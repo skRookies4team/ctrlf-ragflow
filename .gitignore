@@ -1,2 +1,4 @@
-company.csv
-company.xlsx
+/company.xlsx
+/company.csv
+*.xlsx
+*.csv
