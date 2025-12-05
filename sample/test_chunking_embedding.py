@@ -666,21 +666,42 @@ def main():
 
                 add_chunks_safe(doc, chunks)
                 continue
-
             # 1-2) 이미지 기반 PDF / PPT → PreprocessPipeline + add_chunk
             print("→ [이미지/슬라이드] PreprocessPipeline + add_chunk 사용")
-            # ⬇⬇⬇ 여기는 기존에 쓰던 이미지/PPT 파이프라인 코드 그대로 두면 됨
-            # preprocess_pipeline.run(...) 호출하고,
-            # 생성된 doc / chunk들은 기존 로직 유지
-            # ------------------------------------------
+
+            print("→ [이미지/슬라이드] PreprocessPipeline + add_chunk 사용")
+
+            # 🟢 1) 먼저 RAGFlow에 문서 업로드해서 doc 생성
+            with open(fpath, "rb") as fb:
+                blob = fb.read()
+
+            doc = dataset.upload_documents(
+                [{"display_name": fpath.name, "blob": blob}]
+            )[0]
+            print(f"→ 업로드 완료 (doc.id={doc.id})")
+
+            # 🟢 2) PreprocessPipeline 실행
             pipeline_result = preprocess_pipeline.run(
-                file_path=str(fpath),
-                dataset=dataset,
-                display_name=fpath.name,
+                str(fpath),      # input_pdf
+                chunk_size=1200, # 필요하면 조절
             )
+
             print("→ PreprocessPipeline 완료")
-            print_pipeline_summary(pipeline_result)
-            # 이미지/PPT는 여기서 계속 다음 파일로
+
+            # 🟢 3) 파이프라인에서 나온 청크 뽑기
+            chunks = [c["text"] for c in pipeline_result["result_json"]["chunks"]]
+            print(f"→ 파이프라인 청크 {len(chunks)}개 반환")
+
+            # 🟢 4) RAGFlow doc에 add_chunk
+            for idx, c in enumerate(chunks, 1):
+                doc.add_chunk(content=c)
+                if idx <= 2:
+                    print(f"\n  [미리보기 청크 {idx}]")
+                    print(c[:200] + ("..." if len(c) > 200 else ""))
+
+            print(f"→ 총 {len(chunks)}개 청크 추가 완료")
+
+            # 이 파일은 파이프라인으로 끝났으니까 다음 파일로 넘어감
             continue
 
         # ─────────────────────────────
