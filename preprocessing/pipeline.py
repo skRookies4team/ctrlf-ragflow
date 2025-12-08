@@ -8,6 +8,7 @@ import fitz  # PyMuPDF
 import numpy as np
 from PIL import Image, ImageFilter, ImageEnhance, ImageOps
 import pytesseract
+import cv2 
 
 logger = logging.getLogger("pipeline")
 logging.basicConfig(level=logging.INFO)
