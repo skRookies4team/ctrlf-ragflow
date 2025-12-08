@@ -148,7 +148,6 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
 ragflow_cli.egg-info
 # Gatsby files
 .cache/
@@ -201,3 +200,6 @@ backup
 sample/dataset/
 sample/unset/
 sample/hwptodocx/
+
+
+*.zip
