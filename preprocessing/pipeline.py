@@ -1,255 +1,276 @@
 import logging
-import json
-import base64
 import io
 import re
-import os
 from pathlib import Path
-from uuid import uuid4
-from typing import List, Tuple, Dict, Any
+from typing import Dict, Any, List, Tuple, Optional
 
-import numpy as np
-from PIL import Image, ImageFilter, ImageEnhance, ImageOps, ImageOps
-import pytesseract
 import fitz  # PyMuPDF
+import numpy as np
+from PIL import Image, ImageFilter, ImageEnhance, ImageOps
+import pytesseract
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("pipeline")
 logging.basicConfig(level=logging.INFO)
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
+# ------------------------------------------------
+# EasyOCR (선택)
+# ------------------------------------------------
+try:
+    import easyocr
+    _EASYOCR_AVAILABLE = True
+except Exception:
+    easyocr = None
+    _EASYOCR_AVAILABLE = False
+    logger.info("[OCR] easyocr 미설치 – Tesseract만 사용합니다.")
+
+
+# ------------------------------------------------
+# 텍스트 품질 점수 업그레이드 (정확도 ↑)
+# ------------------------------------------------
+def text_quality_score(t: str) -> float:
+    """OCR 결과 텍스트 품질 점수 (0~1)"""
+    if not t:
+        return 0.0
+    s = t.strip()
+    if not s:
+        return 0.0
+
+    length_score = min(len(s) / 900.0, 1.0)
+
+    alpha_count = len(re.findall(r"[A-Za-z가-힣0-9]", s))
+    noise_count = len(re.findall(r"[^0-9A-Za-z가-힣\s\.,\-\(\)\!?\":'%#]", s))
+
+    alpha_ratio = alpha_count / max(len(s), 1)
+    noise_ratio = noise_count / max(len(s), 1)
+
+    # 노이즈 penalty 강화
+    penalty = min(noise_ratio * 1.8, 0.45)
+
+    # 반복문자 패널티 강화
+    repeated = len(re.findall(r"(.)\1{4,}", s))
+    rep_penalty = min(repeated * 0.05, 0.25)
+
+    score = (0.7 * length_score + 0.3 * alpha_ratio) * (1.0 - penalty) * (1.0 - rep_penalty)
+    return float(max(0.0, min(score, 1.0)))
+
+
+# ------------------------------------------------
+# Main Pipeline
+# ------------------------------------------------
 class PreprocessPipeline:
     def __init__(self):
-        self.run_id = str(uuid4())
-        logger.info(f"[Pipeline Init] run_id={self.run_id}")
-        self.always_run_ocr = True  # 🔥 슬라이드 PDF 등 전 페이지 OCR 강제 실행
+        self.run_id = "RUN"
+        self.easyocr_reader: Optional[Any] = None
 
-    # ---------------- 이미지 텍스트 포함 판단 ----------------
-    def _contains_text(self, image: Image.Image) -> bool:
-        """이미지에 텍스트 구조가 있는지 대략 판단"""
+        if _EASYOCR_AVAILABLE:
+            try:
+                self.easyocr_reader = easyocr.Reader(["ko", "en"], gpu=False)
+            except:
+                self.easyocr_reader = None
+
+        logger.info(f"[Pipeline Init] run_id={self.run_id}")
+
+    # ---------------- 이미지 변환 ----------------
+    def _pixmap_to_pil(self, pix: fitz.Pixmap) -> Image.Image:
+        img_bytes = pix.tobytes("png")
+        return Image.open(io.BytesIO(img_bytes))
+
+    # ---------------- 이미지 품질 진단 ----------------
+    def _is_blurry(self, img: Image.Image) -> bool:
         try:
-            gray = np.array(image.convert("L"), dtype=np.int32)
-            diff = np.abs(np.diff(gray, axis=1))
-            return np.mean(diff) > 4  # 5 → 4로 살짝 완화
-        except Exception:
+            gray = np.array(img.convert("L"), dtype=float)
+            g = np.gradient(gray)
+            v = float(np.var(g))
+            return v < 55.0
+        except:
             return False
 
-    # ---------------- 이미지 전처리 필요 판단 ----------------
-    def _needs_preprocess(self, image: Image.Image) -> bool:
-        """이미지 그래디언트 분산 기반으로 흐림 정도 판단"""
+    def _is_low_contrast(self, img: Image.Image) -> bool:
         try:
-            gray = np.array(image.convert("L"), dtype=float)
-            grads = np.gradient(gray)
-            return np.var(grads) < 45  # 40 → 45로 완화
-        except Exception:
-            return True
+            gray = np.array(img.convert("L"), dtype=float)
+            return float(np.std(gray)) < 35.0
+        except:
+            return False
 
-    # ---------------- 이미지 전처리 적용 ----------------
-    def _apply_preprocess(self, image: Image.Image) -> Image.Image:
-        """글자/슬라이드 OCR 정확도 향상 최소 전처리"""
+    # ---------------- Light Preprocess 강화 ----------------
+    def _light_preprocess(self, img: Image.Image) -> Image.Image:
         try:
-            img = ImageOps.exif_transpose(image)
-            img = img.filter(ImageFilter.MedianFilter(size=3))
-            img = ImageEnhance.Contrast(img).enhance(1.6)
-            img = ImageEnhance.Sharpness(img).enhance(1.3)
+            im = ImageOps.exif_transpose(img)
+
+            im = im.filter(ImageFilter.MedianFilter(size=3))
+            im = ImageEnhance.Sharpness(im).enhance(1.6)
+            im = ImageEnhance.Contrast(im).enhance(1.35)
+            im = ImageOps.autocontrast(im)
+
+            return im
+        except:
             return img
-        except Exception as e:
-            logger.warning(f"[Image Preprocess fail]: {e}")
-            return image
 
-    # ---------------- Adaptive 이진화 ----------------
-    def _adaptive_binarize(self, img: Image.Image) -> Image.Image:
-        """과도하게 뭉개지는 이진화 방지 + 글자 보존 강화"""
+    # ---------------- Heavy Preprocess 강화 ----------------
+    def _heavy_preprocess(self, img: Image.Image) -> Image.Image:
         try:
-            im = img.convert("L")
+            im = ImageOps.exif_transpose(img).convert("L")
+            w, h = im.size
+            im = im.resize((int(w * 1.8), int(h * 1.8)), Image.LANCZOS)
+
+            # Bilateral blur (엣지 유지하면서 노이즈 제거)
+            arr = np.array(im)
+            arr = cv2.bilateralFilter(arr, d=7, sigmaColor=50, sigmaSpace=50)
+            im = Image.fromarray(arr)
+
+            im = ImageEnhance.Sharpness(im).enhance(2.2)
+
+            # Adaptive threshold
             hist = im.histogram()
             total = sum(hist)
-            if total == 0:
-                return im
-            mean = sum(i * hist[i] for i in range(256)) / total
-            var = sum(((i - mean) ** 2) * hist[i] for i in range(256)) / total
+            mean = sum(i * hist[i] for i in range(256)) / (total + 1)
+            var = sum(((i - mean) ** 2) * hist[i] for i in range(256)) / (total + 1)
             std = var ** 0.5
-            thresh = int(max(120, min(200, mean + 0.3 * std)))
-            return im.point(lambda p: 255 if p > thresh else 0)
-        except Exception:
+
+            thresh = int(max(90, min(200, mean + 0.25 * std)))
+            im = im.point(lambda p: 255 if p > thresh else 0)
+
+            return im
+        except:
             return img
 
-    # ---------------- 이미지 OCR용 전처리 ----------------
-    def preprocess_image_for_ocr(self, image: Image.Image) -> Image.Image:
-        """OCR 이미지 전처리 + 이진화"""
-        img = self._apply_preprocess(image)
-        img = self._adaptive_binarize(img)
-        return img
+    # ---------------- PSM 자동 선택 ----------------
+    def _auto_psm(self, img: Image.Image) -> int:
+        """문서 형태 기반 PSM 자동 선택"""
+        w, h = img.size
+        if h > w * 1.2:
+            return 11  # block text detection
+        return 6
 
-
-    # ---------------- 텍스트 영역 탐지(옵션인데 당장 안써도됨) ----------------
-    def _detect_text_regions(self, image_gray_np: np.ndarray) -> List[Tuple[int, int, int, int]]:
-        """텍스트가 있을만한 영역을 분할 탐지 (필요시 활용가능)"""
-        h, w = image_gray_np.shape
-        boxes = []
-        step_h, step_w = h // 2, w // 2
-        for y in range(0, h, step_h):
-            for x in range(0, w, step_w):
-                x2, y2 = min(x + step_w, w), min(y + step_h, h)
-                crop = image_gray_np[y:y2, x:x2]
-                if crop.size == 0:
-                    continue
-                if np.var(crop) > 16:
-                    boxes.append((x, y, x2, y2))
-        return boxes
-
-    # ---------------- 영역 기반 OCR(옵션) ----------------
-    def _ocr_from_image_regions(self, img: Image.Image, boxes: List[Tuple[int, int, int, int]]) -> str:
-        """영역 단위 OCR 실행"""
-        text = ""
-        for i, (x1, y1, x2, y2) in enumerate(boxes):
-            try:
-                region = img.crop((x1, y1, x2, y2))
-                ocr = pytesseract.image_to_string(region, lang="kor+eng").strip()
-                if ocr:
-                    text += f"\n--- OCR region {i} ---\n" + ocr
-            except Exception:
-                logger.warning(f"[OCR region fail] {i}")
-        return text.strip()
-
-    # ---------------- PDF 텍스트 추출 ----------------
-    def extract_text_from_pdf(self, pdf_path: Path) -> List[str]:
-        """PyMuPDF로 페이지별 TEXT 추출"""
-        texts = []
+    # ---------------- OCR: Tesseract ----------------
+    def _ocr_tesseract(self, img: Image.Image, psm: Optional[int] = None) -> str:
         try:
-            doc = fitz.open(str(pdf_path))
-            for i, page in enumerate(doc):
-                t = page.get_text("text") or ""
-                texts.append(t.strip())
-                logger.info(f"[PDF TEXT] page={i}, len={len(t.strip())}")
-            doc.close()
-        except Exception as e:
-            logger.error("[PDF open fail]", e)
-        return texts
+            if psm is None:
+                psm = self._auto_psm(img)
 
-    # ---------------- PDF OCR 추출 ----------------
-    def extract_ocrs_from_pdf(self, pdf_path: Path, min_len_skip: int = 35) -> List[str]:
-        """PDF->이미지->OCR 실행"""
-        ocrs = []
-        try:
-            doc = fitz.open(str(pdf_path))
-            for i, page in enumerate(doc):
-                txt = page.get_text("text").strip()
-                if len(txt) < min_len_skip or self.always_run_ocr:
-                    pix = page.get_pixmap(dpi=450, alpha=False)
-                    img = Image.open(io.BytesIO(pix.tobytes("png")))
-                    img = self.preprocess_image_for_ocr(img)
-                    ocr_text = pytesseract.image_to_string(img, lang="kor+eng",
-                                config=r"--psm 4 --oem 1 -c preserve_interword_spaces=1").strip()
-                    ocrs.append(ocr_text)
-                else:
-                    ocrs.append("")
-                logger.info(f"[OCR TEXT] page={i}, len={len(ocr_text)}")
-            doc.close()
-        except Exception as e:
-            logger.error("OCR extract fail %s", e)
-        return ocrs
-
-    # ---------------- 텍스트 품질 점수 ----------------
-    def _text_quality_score(self, t: str) -> float:
-        if not t:
-            return 0.0
-        s = t.strip()
-        length_score = min(len(s) / 900.0, 1.0)
-        alpha_count = len(re.findall(r"[A-Za-z가-힣0-9]", s))
-        noise_count = len(re.findall(r"[^0-9A-Za-z가-힣\s\.,\-\(\)\!?\":'%#]", s))
-        alpha_ratio = alpha_count / max(1, len(s))
-        penalty = min(noise_count / max(1, len(s)), 0.35)
-        return length_score * (0.7 + 0.3 * alpha_ratio) * (1.0 - penalty)
-
-    # ---------------- PDF Text + OCR 병합 ----------------
-    def merge_page_texts(self, py_text: str, ocr_text: str) -> str:
-        py = py_text.strip()
-        ocr = ocr_text.strip()
-        if not py and not ocr:
-            return ""
-        py_score = self._text_quality_score(py)
-        ocr_score = self._text_quality_score(ocr)
-        if py_score >= ocr_score * 1.1:
-            return py
-        if ocr_score >= py_score * 1.1:
-            return ocr
-        merged = []
-        seen = set()
-        for line in (py.splitlines() + ocr.splitlines()):
-            l = line.strip()
-            if l and l not in seen:
-                merged.append(l)
-                seen.add(l)
-        return "\n".join(merged)
-
-    def merge_pdf_texts(self, py_texts: List[str], ocr_texts: List[str]) -> str:
-        pages = []
-        for py, ocr in zip(py_texts, ocr_texts):
-            merged_page = self.merge_page_texts(py, ocr)
-            if merged_page.strip():
-                pages.append(merged_page)
-        return "\n\n===PAGE_BREAK===\n\n".join(pages)
-
-    # ---------------- 노이즈 제거 ----------------
-    def remove_noise_patterns(self, text: str) -> str:
-        if not text:
+            cfg = f"--psm {psm} --oem 1 -c preserve_interword_spaces=1"
+            return pytesseract.image_to_string(img, lang="kor+eng", config=cfg).strip()
+        except:
             return ""
 
-        # 슬라이드용 relaxed noise 패턴 리스트
-        relaxed_patterns = [r"={5,}", r"-{5,}", r"_{5,}", r"\|{5,}", r"\n{4,}", r"[ \t]{3,}"]
+    # ---------------- OCR: EasyOCR ----------------
+    def _ocr_easyocr(self, img: Image.Image) -> str:
+        try:
+            if self.easyocr_reader is None:
+                return ""
+            arr = np.array(img.convert("RGB"))
+            results = self.easyocr_reader.readtext(arr, detail=0, paragraph=True)
+            return "\n".join(r.strip() for r in results if r.strip())
+        except:
+            return ""
 
-        for p in relaxed_patterns:
-            text = re.sub(p, " ", text)
+    # ---------------- 단일 페이지 처리 ----------------
+    def _run_page_ocr(self, img: Image.Image) -> Tuple[str, Dict[str, Any]]:
+        blur = self._is_blurry(img)
+        low_contrast = self._is_low_contrast(img)
 
-        text = re.sub(r"[ ]{2,}", " ", text)
-        return text.strip()
+        # Light + Tess
+        light = self._light_preprocess(img)
+        txt_light = self._ocr_tesseract(light)
+        q_light = text_quality_score(txt_light)
 
-    # ---------------- Word 단위 청킹 (슬라이드 friendly) ----------------
-    def safe_smart_chunk(self, text: str, max_len: int = 1200) -> List[str]:
-        if not text:
-            return []
-        chunks = []
-        buf = ""
-        for line in text.splitlines():
-            if not line.strip():
-                continue
-            if not buf:
-                buf = line
-            elif len(buf) + len(line) + 1 <= max_len:
-                buf += " " + line
-            else:
-                chunks.append(buf.strip())
-                buf = line
-        if buf:
-            chunks.append(buf.strip())
-        return [c for c in chunks if len(c) > 15]
+        best_text, best_q = txt_light, q_light
+        best_engine = "tesseract_light"
+        used_heavy = False
+        used_easy = False
 
-    # ---------------- 실행 메인 ----------------
-    def run(self, input_pdf: str, chunk_size: int = 1200) -> Dict[str, Any]:
+        # Heavy 필요 조건
+        if best_q < 0.65 or blur or low_contrast:
+            heavy = self._heavy_preprocess(img)
+            txt_heavy = self._ocr_tesseract(heavy)
+            q_heavy = text_quality_score(txt_heavy)
+
+            if q_heavy > best_q:
+                best_q = q_heavy
+                best_text = txt_heavy
+                best_engine = "tesseract_heavy"
+                used_heavy = True
+        else:
+            q_heavy = 0.0
+
+        # EasyOCR
+        if self.easyocr_reader is not None and best_q < 0.80:
+            txt_easy = self._ocr_easyocr(img)
+            q_easy = text_quality_score(txt_easy)
+
+            if q_easy > best_q:
+                best_q = q_easy
+                best_text = txt_easy
+                best_engine = "easyocr"
+                used_easy = True
+        else:
+            txt_easy = ""
+            q_easy = 0.0
+
+        info = {
+            "blur": blur,
+            "low_contrast": low_contrast,
+            "q_light": q_light,
+            "q_heavy": q_heavy,
+            "q_easy": q_easy,
+            "best_quality": best_q,
+            "best_engine": best_engine,
+            "used_heavy": used_heavy,
+            "used_easyocr": used_easy,
+            "ocr_len": len(best_text),
+        }
+
+        return best_text, info
+
+    # ---------------- 전체 PDF 처리 ----------------
+    def run(self, input_pdf: str) -> Dict[str, Any]:
         pdf_path = Path(input_pdf)
         if not pdf_path.exists():
-            raise FileNotFoundError(f"❌ PDF not found: {input_pdf}")
+            raise FileNotFoundError(f"PDF not found: {pdf_path}")
 
-        py_texts = self.extract_text_from_pdf(pdf_path)
-        ocr_texts = self.extract_ocrs_from_pdf(pdf_path)
+        doc = fitz.open(str(pdf_path))
 
-        merged = self.merge_pdf_texts(py_texts, ocr_texts)
-        clean = self.remove_noise_patterns(merged)
-        chunks = self.safe_smart_chunk(clean, max_len=chunk_size)
+        pages = []
+        qualities = []
 
-        payload = {
-            "meta": {"run_id": self.run_id},
-            "num_chunks": len(chunks),
-            "chunks": [{"index": i, "text": c} for i, c in enumerate(chunks)],
-        }
+        for i, page in enumerate(doc):
+            try:
+                pix = page.get_pixmap(dpi=260, alpha=False)
+                img = self._pixmap_to_pil(pix)
 
-        out_path = Path("pipeline_result.json")
-        out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-        logger.info(f"[저장 완료] {out_path}")
+                text, info = self._run_page_ocr(img)
+                info["page_index"] = i
 
-        return {
-            "doc_type": "slide-friendly",
+                pages.append({
+                    "index": i,
+                    "text": text,
+                    "langeffect": info,
+                })
+                qualities.append(info["best_quality"])
+
+                logger.info(
+                    f"[Page {i}] engine={info['best_engine']} "
+                    f"q={info['best_quality']:.3f} len={info['ocr_len']}"
+                )
+            except Exception as e:
+                logger.error(f"[Page {i}] 처리 실패: {e}")
+                pages.append({
+                    "index": i,
+                    "text": "",
+                    "langeffect": {"page_index": i, "error": str(e)},
+                })
+                qualities.append(0.0)
+
+        doc.close()
+
+        avg_q = sum(qualities) / max(1, len(qualities))
+        result = {
             "run_id": self.run_id,
-            "num_chunks": len(chunks),
-            "result_json": payload,
+            "page_count": len(pages),
+            "avg_quality": avg_q,
+            "pages": pages,
         }
+
+        logger.info(f"[Pipeline 완료] avg_quality={avg_q:.3f}")
+        return result
+ 
