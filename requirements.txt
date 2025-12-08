@@ -1,0 +1,43 @@
+fastapi
+uvicorn
+pydantic
+python-multipart
+
+# OCR / 이미지 처리
+pillow
+pytesseract
+opencv-python-headless
+numpy
+
+# PDF / 문서 처리
+pymupdf
+python-docx
+pypdf
+pdf2image
+
+# 구조/청킹
+regex
+nltk
+beautifulsoup4
+
+# 임베딩/LLM
+openai
+langchain
+langchain-community
+faiss-cpu
+
+# HWP 변환
+olefile
+pyhwp
+
+# 평가 (CER 등)
+python-Levenshtein
+
+# 유틸
+tqdm
+requests
+pandas
+scikit-learn
+
+# 서버 모니터링 / 로깅
+loguru
