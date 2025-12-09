@@ -3,7 +3,7 @@ import logging
 import json
 from typing import List, Dict, Any
 
-from text.text_cleaner import TextCleaner
+from preprocessing.ocr.ocr_cleaner import TextCleaner
 from serialization.json_serializer import JSONSerializer
 
 logger = logging.getLogger(__name__)
