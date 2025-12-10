@@ -1,47 +1,55 @@
+# preprocessing/pipeline.py
 """
-Stable OCR Pipeline + LLM Correction
-- Soft preprocess (light sharpen)
-- 3 OCR(Tesseract/Easy/Paddle) 비교 후 최고 품질 선택
-- Qwen LLM 자동 교정(오타/띄어쓰기/단어복원)
+이미지/비정형형 PDF → OCR + LLM 교정 파이프라인 (PyMuPDF 제거 버전)
+
+- PDF → 이미지: pdf2image 사용
+- 텍스트 영역 감지: PaddleOCR(det)
+- OCR: Tesseract (crop 기반)
+- LLM 교정: safe_llm_correct
 """
 
-import logging
 import io
+import logging
 import re
+import sys
 from pathlib import Path
 from typing import Dict, Any, List, Tuple
 
-import fitz
-import numpy as np
-from PIL import Image
-import pytesseract
 import cv2
+import numpy as np
+import pytesseract
+from PIL import Image
+from pdf2image import convert_from_path
 
-# --------------------------------------------
-# LLM 자동 교정 가져오기
-# --------------------------------------------
-try:
-    from preprocessing.llm.llm_correction import llm_correct_text
-except Exception as e:
-    print("[WARNING] llm_correct_text import 실패:", e)
-    def llm_correct_text(x): 
-        return x  # fallback
-
+# LLM 안전 교정 래퍼
+from preprocessing.llm.llm_correction import safe_llm_correct
 
 logger = logging.getLogger("pipeline")
-logging.basicConfig(level=logging.INFO)
+if not logger.handlers:
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout, force=True)
 
+# ------------------------------------------------------
+# PaddleOCR Detector
+# ------------------------------------------------------
+try:
+    from paddleocr import PaddleOCR
+    OCR_DETECTOR = PaddleOCR(lang="korean", use_angle_cls=False)
+    DET_AVAILABLE = True
+    logger.info("[INIT] PaddleOCR detector ready")
+except Exception as e:
+    OCR_DETECTOR = None
+    DET_AVAILABLE = False
+    logger.warning(f"[INIT] PaddleOCR detector unavailable → {e}")
 
-# ------------------------------------------------
-# 품질 스코어 계산 함수
-# ------------------------------------------------
+# ------------------------------------------------------
+# 텍스트 품질 평가
+# ------------------------------------------------------
 def text_quality_score(t: str) -> float:
     if not t or not t.strip():
         return 0.0
-
     s = t.strip()
-    length_score = min(len(s) / 900.0, 1.0)
 
+    length_score = min(len(s) / 900.0, 1.0)
     alpha_count = len(re.findall(r"[A-Za-z가-힣0-9]", s))
     noise_count = len(re.findall(r"[^0-9A-Za-z가-힣\s\.,\-\(\)\!?\":'%#]", s))
 
@@ -53,68 +61,33 @@ def text_quality_score(t: str) -> float:
 
     score = (0.7 * length_score + 0.3 * alpha_ratio)
     score *= (1 - penalty) * (1 - min(repeat_penalty, 0.3))
+    return max(0.0, min(score, 1.0))
 
-    return float(max(0, min(score, 1)))
-
-
-# ------------------------------------------------
+# ------------------------------------------------------
 # OCR Pipeline
-# ------------------------------------------------
+# ------------------------------------------------------
 class PreprocessPipeline:
+
     def __init__(self):
         self.run_id = "RUN"
+        self.detector = OCR_DETECTOR
+        self.det_available = DET_AVAILABLE
+        logger.info(f"[INIT] Pipeline (det={self.det_available}, tesseract=on)")
 
-        # EasyOCR
-        try:
-            import easyocr
-            self.easy_reader = easyocr.Reader(["ko", "en"], gpu=False)
-            self.easy_available = True
-        except:
-            self.easy_reader = None
-            self.easy_available = False
-
-        # PaddleOCR
-        try:
-            from paddleocr import PaddleOCR
-            self.paddle_reader = PaddleOCR(lang="korean", use_gpu=False)
-            self.paddle_available = True
-        except:
-            self.paddle_reader = None
-            self.paddle_available = False
-
-        logger.info("[INIT] OCR Pipeline 준비 완료")
-
-    # ------------------------------------------------
-    # Pixmap → PIL 변환
-    # ------------------------------------------------
-    def _pixmap_to_pil(self, pix: fitz.Pixmap):
-        return Image.open(io.BytesIO(pix.tobytes("png"))).convert("RGB")
-
-    # ------------------------------------------------
-    # Soft Preprocess (가벼운 sharpen)
-    # ------------------------------------------------
+    # soft preprocess
     def soft_preprocess(self, img: Image.Image) -> Image.Image:
         arr = np.array(img)
         arr = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
 
-        # 약한 sharpen 필터
-        kernel = np.array([
-            [0, -0.5, 0],
-            [-0.5, 3, -0.5],
-            [0, -0.5, 0],
-        ])
+        kernel = np.array([[0, -0.5, 0], [-0.5, 3.0, -0.5], [0, -0.5, 0]])
         sharp = cv2.filter2D(arr, -1, kernel)
-
         gray = cv2.cvtColor(sharp, cv2.COLOR_BGR2GRAY)
         return Image.fromarray(gray)
 
-    # ------------------------------------------------
-    # Tesseract
-    # ------------------------------------------------
-    def _ocr_tesseract(self, img):
+    # tesseract
+    def _ocr_tesseract(self, img: Image.Image) -> Tuple[str, float]:
         psm_modes = [4, 6, 7]
-
-        best_q = 0
+        best_q = 0.0
         best_txt = ""
 
         for psm in psm_modes:
@@ -125,128 +98,111 @@ class PreprocessPipeline:
                 if q > best_q:
                     best_q = q
                     best_txt = txt.strip()
-            except:
+            except Exception:
                 continue
 
         return best_txt, best_q
 
-    # ------------------------------------------------
-    # EasyOCR
-    # ------------------------------------------------
-    def _ocr_easy(self, img):
-        if not self.easy_available:
-            return "", 0.0
+    # 영역 감지
+    def _detect_text_regions(self, page_bgr):
+        if not self.det_available:
+            return []
 
         try:
-            arr = np.array(img)
-            result = self.easy_reader.readtext(arr, detail=0, paragraph=True)
-            txt = "\n".join(result)
-            return txt, text_quality_score(txt)
-        except:
-            return "", 0.0
+            result = self.detector.ocr(page_bgr, rec=False, cls=False)
+        except Exception:
+            return []
 
-    # ------------------------------------------------
-    # PaddleOCR
-    # ------------------------------------------------
-    def _ocr_paddle(self, img):
-        if not self.paddle_available:
-            return "", 0.0
+        if not result:
+            return []
 
-        try:
-            arr = np.array(img)
-            result = self.paddle_reader.ocr(arr)
-            if not result or not result[0]:
-                return "", 0.0
+        lines = result[0] if (isinstance(result, list) and len(result) == 1) else result
 
-            lines = [line[1][0] for line in result[0]]
-            txt = "\n".join(lines)
-            return txt, text_quality_score(txt)
-        except:
-            return "", 0.0
-
-    # ------------------------------------------------
-    # 한 페이지 OCR + LLM 교정
-    # ------------------------------------------------
-    def _run_page(self, img: Image.Image):
-        processed = self.soft_preprocess(img)
-
-        tess_txt, tess_q = self._ocr_tesseract(processed)
-        easy_txt, easy_q = self._ocr_easy(processed)
-        paddle_txt, paddle_q = self._ocr_paddle(processed)
-
-        results = [
-            ("tesseract", tess_txt, tess_q),
-            ("easyocr", easy_txt, easy_q),
-            ("paddleocr", paddle_txt, paddle_q),
-        ]
-
-        best_engine, best_txt, best_q = max(results, key=lambda x: x[2])
-
-        # ----------------------------------------
-        # 🔥 LLM 자동 교정 (빈 텍스트 보호)
-        # ----------------------------------------
-        if best_txt.strip():
+        boxes = []
+        for line in lines:
             try:
-                corrected = llm_correct_text(best_txt)
-            except Exception as e:
-                print("[LLM ERROR] 교정 실패:", e)
-                corrected = best_txt
-        else:
-            corrected = ""
+                pts = np.array(line[0]).astype(np.int32)
+                x, y, w, h = cv2.boundingRect(pts)
+            except:
+                continue
 
+            if w < 60 or h < 25:
+                continue
+            boxes.append((x, y, w, h))
+
+        boxes.sort(key=lambda b: (b[1], b[0]))
+        return boxes
+
+    # 한 페이지 처리
+    def _run_page(self, img_pil: Image.Image, page_idx: int):
+        arr = np.array(img_pil)
+        page_bgr = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
+
+        boxes = self._detect_text_regions(page_bgr)
+        region_texts = []
+
+        # 영역별 OCR
+        for x, y, w, h in boxes:
+            crop = page_bgr[y:y+h, x:x+w]
+            crop_pil = Image.fromarray(cv2.cvtColor(crop, cv2.COLOR_BGR2RGB))
+            crop_proc = self.soft_preprocess(crop_pil)
+            txt, q = self._ocr_tesseract(crop_proc)
+
+            if q < 0.15 or len(txt.strip()) < 15:
+                continue
+
+            region_texts.append(txt)
+
+        # fallback: 전체 페이지 OCR
+        if not region_texts:
+            proc = self.soft_preprocess(img_pil)
+            best_txt, best_q = self._ocr_tesseract(proc)
+            raw_text = best_txt
+        else:
+            raw_text = "\n\n".join(region_texts)
+            best_q = text_quality_score(raw_text)
+
+        corrected = safe_llm_correct(raw_text, page_idx)
         corrected_q = text_quality_score(corrected)
 
-        return corrected, {
-            "best_engine": best_engine,
-            "ocr_quality": best_q,
-            "corrected_quality": corrected_q,
-            "ocr_len": len(best_txt),
+        meta = {
+            "page": page_idx,
+            "ocr_quality": float(best_q),
+            "corrected_quality": float(corrected_q),
+            "raw_len": len(raw_text),
+            "corrected_len": len(corrected),
         }
 
-    # ------------------------------------------------
-    # 전체 PDF 처리
-    # ------------------------------------------------
+        return corrected, meta
+
+    # 전체 실행
     def run(self, input_pdf: str):
         pdf_path = Path(input_pdf)
         if not pdf_path.exists():
-            raise FileNotFoundError(f"PDF not found: {pdf_path}")
+            raise FileNotFoundError(pdf_path)
 
-        doc = fitz.open(str(pdf_path))
-        pages = []
+        logger.info(f"[START] PDF → image 변환: {pdf_path.name}")
+
+        # PDF → 이미지 변환 (dpi=300~350 권장)
+        pages = convert_from_path(str(pdf_path), dpi=300)
+
+        all_pages = []
         chunks = []
         qualities = []
 
-        for idx, page in enumerate(doc):
-            pix = page.get_pixmap(dpi=350, alpha=False)
-            img = self._pixmap_to_pil(pix)
+        for idx, img_pil in enumerate(pages):
+            txt, meta = self._run_page(img_pil, idx)
 
-            text, meta = self._run_page(img)
-            meta["page"] = idx
-
-            pages.append({
-                "index": idx,
-                "text": text,
-                "meta": meta
-            })
-
-            chunks.append({
-                "chunk_index": idx,
-                "text": text,
-                "quality": meta["corrected_quality"]
-            })
-
+            all_pages.append({"index": idx, "text": txt, "meta": meta})
+            chunks.append({"chunk_index": idx, "text": txt, "quality": meta["corrected_quality"]})
             qualities.append(meta["corrected_quality"])
-
-            logger.info(f"[Page {idx}] engine={meta['best_engine']} corrected_q={meta['corrected_quality']:.3f}")
 
         avg_q = sum(qualities) / max(1, len(qualities))
 
-        logger.info(f"전체 완료: 평균 품질 score={avg_q:.3f}")
-
         return {
             "run_id": self.run_id,
-            "page_count": len(pages),
+            "page_count": len(all_pages),
             "avg_quality": avg_q,
-            "pages": pages,
+            "pages": all_pages,
             "chunks": chunks,
         }
