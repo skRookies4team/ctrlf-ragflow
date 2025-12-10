@@ -50,3 +50,4 @@ EMBED_DIM=
 
 # Milvus 미러링 기능 활성화 여부
 ENABLE_MILVUS_MIRROR=true
+
