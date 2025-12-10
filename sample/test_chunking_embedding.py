@@ -3,8 +3,8 @@ RAGFlow 커스텀 청킹(Chunking) + add_chunk
 HWP / PDF / PPT / DOCX / TXT / CSV 자동 처리 + 문서 타입 판별 + 자동 패턴 감지 완전판
 """
 
-import os
 import sys
+import os
 import time
 import requests
 import re
