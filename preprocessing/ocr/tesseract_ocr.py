@@ -1,26 +1,29 @@
+# preprocessing/ocr/tesseract_ocr.py
 import pytesseract
 from PIL import Image
-import numpy as np
-import cv2
-import logging
+import re
 
-logger = logging.getLogger("tesseract_ocr")
+def quality_score(t: str) -> float:
+    if not t.strip():
+        return 0.0
+    s = t.strip()
+    alpha = len(re.findall(r"[A-Za-z가-힣0-9]", s))
+    noise = len(re.findall(r"[^A-Za-z가-힣0-9\s\.,!?]", s))
+    return max(0, min((alpha / (len(s)+1)) - noise * 0.01, 1.0))
 
+class TesseractOCR:
 
-def run_tesseract(img, psm=6):
-    """
-    이미지 → Tesseract OCR 텍스트 반환
-    img: OpenCV BGR 또는 PIL Image 지원
-    """
-    try:
-        # OpenCV → PIL 변환
-        if isinstance(img, np.ndarray):
-            img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    PSM_LIST = [6, 4, 7]
 
-        config = f"--psm {psm} --oem 1 -c preserve_interword_spaces=1"
-        text = pytesseract.image_to_string(img, lang="kor+eng", config=config)
-        return text.strip()
+    def run(self, img: Image.Image):
+        best = ("", 0)
 
-    except Exception as e:
-        logger.error(f"[Tesseract OCR] 실패: {e}")
-        return ""
+        for psm in self.PSM_LIST:
+            config = f"--psm {psm} --oem 3 -c preserve_interword_spaces=1"
+            text = pytesseract.image_to_string(img, lang="kor+eng", config=config)
+            q = quality_score(text)
+
+            if q > best[1]:
+                best = (text.strip(), q)
+
+        return best

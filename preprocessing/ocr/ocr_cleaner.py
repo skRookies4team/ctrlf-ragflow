@@ -1,35 +1,64 @@
+import cv2
+import numpy as np
+from PIL import Image
 import re
-import logging
-
-logger = logging.getLogger(__name__)
 
 
-def clean_ocr_text(text: str) -> str:
-    """
-    OCR 텍스트를 안전하게 클리닝하는 버전.
-    - 절대 문장 삭제 금지
-    - 불필요한 장식·도형만 제거
-    - 개행 및 문단은 유지
-    """
+class OCRCleaner:
 
-    if not text:
-        return ""
+    # --------------------------------------------------------
+    # 슬라이드 PDF / 이미지 PDF 최적화 전처리
+    # --------------------------------------------------------
+    def preprocess_image(self, pil_img: Image.Image) -> Image.Image:
+        """
+        슬라이드 PDF 최적화: grayscale → adaptive threshold →
+        dilation → sharpen → resize(1.8x)
+        """
+        img = np.array(pil_img)
 
-    # 1) 도형 / 장식 기호 제거 (본문 한글에는 영향 없음)
-    text = re.sub(r"[│┃◆●■□▪▫▣▤▥▦◈○◎◇☆★▷▶]", " ", text)
-    text = re.sub(r"[~_<>{}=]{2,}", " ", text)
+        # grayscale
+        gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
-    # 2) OCR 개행은 최대한 유지
-    text = text.replace("\t", " ")
+        # adaptive threshold (슬라이드용 최적값)
+        thr = cv2.adaptiveThreshold(
+            gray,
+            255,
+            cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+            cv2.THRESH_BINARY,
+            31, 10
+        )
 
-    # 3) 중복 공백 줄이기 (개행은 유지)
-    text = re.sub(r" {2,}", " ", text)
+        # dilation (글자 테두리 강화)
+        kernel = np.ones((2, 2), np.uint8)
+        thr = cv2.dilate(thr, kernel, iterations=1)
 
-    # 4) 한글-숫자/영문 붙은 경우만 최소한으로 분리
-    text = re.sub(r"([0-9])([가-힣A-Za-z])", r"\1 \2", text)
+        # sharpen
+        kernel_sharp = np.array([
+            [0, -1, 0],
+            [-1, 5, -1],
+            [0, -1, 0]
+        ])
+        thr = cv2.filter2D(thr, -1, kernel_sharp)
 
-    # 5) 짧은 라인/노이즈 삭제 절대 금지 → 문단 유지
-    lines = text.split("\n")
-    cleaned_lines = [l.rstrip() for l in lines]
+        # resize → OCR 인식률 증가
+        thr = cv2.resize(thr, None, fx=1.8, fy=1.8, interpolation=cv2.INTER_CUBIC)
 
-    return "\n".join(cleaned_lines).strip()
+        return Image.fromarray(thr)
+
+    # --------------------------------------------------------
+    # 텍스트 후처리 (기본적인 노이즈 제거)
+    # --------------------------------------------------------
+    def postprocess_text(self, txt: str) -> str:
+        if not txt:
+            return ""
+
+        t = txt
+
+        # 제거: ASCII control, 이상한 유니코드, 잉여 공백
+        t = re.sub(r"[^\S\r\n]+", " ", t)
+        t = re.sub(r"[^\x09\x0A\x0D\x20-\x7E가-힣0-9.,!?():%\-/\n ]", "", t)
+
+        # 여러 줄 개행 → 정리
+        t = re.sub(r"\n{3,}", "\n\n", t)
+
+        return t.strip()
