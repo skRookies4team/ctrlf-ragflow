@@ -16,8 +16,8 @@ print(f"👉 connecting to Milvus on {MILVUS_HOST}:{MILVUS_PORT}...")
 try:
     connections.connect(
         alias="default",
-        host=HOST,
-        port=PORT,
+        host=MILVUS_HOST,
+        port=MILVUS_PORT,
     )
     print("✅ connected!")
 except Exception as e:
