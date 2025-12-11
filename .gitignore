@@ -202,7 +202,4 @@ sample/unset/
 sample/hwptodocx/
 preprocessing/llm/llm_correction.py
 
-# eval results (contains sensitive data)
-sample/eval/results/
-
 *.zip
