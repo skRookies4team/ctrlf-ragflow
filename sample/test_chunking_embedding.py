@@ -28,7 +28,12 @@ sys.path.insert(0, str(BASE_DIR))
 load_dotenv(BASE_DIR / ".env")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-# ... 기존 load_dotenv(BASE_DIR / ".env") 바로 아래쪽에 추가
+# milvus 환경설정
+MILVUS_HOST = os.getenv("MILVUS_HOST")
+MILVUS_PORT = os.getenv("MILVUS_PORT")
+MILVUS_COLLECTION = os.getenv("MILVUS_COLLECTION")
+
+
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # RAGFLOW_EMBEDDING_MODEL 이 "text-embedding-004@Gemini" 라고 되어 있으니까,
 # 실제 Gemini 모델 이름은 아래처럼 쓸게.
@@ -704,9 +709,9 @@ def main():
         print_step(1, "Milvus 연결")
     try:
         milvus = MilvusProxy(
-            host="localhost",
-            port="19530",
-            collection_name="ragflow_chunks",
+            host=MILVUS_HOST,
+            port=MILVUS_PORT,
+            collection_name=MILVUS_COLLECTION,
             dim=GEMINI_EMBED_DIM,   # Gemini 임베딩 차원과 반드시 동일
         )
         print("✅ Milvus 연결/컬렉션 준비 완료")
