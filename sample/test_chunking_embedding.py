@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import List, Sequence
 from dotenv import load_dotenv
 from difflib import SequenceMatcher
+import google.generativeai as genai  # Gemini SDK
 
 # =======================
 # 0. 경로/환경 설정
@@ -25,6 +26,29 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
 load_dotenv(BASE_DIR / ".env")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+# milvus 환경설정
+MILVUS_HOST = os.getenv("MILVUS_HOST")
+MILVUS_PORT = os.getenv("MILVUS_PORT")
+MILVUS_COLLECTION = os.getenv("MILVUS_COLLECTION")
+
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# RAGFLOW_EMBEDDING_MODEL 이 "text-embedding-004@Gemini" 라고 되어 있으니까,
+# 실제 Gemini 모델 이름은 아래처럼 쓸게.
+GEMINI_EMBED_MODEL = os.getenv(
+    "GEMINI_EMBED_MODEL",
+    "models/text-embedding-004",
+)
+# 벡터 차원 (Milvus dim과 반드시 일치해야 함)
+GEMINI_EMBED_DIM = int(os.getenv("GEMINI_EMBED_DIM", "768"))
+
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+else:
+    print("⚠ GEMINI_API_KEY 가 .env에 없습니다. embed_text() 호출 시 에러가 납니다.")
+
 
 # =======================
 # 1. RAGFlow SDK import
@@ -37,6 +61,7 @@ except ImportError:
     from ragflow_sdk import RAGFlow
 
 from ragflow_sdk.modules.dataset import DataSet
+from milvus_proxy import MilvusProxy
 
 # =======================
 # 2. 커스텀 전처리 모듈 import
@@ -535,15 +560,46 @@ def chunk_text_pdf(path: Path) -> list[str]:
 # ===========================================================
 MAX_CHUNK_LEN = 8000  # 너무 긴 청크 방지용 (필요하면 4000~6000 정도로 줄여도 됨)
 
+# =========================
+# 텍스트 임베딩 함수 (Milvus 용, Gemini text-embedding-004)
+# =========================
+def embed_text(text: str) -> list[float]:
+    """
+    Gemini text-embedding-004을 호출해서 임베딩을 생성한다.
+    - dim: 기본 768 (GEMINI_EMBED_DIM과 MilvusProxy dim이 반드시 같아야 함)
+    """
+    if not GEMINI_API_KEY:
+        raise RuntimeError("GEMINI_API_KEY 가 설정되어 있지 않습니다.")
+
+    # 긴 문서는 잘라서 평균내고 싶으면 여기서 전처리하면 됨.
+    # 일단은 전체 텍스트 한 번에Embedding.
+    response = genai.embed_content(
+        model=GEMINI_EMBED_MODEL,
+        content=text,
+        task_type="RETRIEVAL_DOCUMENT",
+    )
+
+    # text-embedding-004 응답은 {"embedding": [...]} 형태
+    embedding = response.get("embedding") or response["embeddings"][0]
+
+    if len(embedding) != GEMINI_EMBED_DIM:
+        # 예상 차원과 다르면 경고만 찍고 그대로 반환
+        print(
+            f"⚠ Gemini 임베딩 차원({len(embedding)})이 "
+            f"GEMINI_EMBED_DIM({GEMINI_EMBED_DIM})과 다릅니다."
+        )
+
+    return embedding
+
 SCRIPT_DIR = Path(__file__).parent  # sample 폴더 기준
 
 DOMAIN_DIRS = {
     "직무교육":        SCRIPT_DIR / "dataset_직무교육",
     "장애인인식개선교육": SCRIPT_DIR / "dataset_장애인인식개선",
-    "직장 내 괴롭힘 교육": SCRIPT_DIR / "dataset_괴롭힘교육",
-    "직장 내 성희롱 교육": SCRIPT_DIR / "dataset_성희롱교육",
-    "정보보안 교육":    SCRIPT_DIR / "dataset_정보보안교육",
-    "사내 규정":        SCRIPT_DIR / "dataset_사내규정",
+    "직장내괴롭힘교육": SCRIPT_DIR / "dataset_괴롭힘교육",
+    "직장내성희롱교육": SCRIPT_DIR / "dataset_성희롱교육",
+    "정보보안교육":    SCRIPT_DIR / "dataset_정보보안교육",
+    "사내규정":        SCRIPT_DIR / "dataset_사내규정",
 }
 
 
@@ -568,24 +624,50 @@ def compare_with_solution(dataset_dir: Path, fpath: Path, chunks: list[str]):
 
 
 # ===========================================================
-# 청크 추가 유틸 (심플 버전)
+# 청크 추가 유틸 (RAGFlow + (옵션) Milvus 동시 저장 버전)
 # ===========================================================
-def add_chunks_safe(doc, chunks):
+def add_chunks_safe(
+    doc,
+    chunks,
+    milvus: "MilvusProxy | None" = None,
+    dataset_id: str | None = None,   # ← Milvus에 들어갈 dataset 식별자 (우리는 domain 이름 넣을 거)
+    doc_id: str | None = None,       # ← 파일 이름
+):
     """
-    청크들을 RAGFlow doc에 추가.
-    - 생성된 청크 수 + 미리보기 1,2번만 출력
+    청크들을 RAGFlow doc에 추가 + (선택) Milvus에도 함께 저장.
+    - RAGFlow: doc.add_chunk(content=...)
+    - Milvus:  dataset_id / doc_id / chunk_id / text / embedding
     """
     print(f"→ 생성된 청크 수: {len(chunks)}")
 
     added = 0
+    milvus_payload = []
+
     for idx, c in enumerate(chunks, start=1):
         if not c or not c.strip():
             continue
 
-        # 필요하면 여기서 길이 체크해서 잘라 넣을 수도 있지만
-        # 지금은 적당한 길이라고 가정하고 그대로 추가
+        # 1) RAGFlow에 청크 추가
         doc.add_chunk(content=c)
         added += 1
+
+        # 2) Milvus용 payload 준비 (임베딩까지)
+        if milvus is not None and dataset_id is not None and doc_id is not None:
+            try:
+                emb = embed_text(c)   # ← Gemini 임베딩 호출하는 함수 (이미 위에 stub 만들어둔 그거)
+                milvus_payload.append(
+                    {
+                        "doc_id": doc_id,
+                        "chunk_id": idx,
+                        "text": c,
+                        "embedding": emb,
+                    }
+                )
+            except NotImplementedError:
+                # embed_text 아직 구현 안 했으면 경고만 찍고 이후부턴 시도 안 함
+                if idx == 1:
+                    print("⚠ embed_text()가 구현되지 않아 Milvus 저장은 건너뜁니다.")
+                milvus = None  # 한 번만 경고 찍고 이후엔 시도 안 함
 
         # 미리보기는 앞의 두 개만
         if idx <= 2:
@@ -596,6 +678,11 @@ def add_chunks_safe(doc, chunks):
             print(preview)
 
     print(f"→ 총 {added}개 청크 추가 완료")
+
+    # 3) Milvus에 한 번에 insert
+    if milvus is not None and milvus_payload:
+        milvus.insert_chunks(dataset_id=dataset_id, chunks=milvus_payload)
+        
 # ===========================================================
 # 메인
 # ===========================================================
@@ -617,6 +704,21 @@ def main():
     except Exception as e:
         print(f"❌ 서버 연결 실패: {e}")
         return
+    
+    # ★ 여기 추가: Milvus 연결
+        print_step(1, "Milvus 연결")
+    try:
+        milvus = MilvusProxy(
+            host=MILVUS_HOST,
+            port=MILVUS_PORT,
+            collection_name=MILVUS_COLLECTION,
+            dim=GEMINI_EMBED_DIM,   # Gemini 임베딩 차원과 반드시 동일
+        )
+        print("✅ Milvus 연결/컬렉션 준비 완료")
+
+    except Exception as e:
+        print(f"❌ Milvus 연결 실패 (일단 RAGFlow만 진행): {e}")
+        milvus = None
 
     # ==============================================
     # ★ 도메인별로 Dataset을 순차적으로 구성 ★
@@ -718,7 +820,14 @@ def main():
                     # ★ solution/ 정답 txt가 있으면 유사도 체크
                     compare_with_solution(dataset_dir, fpath, chunks)
 
-                    add_chunks_safe(doc, chunks)
+                    # RAGFlow + (옵션) Milvus 동시 저장
+                    add_chunks_safe(
+                        doc,
+                        chunks,
+                        milvus=milvus,
+                        dataset_id=domain,   # 도메인별 dataset 이름을 dataset_id로 사용
+                        doc_id=fpath.name,
+                    )
                     continue
 
                 # 1-2) 이미지 기반 PDF / PPT → PreprocessPipeline + add_chunk
@@ -736,19 +845,16 @@ def main():
 
                 print("→ PreprocessPipeline 완료")
 
-                # 페이지 단위 청크 사용
                 chunks = [c["text"] for c in pipeline_result.get("chunks", [])]
                 print(f"→ 파이프라인 청크 {len(chunks)}개 반환")
 
-                for idx, c in enumerate(chunks, 1):
-                    if not c or not c.strip():
-                        continue
-                    doc.add_chunk(content=c)
-                    if idx <= 2:
-                        print(f"\n  [미리보기 청크 {idx}]")
-                        print(c[:200] + ("..." if len(c) > 200 else ""))
-
-                print(f"→ 총 {len(chunks)}개 청크 추가 완료")
+                add_chunks_safe(
+                    doc,
+                    chunks,
+                    milvus=milvus,
+                    dataset_id=domain,
+                    doc_id=fpath.name,
+                )
                 continue
 
             # ─────────────────────────────
@@ -767,7 +873,14 @@ def main():
 
                 chunks = chunk_document(fpath)
                 compare_with_solution(dataset_dir, fpath, chunks)
-                add_chunks_safe(doc, chunks)
+
+                add_chunks_safe(
+                    doc,
+                    chunks,
+                    milvus=milvus,
+                    dataset_id=domain,
+                    doc_id=fpath.name,
+                )
                 continue
 
             # 기타 확장자는 스킵
