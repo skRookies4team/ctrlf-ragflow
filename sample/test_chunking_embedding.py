@@ -1,15 +1,14 @@
 """
 RAGFlow 커스텀 청킹(Chunking) + add_chunk
-HWP / PDF / PPT / DOCX / TXT / CSV 자동 처리 + 문서 타입 판별 + 자동 패턴 감지 완전판
+HWP / PDF / PPT / DOCX / TXT 자동 처리 + 문서 타입 판별 + 자동 패턴 감지 완전판
 """
 
-import sys
 import os
+import sys
 import time
 import requests
 import re
 import json
-import csv
 import pdfplumber
 from pathlib import Path
 from typing import List, Sequence
@@ -91,6 +90,7 @@ def detect_document_type(raw_text: str) -> str:
     - structured: ◇/◊/○/숫자 헤더가 많은 보안/방침 문서
     - general: 일반 문서 (보고서, 회의록 등)
     """
+
     text = raw_text.replace("\x01", " ").replace("\u00a0", " ")
     lines = text.splitlines()
 
@@ -224,12 +224,10 @@ def split_long_chunk_with_heading(chunk_text: str, max_chars: int) -> List[str]:
 # ===========================================================
 # 4. 규정형 청킹
 # ===========================================================
-def split_text_by_rules(
-    raw_text: str,
-    heading_patterns: Sequence[str],
-    max_chars: int,
-    strict_heading_only: bool = False
-) -> List[str]:
+def split_text_by_rules(raw_text: str,
+                        heading_patterns: Sequence[str],
+                        max_chars: int,
+                        strict_heading_only: bool = False) -> List[str]:
     """
     strict_heading_only=True → 길이 기준 분할 OFF (조 단위 유지)
     """
@@ -279,6 +277,8 @@ def split_text_by_rules(
             final.extend(split_long_chunk_with_heading(ch, max_chars))
 
     return [c for c in final if len(c.strip()) > 20]
+
+
 # ==========================================
 # HWP / 슬라이드형 PDF 전처리 파이프라인 래퍼
 # ==========================================
@@ -287,16 +287,16 @@ def preprocess_to_chunks(path: Path, chunk_size: int = 1200) -> list[str]:
     PreprocessPipeline을 실행해서 청크 리스트(list[str])로 변환.
     - result 구조:
         {
-          "run_id": "...",
-          "page_count": ...,
-          "avg_quality": ...,
-          "pages": [...],
-          "chunks": [
-             {"text": "...", "page_index": ..., ...},
-             ...
-          ]
+          "result_json": {
+             "num_chunks": 3,
+             "chunks": [
+                 {"text": "...", "meta": {...}},
+                 ...
+             ],
+             "meta": {...}
+          }
         }
-    를 가정하고 안전하게 파싱.
+    이런 형태를 가정하고 안전하게 파싱.
     """
     result = preprocess_pipeline.run(str(path), chunk_size=chunk_size)
 
@@ -314,15 +314,17 @@ def preprocess_to_chunks(path: Path, chunk_size: int = 1200) -> list[str]:
     items = []
 
     if isinstance(data, dict):
-        # case 1: {"result_json": {...}} (구버전 호환)
+        # case 1: {"result_json": {...}}
         if "result_json" in data:
             rj = data["result_json"]
             if isinstance(rj, dict):
+                # {"num_chunks": n, "chunks": [...], "meta": {...}}
                 if "chunks" in rj and isinstance(rj["chunks"], list):
                     items = rj["chunks"]
             elif isinstance(rj, list):
                 items = rj
-        # case 2: {"chunks": [...]} (현재 버전)
+
+        # case 2: {"chunks": [...]} 형태
         elif "chunks" in data and isinstance(data["chunks"], list):
             items = data["chunks"]
 
@@ -345,7 +347,6 @@ def preprocess_to_chunks(path: Path, chunk_size: int = 1200) -> list[str]:
             chunks.append(text)
 
     return chunks
-
 
 # =========================
 # CER(문자 오류율) 계산 유틸 (선택적)
@@ -371,9 +372,9 @@ def cer(pred: str, truth: str) -> float:
         for j in range(1, len(p) + 1):
             cost = 0 if t[i - 1] == p[j - 1] else 1
             dp[i][j] = min(
-                dp[i - 1][j] + 1,         # 삭제
-                dp[i][j - 1] + 1,         # 삽입
-                dp[i - 1][j - 1] + cost   # 교체
+                dp[i - 1][j] + 1,      # 삭제
+                dp[i][j - 1] + 1,      # 삽입
+                dp[i - 1][j - 1] + cost  # 교체
             )
 
     return dp[len(t)][len(p)] / max(1, len(t))
@@ -387,6 +388,7 @@ def eval_cer_for_pdf_text(pdf_path: Path, extracted_text: str) -> None:
         sample/dataset/solution/<pdf파일명>.txt
         예) 이사회규정.pdf → solution/이사회규정.txt
     """
+
     gt_root = pdf_path.parent / "solution"
     gt_path = gt_root / f"{pdf_path.stem}.txt"
 
@@ -406,7 +408,7 @@ def eval_cer_for_pdf_text(pdf_path: Path, extracted_text: str) -> None:
 
 
 # ===========================================================
-# 5. DOCX / TXT / CSV 전용 chunk 함수
+# 5. DOCX / TXT 전용 chunk 함수
 #    (PDF/HWP/PPT는 상위 루프에서 처리)
 # ===========================================================
 def extract_text_docx(path: Path) -> str:
@@ -420,48 +422,17 @@ def extract_text_txt(path: Path) -> str:
     return path.read_text(encoding="utf-8", errors="ignore")
 
 
-def extract_text_csv(path: Path) -> str:
-    """
-    CSV 파일을 TEXT 문서처럼 변환하여 반환.
-    검색 품질을 높이기 위해 "col: value" 형식으로 변환.
-    """
-    lines: list[str] = []
-
-    with open(path, "r", encoding="utf-8", errors="ignore") as f:
-        reader = csv.reader(f)
-        rows = list(reader)
-
-    if not rows:
-        return ""
-
-    header = rows[0]
-    for row in rows[1:]:
-        for col, val in zip(header, row):
-            col_s = str(col).strip()
-            val_s = str(val).strip()
-            if col_s or val_s:
-                lines.append(f"{col_s}: {val_s}")
-        lines.append("")  # 행과 행 사이 공백 라인
-
-    return "\n".join(lines).strip()
-
-
 def chunk_document(path: Path) -> List[str]:
     """
-    DOCX / TXT / CSV 전용 청킹
+    DOCX / TXT 전용 청킹
     (PDF/HWP/HWPX/PPT 는 상위 for 루프에서 별도 처리)
     """
     ext = path.suffix.lower()
 
     if ext == ".docx":
         raw = extract_text_docx(path)
-    elif ext == ".csv":
-        raw = extract_text_csv(path)
     else:
         raw = extract_text_txt(path)
-
-    if not raw.strip():
-        return []
 
     # 문서 타입 분석 후 기존 규정 청킹
     doc_type = detect_document_type(raw)
@@ -495,7 +466,7 @@ def chunk_text_pdf(path: Path) -> list[str]:
     텍스트 기반 PDF → pdfplumber로 텍스트 추출 후
     DOCX랑 똑같은 규정/구조 문서 청킹 로직 적용
     """
-    pages: list[str] = []
+    pages = []
     with pdfplumber.open(str(path)) as pdf:
         for p in pdf.pages:
             pages.append(p.extract_text() or "")
@@ -515,8 +486,8 @@ def chunk_text_pdf(path: Path) -> list[str]:
     else:
         # 일반 보고서 스타일 → DOCX랑 동일한 단락 기반 청킹
         paras = [p.strip() for p in raw.split("\n\n") if p.strip()]
-        chunks: list[str] = []
-        buf: list[str] = []
+        chunks = []
+        buf = []
 
         for p in paras:
             candidate = "\n\n".join(buf + [p]) if buf else p
@@ -530,22 +501,12 @@ def chunk_text_pdf(path: Path) -> list[str]:
             chunks.append("\n\n".join(buf))
 
         return chunks
+
+
 # ===========================================================
-# 메인 설정값 & 도메인 디렉터리 정의
+# 메인
 # ===========================================================
 MAX_CHUNK_LEN = 8000  # 너무 긴 청크 방지용 (필요하면 4000~6000 정도로 줄여도 됨)
-
-SCRIPT_DIR = Path(__file__).parent  # sample 폴더 기준
-
-DOMAIN_DIRS = {
-    "직무교육":        SCRIPT_DIR / "dataset_직무교육",
-    "장애인인식개선교육": SCRIPT_DIR / "dataset_장애인인식개선",
-    "직장 내 괴롭힘 교육": SCRIPT_DIR / "dataset_괴롭힘교육",
-    "직장 내 성희롱 교육": SCRIPT_DIR / "dataset_성희롱교육",
-    "정보보안 교육":    SCRIPT_DIR / "dataset_정보보안교육",
-    "사내 규정":        SCRIPT_DIR / "dataset_사내규정",
-}
-
 
 def compare_with_solution(dataset_dir: Path, fpath: Path, chunks: list[str]):
     solution_dir = dataset_dir / "solution"
@@ -573,34 +534,32 @@ def compare_with_solution(dataset_dir: Path, fpath: Path, chunks: list[str]):
 def add_chunks_safe(doc, chunks):
     """
     청크들을 RAGFlow doc에 추가.
-    - 생성된 청크 수 + 미리보기 1,2번만 출력
+    - 예전처럼: 생성된 청크 수 + 미리보기 1,2번만 출력
     """
     print(f"→ 생성된 청크 수: {len(chunks)}")
 
-    added = 0
     for idx, c in enumerate(chunks, start=1):
         if not c or not c.strip():
             continue
 
         # 필요하면 여기서 길이 체크해서 잘라 넣을 수도 있지만
-        # 지금은 적당한 길이라고 가정하고 그대로 추가
+        # 지금은 다 짧으니까 그대로 추가
         doc.add_chunk(content=c)
-        added += 1
 
         # 미리보기는 앞의 두 개만
         if idx <= 2:
             print(f"\n  [미리보기 청크 {idx}]")
-            preview = c[:200]
-            if len(c) > 200:
-                preview += "..."
-            print(preview)
+            print(c[:200] + "...")
 
-    print(f"→ 총 {added}개 청크 추가 완료")
+    print(f"→ 총 {len(chunks)}개 청크 추가 완료")
+
+
+
 # ===========================================================
 # 메인
 # ===========================================================
 def main():
-    print_section("RAGFlow 커스텀 청킹 + add_chunk (HWP/PDF/PPT/DOCX/TXT/CSV 포함)")
+    print_section("RAGFlow 커스텀 청킹 + add_chunk (HWP/PDF/PPT/DOCX/TXT 포함)")
 
     # ------------------------------------
     # 1) 서버 연결
@@ -618,111 +577,79 @@ def main():
         print(f"❌ 서버 연결 실패: {e}")
         return
 
-    # ==============================================
-    # ★ 도메인별로 Dataset을 순차적으로 구성 ★
-    # ==============================================
-    for domain, dataset_dir in DOMAIN_DIRS.items():
-        print("\n" + "#" * 60)
-        print(f"### 도메인: {domain}")
-        print(f"### 로컬 폴더: {dataset_dir}")
-        print("#" * 60)
+    # ------------------------------------
+    # 2) dataset 폴더 검색
+    # ------------------------------------
+    print_step(2, "dataset 폴더 스캔")
+    dataset_dir = Path(__file__).parent / "dataset"
 
-        if not dataset_dir.exists():
-            print(f"⚠️  폴더가 없습니다. 스킵: {dataset_dir}")
-            continue
+    pdfs = list(dataset_dir.glob("*.pdf"))
+    ppts = list(dataset_dir.glob("*.ppt")) + list(dataset_dir.glob("*.pptx"))
+    hwps = list(dataset_dir.glob("*.hwp")) + list(dataset_dir.glob("*.hwpx"))
+    docxs = list(dataset_dir.glob("*.docx"))
+    txts = list(dataset_dir.glob("*.txt"))
 
-        # ------------------------------------
-        # 2) 도메인 폴더 안 파일 스캔
-        # ------------------------------------
-        print_step(2, f"[{domain}] dataset 폴더 스캔")
+    files = sorted(pdfs + ppts + hwps + docxs + txts)
 
-        pdfs = list(dataset_dir.glob("*.pdf"))
-        ppts = list(dataset_dir.glob("*.ppt")) + list(dataset_dir.glob("*.pptx"))
-        hwps = list(dataset_dir.glob("*.hwp")) + list(dataset_dir.glob("*.hwpx"))
-        docxs = list(dataset_dir.glob("*.docx"))
-        txts = list(dataset_dir.glob("*.txt"))
-        csvs = list(dataset_dir.glob("*.csv"))
+    if not files:
+        print("❌ 처리할 파일이 없습니다.")
+        return
 
-        files = sorted(pdfs + ppts + hwps + docxs + txts + csvs)
+    print("📂 처리 파일:")
+    for f in files:
+        print("   -", f.name)
 
-        if not files:
-            print(f"❌ [{domain}] 처리할 파일이 없습니다.")
-            continue
+    # ------------------------------------
+    # 3) Dataset 생성
+    # ------------------------------------
+    print_step(3, "데이터셋 생성")
+    dataset_name = f"auto_chunk_{int(time.time())}"
 
-        print("📂 처리 파일:")
-        for f in files:
-            print("   -", f.name)
+    parser_config = DataSet.ParserConfig(rag, {"raptor": {"use_raptor": False}})
 
-        # ------------------------------------
-        # 3) 도메인별 Dataset 생성
-        # ------------------------------------
-        print_step(3, f"[{domain}] 데이터셋 생성")
-        dataset_name = f"auto_{domain}_{int(time.time())}"
+    dataset = rag.create_dataset(
+        name=dataset_name,
+        description="자동 청킹 (HWP/슬라이드/텍스트 PDF/DOCX/TXT 혼합)",
+        chunk_method="manual",
+        embedding_model=EMBEDDING_MODEL,
+        parser_config=parser_config,
+    )
 
-        parser_config = DataSet.ParserConfig(rag, {"raptor": {"use_raptor": False}})
+    print(f"✅ Dataset 생성 완료: {dataset.id}")
 
-        dataset = rag.create_dataset(
-            name=dataset_name,
-            description=f"{domain} 전용 자동 청킹 데이터셋",
-            chunk_method="manual",
-            embedding_model=EMBEDDING_MODEL,
-            parser_config=parser_config,
-        )
+    # ------------------------------------
+    # 4) 파일별 업로드 + 청킹
+    # ------------------------------------
+    print_step(4, "파일 업로드 + 청킹")
 
-        print(f"✅ [{domain}] Dataset 생성 완료: {dataset.id} (name={dataset_name})")
+    for fpath in files:
+        fpath = fpath.resolve()
+        ext = fpath.suffix.lower().lstrip(".")
+        print(f"\n======= {fpath.name} 처리 =======")
 
-        # ------------------------------------
-        # 4) 파일별 업로드 + 청킹
-        # ------------------------------------
-        print_step(4, f"[{domain}] 파일 업로드 + 청킹")
+        # ─────────────────────────────
+        # 4-1. HWP/HWPX → DOCX로 변환
+        # ─────────────────────────────
+        if ext in ("hwp", "hwpx"):
+            print(f"[HWP] {fpath.name} → DOCX로 변환")
+            docx_path = hwp_adapter.to_docx(str(fpath))
+            fpath = Path(docx_path)
+            ext = "docx"
 
-        for fpath in files:
-            fpath = fpath.resolve()
-            ext = fpath.suffix.lower().lstrip(".")
-            print(f"\n======= [{domain}] {fpath.name} 처리 =======")
+        # ─────────────────────────────
+        # 4-2. PDF / PPT / PPTX 처리
+        # ─────────────────────────────
+        if ext in ("pdf", "ppt", "pptx"):
+            if ext == "pdf":
+                doc_type = classifier.classify(str(fpath))
+            else:
+                doc_type = "ppt"
 
-            # ─────────────────────────────
-            # 4-1. HWP/HWPX → DOCX로 변환
-            # ─────────────────────────────
-            if ext in ("hwp", "hwpx"):
-                print(f"[HWP] {fpath.name} → DOCX로 변환")
-                docx_path = hwp_adapter.to_docx(str(fpath))
-                fpath = Path(docx_path)
-                ext = "docx"
+            print(f"→ 문서 타입: {doc_type}")
 
-            # ─────────────────────────────
-            # 4-2. PDF / PPT / PPTX 처리
-            # ─────────────────────────────
-            if ext in ("pdf", "ppt", "pptx"):
-                if ext == "pdf":
-                    doc_type = classifier.classify(str(fpath))
-                else:
-                    doc_type = "ppt"
-
-                print(f"→ 문서 타입: {doc_type}")
-
-                # 1-1) 텍스트 기반 PDF → 우리 규정형 청킹 사용
-                if doc_type == "text_pdf":
-                    print("→ [텍스트 PDF] 로컬 규정형 청킹 사용")
-
-                    with open(fpath, "rb") as fb:
-                        blob = fb.read()
-
-                    doc = dataset.upload_documents(
-                        [{"display_name": fpath.name, "blob": blob}]
-                    )[0]
-                    print(f"→ 업로드 완료 (doc.id={doc.id})")
-
-                    chunks = chunk_text_pdf(fpath)
-
-                    # ★ solution/ 정답 txt가 있으면 유사도 체크
-                    compare_with_solution(dataset_dir, fpath, chunks)
-
-                    add_chunks_safe(doc, chunks)
-                    continue
-
-                # 1-2) 이미지 기반 PDF / PPT → PreprocessPipeline + add_chunk
-                print("→ [이미지/슬라이드] PreprocessPipeline + add_chunk 사용")
+            # 1-1) 텍스트 기반 PDF → 우리 규정형 청킹 사용
+            if doc_type == "text_pdf":
+                print("→ [텍스트 PDF] 로컬 규정형 청킹 사용")
 
                 with open(fpath, "rb") as fb:
                     blob = fb.read()
@@ -732,62 +659,83 @@ def main():
                 )[0]
                 print(f"→ 업로드 완료 (doc.id={doc.id})")
 
-                pipeline_result = preprocess_pipeline.run(str(fpath))
+                chunks = chunk_text_pdf(fpath)
 
-                print("→ PreprocessPipeline 완료")
-
-                # 페이지 단위 청크 사용
-                chunks = [c["text"] for c in pipeline_result.get("chunks", [])]
-                print(f"→ 파이프라인 청크 {len(chunks)}개 반환")
-
-                for idx, c in enumerate(chunks, 1):
-                    if not c or not c.strip():
-                        continue
-                    doc.add_chunk(content=c)
-                    if idx <= 2:
-                        print(f"\n  [미리보기 청크 {idx}]")
-                        print(c[:200] + ("..." if len(c) > 200 else ""))
-
-                print(f"→ 총 {len(chunks)}개 청크 추가 완료")
-                continue
-
-            # ─────────────────────────────
-            # 4-3. CSV / DOCX / TXT → 기존 규정형 청킹 사용
-            # ─────────────────────────────
-            if ext in ("csv", "docx", "txt"):
-                print("→ [CSV/DOCX/TXT] 기존 규정형 청킹 사용")
-
-                with open(fpath, "rb") as fb:
-                    blob = fb.read()
-
-                doc = dataset.upload_documents(
-                    [{"display_name": fpath.name, "blob": blob}]
-                )[0]
-                print(f"→ 업로드 완료 (doc.id={doc.id})")
-
-                chunks = chunk_document(fpath)
+                # ★ PDF도 solution txt와 유사도 확인
                 compare_with_solution(dataset_dir, fpath, chunks)
+
                 add_chunks_safe(doc, chunks)
                 continue
+            # 1-2) 이미지 기반 PDF / PPT → PreprocessPipeline + add_chunk
+            print("→ [이미지/슬라이드] PreprocessPipeline + add_chunk 사용")
 
-            # 기타 확장자는 스킵
-            print(f"⚠️ 지원하지 않는 확장자입니다: .{ext} (스킵)")
+            print("→ [이미지/슬라이드] PreprocessPipeline + add_chunk 사용")
 
-        # ------------------------------------
-        # 5) 도메인별 검색 테스트 (간단히 1번만)
-        # ------------------------------------
-        print_step(5, f"[{domain}] 검색 테스트")
+            # 🟢 1) 먼저 RAGFlow에 문서 업로드해서 doc 생성
+            with open(fpath, "rb") as fb:
+                blob = fb.read()
 
-        query = f"{domain} 관련 문서의 목적은 무엇인가?"
-        results = rag.retrieve(
-            dataset_ids=[dataset.id],
-            question=query,
-            top_k=3,
-        )
+            doc = dataset.upload_documents(
+                [{"display_name": fpath.name, "blob": blob}]
+            )[0]
+            print(f"→ 업로드 완료 (doc.id={doc.id})")
 
-        for i, r in enumerate(results, 1):
-            print(f"\n[검색 {i}]")
-            print(r.content[:200] + "...")
+            # 🟢 2) PreprocessPipeline 실행
+            pipeline_result = preprocess_pipeline.run(
+                str(fpath),      # input_pdf
+                chunk_size=1200, # 필요하면 조절
+            )
+
+            print("→ PreprocessPipeline 완료")
+
+            # 🟢 3) 파이프라인에서 나온 청크 뽑기
+            chunks = [c["text"] for c in pipeline_result["result_json"]["chunks"]]
+            print(f"→ 파이프라인 청크 {len(chunks)}개 반환")
+
+            # 🟢 4) RAGFlow doc에 add_chunk
+            for idx, c in enumerate(chunks, 1):
+                doc.add_chunk(content=c)
+                if idx <= 2:
+                    print(f"\n  [미리보기 청크 {idx}]")
+                    print(c[:200] + ("..." if len(c) > 200 else ""))
+
+            print(f"→ 총 {len(chunks)}개 청크 추가 완료")
+
+            # 이 파일은 파이프라인으로 끝났으니까 다음 파일로 넘어감
+            continue
+
+        # ─────────────────────────────
+        # 4-3. DOCX / TXT → 기존 규정형 청킹 사용
+        # ─────────────────────────────
+        print("→ [DOCX/TXT] 기존 규정형 청킹 사용")
+
+        with open(fpath, "rb") as fb:
+            blob = fb.read()
+
+        doc = dataset.upload_documents(
+            [{"display_name": fpath.name, "blob": blob}]
+        )[0]
+        print(f"→ 업로드 완료 (doc.id={doc.id})")
+
+        chunks = chunk_document(fpath)
+        compare_with_solution(dataset_dir, fpath, chunks)
+        add_chunks_safe(doc, chunks)
+
+    # ------------------------------------
+    # 5) 검색 테스트
+    # ------------------------------------
+    print_step(5, "검색 테스트")
+
+    query = "이 문서의 목적은 무엇인가?"
+    results = rag.retrieve(
+        dataset_ids=[dataset.id],
+        question=query,
+        top_k=5,
+    )
+
+    for i, r in enumerate(results, 1):
+        print(f"\n[검색 {i}]")
+        print(r.content[:200] + "...")
 
 
 if __name__ == "__main__":

@@ -148,6 +148,7 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
+dist
 ragflow_cli.egg-info
 # Gatsby files
 .cache/
@@ -200,6 +201,6 @@ backup
 sample/dataset/
 sample/unset/
 sample/hwptodocx/
-preprocessing/llm/llm_correction.py
 
-*.zip
+# eval results (contains IP addresses and sensitive data)
+sample/eval/results/
