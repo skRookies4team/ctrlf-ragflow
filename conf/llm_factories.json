@@ -5479,6 +5479,33 @@
                     "model_type": "reranker"
                 }
             ]
+        },
+        {
+            "name": "VLLM-Custom",
+            "logo": "",
+            "tags": "TEXT EMBEDDING",
+            "status": "1",
+            "rank": "100",
+            "llm": [
+                {
+                    "llm_name": "BM-K/KoSimCSE-roberta-multitask",
+                    "tags": "TEXT EMBEDDING,512",
+                    "max_tokens": 512,
+                    "model_type": "embedding"
+                },
+                {
+                    "llm_name": "intfloat/multilingual-e5-large-instruct",
+                    "tags": "TEXT EMBEDDING,8K",
+                    "max_tokens": 8192,
+                    "model_type": "embedding"
+                },
+                {
+                    "llm_name": "BAAI/bge-m3",
+                    "tags": "TEXT EMBEDDING,8K",
+                    "max_tokens": 8192,
+                    "model_type": "embedding"
+                }
+            ]
         }
     ]
 }
