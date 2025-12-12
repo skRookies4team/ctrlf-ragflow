@@ -940,3 +940,87 @@ class JiekouAIEmbed(OpenAIEmbed):
         if not base_url:
             base_url = "https://api.jiekou.ai/openai/v1/embeddings"
         super().__init__(key, model_name, base_url)
+
+
+class VLLMCustomEmbed(Base):
+    """
+    vLLM 서버를 OpenAI 호환 API로 연결하는 커스텀 임베딩 클래스.
+    환경변수 VLLM_HOST, VLLM_PORT를 사용하여 IP 주소를 관리합니다.
+
+    Example:
+        # .env 파일
+        VLLM_HOST=localhost
+        VLLM_PORT=1234
+
+        # RAGFlow UI에서 모델 추가 시
+        - Factory: VLLM-Custom
+        - Model: intfloat/multilingual-e5-large-instruct
+    """
+    _FACTORY_NAME = "VLLM-Custom"
+
+    def __init__(self, key=None, model_name="intfloat/multilingual-e5-large-instruct", base_url=None, **kwargs):
+        # 환경변수에서 vLLM 서버 주소 가져오기
+        vllm_host = os.getenv("VLLM_HOST", "localhost")
+        vllm_port = os.getenv("VLLM_PORT", "1234")
+
+        # base_url이 명시적으로 제공되면 사용, 아니면 환경변수에서 구성
+        if base_url:
+            self.base_url = base_url.rstrip("/")
+            if not self.base_url.endswith("/v1"):
+                self.base_url = f"{self.base_url}/v1"
+        else:
+            self.base_url = f"http://{vllm_host}:{vllm_port}/v1"
+
+        # OpenAI 클라이언트 초기화 (vLLM은 API key 불필요)
+        self.client = OpenAI(
+            api_key=key if key and key != "x" else "not-needed",
+            base_url=self.base_url
+        )
+        self.model_name = model_name.split("___")[0]
+
+    def encode(self, texts: list):
+        """텍스트 리스트를 임베딩 벡터로 변환"""
+        batch_size = 16
+        ress = []
+        total_tokens = 0
+
+        for i in range(0, len(texts), batch_size):
+            batch = texts[i : i + batch_size]
+            try:
+                res = self.client.embeddings.create(
+                    input=batch,
+                    model=self.model_name,
+                    encoding_format="float"
+                )
+                ress.extend([d.embedding for d in res.data])
+                total_tokens += self.total_token_count(res)
+            except Exception as e:
+                log_exception(e, f"VLLMCustomEmbed.encode failed for batch {i}")
+                raise
+
+        return np.array(ress), total_tokens
+
+    def encode_queries(self, text: str):
+        """단일 쿼리 텍스트를 임베딩 벡터로 변환"""
+        try:
+            res = self.client.embeddings.create(
+                input=[text],
+                model=self.model_name,
+                encoding_format="float"
+            )
+            return np.array(res.data[0].embedding), self.total_token_count(res)
+        except Exception as e:
+            log_exception(e, f"VLLMCustomEmbed.encode_queries failed")
+            raise
+
+    def total_token_count(self, resp):
+        """응답에서 토큰 수 추출"""
+        try:
+            return resp.usage.total_tokens
+        except Exception:
+            pass
+        try:
+            return resp["usage"]["total_tokens"]
+        except Exception:
+            pass
+        return 0
