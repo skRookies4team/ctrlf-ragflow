@@ -1,0 +1,161 @@
+{
+  "timestamp": "20251209_160018",
+  "evaluations": [
+    {
+      "model": "Qwen/Qwen2-7B-Instruct",
+      "total_questions": 130,
+      "avg_response_time": 3.82,
+      "avg_answer_length": 522.0,
+      "success_rate": 100.0,
+      "error_count": 0,
+      "domain_stats": {
+        "사규/복무/인사": {
+          "count": 30,
+          "total_time": 140.2,
+          "total_length": 12359,
+          "avg_time": 4.673333333333333,
+          "avg_length": 411.96666666666664
+        },
+        "개인정보보호": {
+          "count": 20,
+          "total_time": 75.57000000000001,
+          "total_length": 11285,
+          "avg_time": 3.7785,
+          "avg_length": 564.25
+        },
+        "성희롱예방교육": {
+          "count": 20,
+          "total_time": 58.09,
+          "total_length": 8338,
+          "avg_time": 2.9045,
+          "avg_length": 416.9
+        },
+        "직장내괴롭힘예방교육": {
+          "count": 20,
+          "total_time": 57.03,
+          "total_length": 9428,
+          "avg_time": 2.8515,
+          "avg_length": 471.4
+        },
+        "장애인식교육": {
+          "count": 20,
+          "total_time": 78.27,
+          "total_length": 12703,
+          "avg_time": 3.9135,
+          "avg_length": 635.15
+        },
+        "직무(부서별)교육": {
+          "count": 20,
+          "total_time": 87.85,
+          "total_length": 13758,
+          "avg_time": 4.3925,
+          "avg_length": 687.9
+        }
+      }
+    },
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "total_questions": 130,
+      "avg_response_time": 2.94,
+      "avg_answer_length": 469.0,
+      "success_rate": 100.0,
+      "error_count": 0,
+      "domain_stats": {
+        "사규/복무/인사": {
+          "count": 30,
+          "total_time": 65.37,
+          "total_length": 11178,
+          "avg_time": 2.1790000000000003,
+          "avg_length": 372.6
+        },
+        "개인정보보호": {
+          "count": 20,
+          "total_time": 68.37,
+          "total_length": 9704,
+          "avg_time": 3.4185000000000003,
+          "avg_length": 485.2
+        },
+        "성희롱예방교육": {
+          "count": 20,
+          "total_time": 44.06999999999999,
+          "total_length": 7595,
+          "avg_time": 2.2034999999999996,
+          "avg_length": 379.75
+        },
+        "직장내괴롭힘예방교육": {
+          "count": 20,
+          "total_time": 56.67,
+          "total_length": 8376,
+          "avg_time": 2.8335,
+          "avg_length": 418.8
+        },
+        "장애인식교육": {
+          "count": 20,
+          "total_time": 62.86000000000001,
+          "total_length": 10783,
+          "avg_time": 3.1430000000000002,
+          "avg_length": 539.15
+        },
+        "직무(부서별)교육": {
+          "count": 20,
+          "total_time": 84.55000000000001,
+          "total_length": 13312,
+          "avg_time": 4.227500000000001,
+          "avg_length": 665.6
+        }
+      }
+    },
+    {
+      "model": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "total_questions": 130,
+      "avg_response_time": 2.44,
+      "avg_answer_length": 361.0,
+      "success_rate": 100.0,
+      "error_count": 0,
+      "domain_stats": {
+        "사규/복무/인사": {
+          "count": 30,
+          "total_time": 55.209999999999994,
+          "total_length": 7520,
+          "avg_time": 1.8403333333333332,
+          "avg_length": 250.66666666666666
+        },
+        "개인정보보호": {
+          "count": 20,
+          "total_time": 48.72999999999999,
+          "total_length": 7454,
+          "avg_time": 2.4364999999999997,
+          "avg_length": 372.7
+        },
+        "성희롱예방교육": {
+          "count": 20,
+          "total_time": 42.86,
+          "total_length": 7212,
+          "avg_time": 2.143,
+          "avg_length": 360.6
+        },
+        "직장내괴롭힘예방교육": {
+          "count": 20,
+          "total_time": 55.43000000000001,
+          "total_length": 7023,
+          "avg_time": 2.7715000000000005,
+          "avg_length": 351.15
+        },
+        "장애인식교육": {
+          "count": 20,
+          "total_time": 55.59000000000001,
+          "total_length": 9450,
+          "avg_time": 2.7795000000000005,
+          "avg_length": 472.5
+        },
+        "직무(부서별)교육": {
+          "count": 20,
+          "total_time": 58.81000000000001,
+          "total_length": 8220,
+          "avg_time": 2.9405000000000006,
+          "avg_length": 411.0
+        }
+      }
+    }
+  ]
+}
