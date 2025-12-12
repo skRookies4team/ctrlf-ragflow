@@ -38,6 +38,105 @@ from common import settings
 from api.apps import login_required, current_user
 
 
+# ============================================================
+# 코어 검색 로직 헬퍼 함수
+# ============================================================
+async def _run_retrieval(
+    question: str,
+    kb_ids: list,
+    tenant_ids: list,
+    page: int = 1,
+    size: int = 30,
+    similarity_threshold: float = 0.0,
+    vector_similarity_weight: float = 0.3,
+    top_k: int = 1024,
+    doc_ids: list = None,
+    rerank_id: str = None,
+    use_kg: bool = False,
+    highlight: bool = False,
+    cross_languages: list = None,
+    keyword: bool = False,
+):
+    """
+    retrieval_test와 동일한 코어 검색 로직을 담당하는 헬퍼 함수.
+
+    Args:
+        question: 검색 질문
+        kb_ids: Knowledge Base ID 리스트
+        tenant_ids: Tenant ID 리스트
+        page: 페이지 번호 (기본값: 1)
+        size: 페이지당 결과 수 (기본값: 30)
+        similarity_threshold: 유사도 임계값 (기본값: 0.0)
+        vector_similarity_weight: 벡터 유사도 가중치 (기본값: 0.3)
+        top_k: 최대 반환 수 (기본값: 1024)
+        doc_ids: 문서 ID 필터 (선택)
+        rerank_id: Rerank 모델 ID (선택)
+        use_kg: Knowledge Graph 사용 여부
+        highlight: 하이라이트 여부
+        cross_languages: 다국어 지원 언어 리스트
+        keyword: 키워드 추출 사용 여부
+
+    Returns:
+        dict: {"chunks": [...], "labels": [...], ...} 형식의 검색 결과
+    """
+    from rag.prompts.generator import cross_languages as do_cross_languages, keyword_extraction
+
+    e, kb = KnowledgebaseService.get_by_id(kb_ids[0])
+    if not e:
+        raise Exception("Knowledgebase not found!")
+
+    # 다국어 처리
+    if cross_languages:
+        question = do_cross_languages(kb.tenant_id, None, question, cross_languages)
+
+    # 임베딩 모델 로드
+    embd_mdl = LLMBundle(kb.tenant_id, LLMType.EMBEDDING.value, llm_name=kb.embd_id)
+
+    # Rerank 모델 로드 (선택)
+    rerank_mdl = None
+    if rerank_id:
+        rerank_mdl = LLMBundle(kb.tenant_id, LLMType.RERANK.value, llm_name=rerank_id)
+
+    # 키워드 추출 (선택)
+    if keyword:
+        chat_mdl = LLMBundle(kb.tenant_id, LLMType.CHAT)
+        question += keyword_extraction(chat_mdl, question)
+
+    # 라벨링
+    labels = label_question(question, [kb])
+
+    # 검색 실행
+    ranks = settings.retriever.retrieval(
+        question, embd_mdl, tenant_ids, kb_ids, page, size,
+        similarity_threshold,
+        vector_similarity_weight,
+        top_k,
+        doc_ids,
+        rerank_mdl=rerank_mdl,
+        highlight=highlight,
+        rank_feature=labels
+    )
+
+    # Knowledge Graph 검색 (선택)
+    if use_kg:
+        ck = settings.kg_retriever.retrieval(
+            question,
+            tenant_ids,
+            kb_ids,
+            embd_mdl,
+            LLMBundle(kb.tenant_id, LLMType.CHAT)
+        )
+        if ck["content_with_weight"]:
+            ranks["chunks"].insert(0, ck)
+
+    # 벡터 필드 제거
+    for c in ranks["chunks"]:
+        c.pop("vector", None)
+
+    ranks["labels"] = labels
+    return ranks
+
+
 @manager.route('/list', methods=['POST'])  # noqa: F821
 @login_required
 @validate_request("doc_id")
@@ -327,50 +426,145 @@ async def retrieval_test():
                     data=False, message='Only owner of knowledgebase authorized for this operation.',
                     code=RetCode.OPERATING_ERROR)
 
-        e, kb = KnowledgebaseService.get_by_id(kb_ids[0])
-        if not e:
-            return get_data_error_result(message="Knowledgebase not found!")
-
-        if langs:
-            question = cross_languages(kb.tenant_id, None, question, langs)
-
-        embd_mdl = LLMBundle(kb.tenant_id, LLMType.EMBEDDING.value, llm_name=kb.embd_id)
-
-        rerank_mdl = None
-        if req.get("rerank_id"):
-            rerank_mdl = LLMBundle(kb.tenant_id, LLMType.RERANK.value, llm_name=req["rerank_id"])
-
-        if req.get("keyword", False):
-            chat_mdl = LLMBundle(kb.tenant_id, LLMType.CHAT)
-            question += keyword_extraction(chat_mdl, question)
-
-        labels = label_question(question, [kb])
-        ranks = settings.retriever.retrieval(question, embd_mdl, tenant_ids, kb_ids, page, size,
-                               float(req.get("similarity_threshold", 0.0)),
-                               float(req.get("vector_similarity_weight", 0.3)),
-                               top,
-                               doc_ids, rerank_mdl=rerank_mdl,
-                                             highlight=req.get("highlight", False),
-                               rank_feature=labels
-                               )
-        if use_kg:
-            ck = settings.kg_retriever.retrieval(question,
-                                                   tenant_ids,
-                                                   kb_ids,
-                                                   embd_mdl,
-                                                   LLMBundle(kb.tenant_id, LLMType.CHAT))
-            if ck["content_with_weight"]:
-                ranks["chunks"].insert(0, ck)
-
-        for c in ranks["chunks"]:
-            c.pop("vector", None)
-        ranks["labels"] = labels
+        # 코어 검색 로직 호출
+        ranks = await _run_retrieval(
+            question=question,
+            kb_ids=kb_ids,
+            tenant_ids=tenant_ids,
+            page=page,
+            size=size,
+            similarity_threshold=float(req.get("similarity_threshold", 0.0)),
+            vector_similarity_weight=float(req.get("vector_similarity_weight", 0.3)),
+            top_k=top,
+            doc_ids=doc_ids if doc_ids else None,
+            rerank_id=req.get("rerank_id"),
+            use_kg=use_kg,
+            highlight=req.get("highlight", False),
+            cross_languages=langs if langs else None,
+            keyword=req.get("keyword", False),
+        )
 
         return get_json_result(data=ranks)
     except Exception as e:
         if str(e).find("not_found") > 0:
             return get_json_result(data=False, message='No chunk found! Check the chunk status please!',
                                    code=RetCode.DATA_ERROR)
+        return server_error_response(e)
+
+
+# ============================================================
+# AI Gateway용 경량 검색 API
+# ============================================================
+@manager.route('/search', methods=['POST'])  # noqa: F821
+async def search_simple():
+    """
+    AI Gateway용 경량 검색 API
+
+    URL: POST /v1/chunk/search
+
+    Request Body:
+        {
+            "query": "검색 질문 (필수)",
+            "top_k": 5,  (선택, 기본값 5)
+            "dataset": "kb_id 문자열 (필수)"
+        }
+
+    Response Body:
+        {
+            "results": [
+                {
+                    "doc_id": "chunk_id",
+                    "title": "문서명",
+                    "page": 페이지번호 또는 null,
+                    "score": 0.87,
+                    "snippet": "내용 일부 (최대 500자)"
+                }
+            ]
+        }
+
+    Example:
+        curl -X POST "http://localhost:9380/v1/chunk/search" \\
+          -H "Content-Type: application/json" \\
+          -d '{
+            "query": "4대 필수교육 미이수 시 패널티",
+            "top_k": 3,
+            "dataset": "실제_kb_id"
+          }'
+    """
+    try:
+        req = await request_json()
+    except Exception:
+        return get_data_error_result(message="Invalid JSON body")
+
+    # 필수 파라미터 검증
+    query = (req.get("query") or "").strip()
+    if not query:
+        return get_data_error_result(message="query is required")
+
+    dataset = req.get("dataset")
+    if not dataset:
+        return get_data_error_result(message="dataset (kb_id) is required")
+
+    # top_k 파라미터 처리
+    try:
+        top_k = int(req.get("top_k", 5))
+        if top_k <= 0:
+            top_k = 5
+    except (ValueError, TypeError):
+        return get_data_error_result(message="top_k must be a positive integer")
+
+    kb_ids = [dataset]
+
+    try:
+        # Knowledge Base 존재 확인 및 tenant_id 조회
+        e, kb = KnowledgebaseService.get_by_id(dataset)
+        if not e:
+            return get_data_error_result(message="Dataset not found")
+
+        tenant_ids = [kb.tenant_id]
+
+        # 코어 검색 로직 호출
+        ranks = await _run_retrieval(
+            question=query,
+            kb_ids=kb_ids,
+            tenant_ids=tenant_ids,
+            page=1,
+            size=top_k,
+            similarity_threshold=0.0,
+            vector_similarity_weight=0.3,
+            top_k=top_k,
+        )
+
+        # 응답 포맷 변환
+        results = []
+        for chunk in ranks.get("chunks", []):
+            # 필드 매핑
+            doc_id = chunk.get("chunk_id") or chunk.get("id", "")
+            title = chunk.get("docnm_kwd") or chunk.get("doc_name") or chunk.get("title", "")
+            page = chunk.get("page_num_int") or chunk.get("page_num") or chunk.get("page")
+            score = chunk.get("similarity") or chunk.get("score") or 0.0
+            content = chunk.get("content_with_weight") or chunk.get("content", "")
+
+            # snippet은 최대 500자
+            snippet = content[:500] if content else ""
+
+            results.append({
+                "doc_id": doc_id,
+                "title": title,
+                "page": page,
+                "score": round(float(score), 4) if score else 0.0,
+                "snippet": snippet,
+            })
+
+        return get_json_result(data={"results": results})
+
+    except Exception as e:
+        if str(e).find("not_found") > 0:
+            return get_json_result(
+                data={"results": []},
+                message='No chunk found',
+                code=RetCode.DATA_ERROR
+            )
         return server_error_response(e)
 
 
