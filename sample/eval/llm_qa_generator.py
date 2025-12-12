@@ -6,6 +6,7 @@ LLM 모델별 Q&A 리스트 생성기
 RAGAS 평가를 위한 데이터셋 생성용
 """
 
+import os
 import csv
 import json
 import requests

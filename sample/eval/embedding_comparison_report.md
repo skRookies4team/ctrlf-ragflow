@@ -18,12 +18,12 @@
 
 | 항목 | 설정값 |
 |------|--------|
-| **LLM 모델** | Qwen2-7B-Instruct (vLLM 서버, 포트 1234) |
+| **LLM 모델** | Qwen2-7B-Instruct (vLLM 서버) |
 | **전처리/청킹 방식** | 문자 기준, chunk size 500, overlap 50 |
 | **Vector DB / 인덱스** | 코사인 유사도 기반 직접 계산 (NumPy) |
 | **문서 형식** | TXT (3개), PDF (19개) |
 | **총 청크 수** | 2,895개 |
-| **임베딩 서버** | vLLM (localhost:1237), OpenAI 호환 API |
+| **임베딩 서버** | vLLM (환경변수: VLLM_HOST, VLLM_PORT), OpenAI 호환 API |
 
 ---
 
@@ -125,13 +125,13 @@
 | 1순위 | **jhgan/ko-sroberta-multitask** | 프로덕션 운영 |
 | 2순위 | BAAI/bge-m3 | 백업/다국어 확장 시 |
 
-### 8.2 단기 액션 (1-2주)
+### 8.2 단기 액션
 
 - [ ] jhgan/ko-sroberta-multitask로 프로덕션 인덱스 구성
 - [ ] RAGFlow 설정에 선정 모델 반영 (`conf/service_conf.yaml`)
 - [ ] 청킹 방식 개선 (문단/의미 단위) 후 2차 평가 수행
 
-### 8.3 중기 액션 (1개월)
+### 8.3 중기 액션
 
 - [ ] Q세트 300문항 이상으로 확대
 - [ ] LLM 모델 비교 테스트 (Qwen2-7B vs Llama3-8B vs Gemma3-12B)
@@ -143,8 +143,8 @@
 ## 부록 A: 실험 환경 상세
 
 ```
-서버: localhost (vLLM)
-포트: 1237 (Embedding)
+서버: 환경변수 VLLM_HOST (vLLM)
+포트: 환경변수 VLLM_PORT (Embedding)
 테스트 일시: 2025-12-08
 문서 수: TXT 3개 + PDF 19개 = 22개
 총 청크 수: 2,895개

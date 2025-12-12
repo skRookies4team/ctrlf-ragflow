@@ -1,0 +1,33 @@
+{
+  "model": "meta-llama/Meta-Llama-3-8B-Instruct",
+  "generated_at": "2025-12-08T12:48:58.398598",
+  "total_questions": 2,
+  "results": [
+    {
+      "q_id": "RUL-001",
+      "domain": "사규/복무/인사",
+      "role": "일반직원",
+      "difficulty": "Easy",
+      "question": "우리 회사의 기본 근무시간과 휴게시간은 어떻게 되나요?",
+      "ground_truth": "우리 회사의 기본 근무시간은 09:00~18:00, 1일 8시간 근무를 원칙으로 합니다. 점심시간 등 휴게시간은 통상 12:00~13:00, 1시간이며 근무시간에 포함되지 않습니다. 부서별로 시차출퇴근제를 운영하는 경우에는 해당 부서 지침을 따릅니다.",
+      "source_doc": "DOC-복무규정",
+      "llm_answer": "일반적으로는, 우리 회사의 기본 근무시간은 40시간 이내로 제한됩니다. 노동법상, 일반적으로는 40시간 이내의 근무시간을 '정상근무시간'으로 정의하고 있습니다. 이 기간 내에서 근무하는 경우, 노동시간을 40시간 이내로 제한할 수 있습니다.\n\n휴게시간은 노동법상, 1시간 이상 2시간 이하의 휴게시간을 제공해야 합니다. 휴게시간은 근무시간 중에 제공해야 하며, 휴게시간을 제공하는 경우, 휴게시간을 1시간 이상 2시간 이하로 제한할 수 있습니다.\n\n이 외에도, 우리 회사는 노동법상, 노동자의 휴게시간을 보장하는 등 노동자의 휴게시간을 보장할 수 있습니다.",
+      "response_time": 1.7,
+      "mode": "pure_llm",
+      "model": "meta-llama/Meta-Llama-3-8B-Instruct"
+    },
+    {
+      "q_id": "RUL-002",
+      "domain": "사규/복무/인사",
+      "role": "일반직원",
+      "difficulty": "Easy",
+      "question": "몇 분 이상 늦게 출근하면 지각으로 처리되며, 지각이 누적되면 어떤 불이익이 있나요?",
+      "ground_truth": "근무 시작 시각 이후 10분 이상 출근하면 지각으로 처리합니다. 1개월 내 3회 이상 지각 시 경고 대상이 될 수 있으며, 5회 이상 지각 시 인사평가에 감점 요인이 됩니다. 구체적인 기준은 복무규정의 지각 관리 조항을 따릅니다.",
+      "source_doc": "DOC-복무규정",
+      "llm_answer": "According to the company's internal rules and labor laws in Korea, if an employee is late to work for more than 15 minutes, it is considered tardiness. If an employee accumulates tardiness, they may face the following consequences:\n\n1. Verbal warning: The first instance of tardiness may result in a verbal warning from the supervisor or HR department.\n2. Written warning: If the employee is late again, they may receive a written warning, which is documented in their personnel file.\n3. Disciplinary action: If the employee continues to be late, they may face disciplinary action, such as a suspension or termination of employment.\n4. Pay deduction: In some cases, the company may deduct the employee's pay for the time they were late.\n5. Loss of benefits: Repeated tardiness may also result in the loss of benefits, such as bonuses or promotions.\n\nIt's worth noting that the company's internal rules and labor laws in Korea require employers to provide a clear and reasonable notice period before taking disciplinary action against an employee. Additionally, employers must also follow the procedures outlined in the Labor Standards Act and the Fair Labor Standards Act when dealing with employee tardiness.\n\nIt's also important to note that the company's internal rules and labor laws in Korea require employers to provide a safe and healthy working environment, and to ensure that employees are not subjected to unfair labor practices.",
+      "response_time": 2.53,
+      "mode": "pure_llm",
+      "model": "meta-llama/Meta-Llama-3-8B-Instruct"
+    }
+  ]
+}
