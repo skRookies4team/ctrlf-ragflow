@@ -1,0 +1,46 @@
+{
+  "model": "meta-llama/Meta-Llama-3-8B-Instruct",
+  "generated_at": "2025-12-08T12:46:06.352878",
+  "total_questions": 3,
+  "results": [
+    {
+      "q_id": "RUL-001",
+      "domain": "사규/복무/인사",
+      "role": "일반직원",
+      "difficulty": "Easy",
+      "question": "우리 회사의 기본 근무시간과 휴게시간은 어떻게 되나요?",
+      "ground_truth": "우리 회사의 기본 근무시간은 09:00~18:00, 1일 8시간 근무를 원칙으로 합니다. 점심시간 등 휴게시간은 통상 12:00~13:00, 1시간이며 근무시간에 포함되지 않습니다. 부서별로 시차출퇴근제를 운영하는 경우에는 해당 부서 지침을 따릅니다.",
+      "source_doc": "DOC-복무규정",
+      "llm_answer": "As an AI assistant familiar with company regulations and policies, I can provide general information based on common corporate practices and Korean labor laws.\n\nAccording to the Labor Standards Act of Korea, the standard working hours for employees are as follows:\n\n* Normal working hours: 40 hours per week, with a maximum of 8 hours per day\n* Overtime work: 12 hours per week, with a maximum of 3 hours per day\n* Rest periods: 1 hour per day, with a minimum of 30 minutes\n\nAs for your company's specific policies, I would need more information about your company's internal regulations and collective bargaining agreements (if applicable). However, based on general practices, it's common for companies to have the following:\n\n* Core working hours: 9:00 AM to 5:00 PM, Monday to Friday (8 hours)\n* Lunch break: 30 minutes to 1 hour, usually from 12:00 PM to 1:00 PM\n* Break times: 15-30 minutes, usually in the morning and afternoon\n* Flexible working hours: Some companies may allow flexible working hours, such as telecommuting or flexible start and end times, depending on the job requirements and employee needs.\n\nPlease note that these are general guidelines, and your company's specific policies may vary. If you have any specific questions or concerns, I recommend consulting your HR department or supervisor for more information.",
+      "response_time": 3.59,
+      "mode": "pure_llm",
+      "model": "meta-llama/Meta-Llama-3-8B-Instruct"
+    },
+    {
+      "q_id": "RUL-002",
+      "domain": "사규/복무/인사",
+      "role": "일반직원",
+      "difficulty": "Easy",
+      "question": "몇 분 이상 늦게 출근하면 지각으로 처리되며, 지각이 누적되면 어떤 불이익이 있나요?",
+      "ground_truth": "근무 시작 시각 이후 10분 이상 출근하면 지각으로 처리합니다. 1개월 내 3회 이상 지각 시 경고 대상이 될 수 있으며, 5회 이상 지각 시 인사평가에 감점 요인이 됩니다. 구체적인 기준은 복무규정의 지각 관리 조항을 따릅니다.",
+      "source_doc": "DOC-복무규정",
+      "llm_answer": "A common question! 😊\n\nAccording to the general corporate practices and Korean labor laws, if an employee is late to work for more than 15 minutes, it is considered tardiness. If an employee accumulates tardiness, they may face the following consequences:\n\n1. Verbal warning: The first instance of tardiness may result in a verbal warning from the supervisor or HR department, reminding the employee of the importance of punctuality and the potential consequences of repeated tardiness.\n2. Written warning: If the employee continues to be late, they may receive a written warning, which may be documented in their personnel file. This warning may specify the expected improvement in punctuality and the potential consequences of further tardiness.\n3. Disciplinary action: If the employee's tardiness persists, they may face disciplinary action, such as a suspension or termination of employment. The company may also deduct the employee's salary or wages for the time they were late.\n4. Loss of benefits: In some cases, repeated tardiness may result in the loss of benefits, such as bonuses, promotions, or other privileges.\n5. Impact on performance evaluation: Tardiness may also affect an employee's performance evaluation, which may impact their career advancement opportunities or future salary increases.\n\nIt's worth noting that the specific consequences for tardiness may vary depending on the company's policies and the employee's collective bargaining agreement (if applicable). Additionally, employees have the right to appeal any disciplinary actions taken against them and to seek mediation or arbitration if necessary.",
+      "response_time": 3.25,
+      "mode": "pure_llm",
+      "model": "meta-llama/Meta-Llama-3-8B-Instruct"
+    },
+    {
+      "q_id": "RUL-003",
+      "domain": "사규/복무/인사",
+      "role": "일반직원",
+      "difficulty": "Medium",
+      "question": "무단결근과 인정 결근은 어떻게 구분되고, 인사상 어떤 영향이 있나요?",
+      "ground_truth": "사전 승인 없이 근무에 불참한 경우 무단결근으로 간주되며, 무급 처리 및 인사상 불이익이 발생할 수 있습니다. 질병·사고 등 불가피한 사유가 있는 경우에는 증빙 서류 제출 시 인정 결근으로 처리될 수 있으며, 처리 기준은 복무규정을 따릅니다. 무단결근이 반복될 경우 징계 사유가 될 수 있습니다.",
+      "source_doc": "DOC-복무규정",
+      "llm_answer": "In Korea, \"무단결근\" (unauthorized absence) and \"인정 결근\" (authorized absence) are two distinct concepts under the Labor Standards Act.\n\n**무단결근 (Unauthorized Absence)**\n\n* Refers to an employee's absence from work without permission or notice, without a valid reason or excuse.\n* This is considered a serious offense and can lead to disciplinary actions, including warnings, suspension, or even termination of employment.\n* The employer has the right to deduct the wages for the unauthorized absence period.\n\n**인정 결근 (Authorized Absence)**\n\n* Refers to an employee's absence from work with prior permission or notice, usually due to a valid reason such as illness, family emergency, or personal reasons.\n* The employee is entitled to take authorized absences, and the employer must grant permission or approve the absence.\n* The employee is usually entitled to receive wages for the authorized absence period, unless the absence is excessive or without a valid reason.\n\nThe impact of these absences on an employee's career and employment can be significant:\n\n* Unauthorized absences can lead to disciplinary actions, which can affect the employee's performance record and future career prospects.\n* Authorized absences, on the other hand, can be a sign of a responsible and considerate employee who prioritizes their work and personal life.\n* Frequent or excessive authorized absences, however, can raise concerns about the employee's commitment to their job and may impact their career advancement opportunities.\n\nIn summary, it is essential for employees to understand the distinction between unauthorized and authorized absences and to communicate with their employer accordingly. Employers, in turn, should maintain a fair and reasonable approach to handling absences, balancing the needs of the business with the needs of their employees.",
+      "response_time": 3.19,
+      "mode": "pure_llm",
+      "model": "meta-llama/Meta-Llama-3-8B-Instruct"
+    }
+  ]
+}

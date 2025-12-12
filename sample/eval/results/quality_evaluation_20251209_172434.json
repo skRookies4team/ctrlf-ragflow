@@ -1,0 +1,27 @@
+{
+  "timestamp": "20251209_172434",
+  "judge_llm": "Qwen/Qwen2.5-7B-Instruct",
+  "evaluations": [
+    {
+      "model": "Qwen/Qwen2-7B-Instruct",
+      "sample_size": 15,
+      "faithfulness": 0.5333333333333333,
+      "relevancy": 0.8666666666666667,
+      "correctness": 0.58
+    },
+    {
+      "model": "Qwen/Qwen2.5-7B-Instruct",
+      "sample_size": 15,
+      "faithfulness": 0.5666666666666667,
+      "relevancy": 0.7,
+      "correctness": 0.5066666666666666
+    },
+    {
+      "model": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "sample_size": 15,
+      "faithfulness": 0.5,
+      "relevancy": 0.7666666666666667,
+      "correctness": 0.44
+    }
+  ]
+}
