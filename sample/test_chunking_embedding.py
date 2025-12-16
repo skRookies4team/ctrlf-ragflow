@@ -629,60 +629,53 @@ def compare_with_solution(dataset_dir: Path, fpath: Path, chunks: list[str]):
 def add_chunks_safe(
     doc,
     chunks,
-    milvus: "MilvusProxy | None" = None,
-    dataset_id: str | None = None,   # ← Milvus에 들어갈 dataset 식별자 (우리는 domain 이름 넣을 거)
-    doc_id: str | None = None,       # ← 파일 이름
+    milvus=None,
+    dataset_id=None,
+    doc_id=None,
 ):
-    """
-    청크들을 RAGFlow doc에 추가 + (선택) Milvus에도 함께 저장.
-    - RAGFlow: doc.add_chunk(content=...)
-    - Milvus:  dataset_id / doc_id / chunk_id / text / embedding
-    """
     print(f"→ 생성된 청크 수: {len(chunks)}")
 
-    added = 0
     milvus_payload = []
+    added = 0
 
-    for idx, c in enumerate(chunks, start=1):
-        if not c or not c.strip():
+    for idx, chunk in enumerate(chunks, start=1):
+        text = chunk.get("text", "").strip()
+        if not text:
             continue
 
-        # 1) RAGFlow에 청크 추가
-        doc.add_chunk(content=c)
+        chunk_type = chunk.get("type", "text")
+        metadata = {
+            "source": chunk_type,
+            "page_index": chunk.get("page_index"),
+            "image_path": chunk.get("image_path"),
+        }
+
+        # RAGFlow
+        doc.add_chunk(content=text)
         added += 1
 
-        # 2) Milvus용 payload 준비 (임베딩까지)
-        if milvus is not None and dataset_id is not None and doc_id is not None:
-            try:
-                emb = embed_text(c)   # ← Gemini 임베딩 호출하는 함수 (이미 위에 stub 만들어둔 그거)
-                milvus_payload.append(
-                    {
-                        "doc_id": doc_id,
-                        "chunk_id": idx,
-                        "text": c,
-                        "embedding": emb,
-                    }
-                )
-            except NotImplementedError:
-                # embed_text 아직 구현 안 했으면 경고만 찍고 이후부턴 시도 안 함
-                if idx == 1:
-                    print("⚠ embed_text()가 구현되지 않아 Milvus 저장은 건너뜁니다.")
-                milvus = None  # 한 번만 경고 찍고 이후엔 시도 안 함
+        # Milvus
+        if milvus and dataset_id and doc_id:
+            embedding = embed_text(text)
+            milvus_payload.append({
+                "dataset_id": dataset_id,
+                "doc_id": doc_id,
+                "chunk_id": idx,
+                "type": chunk_type,
+                "text": text,
+                "embedding": embedding,
+                "metadata": metadata,
+            })
 
-        # 미리보기는 앞의 두 개만
         if idx <= 2:
-            print(f"\n  [미리보기 청크 {idx}]")
-            preview = c[:200]
-            if len(c) > 200:
-                preview += "..."
-            print(preview)
+            print(f"\n[미리보기 {idx}] ({chunk_type})")
+            print(text[:200])
 
     print(f"→ 총 {added}개 청크 추가 완료")
 
-    # 3) Milvus에 한 번에 insert
-    if milvus is not None and milvus_payload:
+    if milvus and milvus_payload:
         milvus.insert_chunks(dataset_id=dataset_id, chunks=milvus_payload)
-        
+
 # ===========================================================
 # 메인
 # ===========================================================

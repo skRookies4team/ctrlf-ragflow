@@ -1,7 +1,7 @@
 import logging
 import re
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Set
 from difflib import SequenceMatcher
 
 import fitz
@@ -24,39 +24,35 @@ if not logger.handlers:
 
 
 # ============================================================
-# LLM image caption (STRICT & SAFE)
+# image caption (LLM)
 # ============================================================
 def generate_image_caption(
     image_path: str,
     near_text: str,
     llm: LLMCorrector,
 ) -> Optional[str]:
-    if near_text and len(near_text.strip()) > 200:
-        return None
-
     prompt = f"""
-다음은 교육자료에서 추출된 이미지에 대한 설명입니다.
+다음은 직장 내 성희롱·괴롭힘 예방 교육 자료에서 추출된 이미지에 대한 설명을 생성해야 합니다.
 
 규칙:
-- "이미지는"으로 시작하지 말 것
-- 요약/추측 금지
-- 사실 기반 설명만 작성
-- 2~3문장 이내
+- 요약 금지 / 추측 금지
+- 정보 중심 설명
+- 2~5문장
+- 불릿, 마크다운 사용 금지
 
-이미지 주변 문맥:
+이 이미지가 사용된 문맥:
 {near_text}
-""".strip()
-
+"""
     caption, meta = llm.correct_page(prompt, page_idx=-1, quality=0.0)
     return caption.strip() if meta.get("used_llm") else None
 
 
 # ============================================================
-# OCR postprocess (완화)
+# OCR 후처리
 # ============================================================
 def deduplicate_similar_lines(text: str, th: float = 0.92) -> str:
     lines = [l.strip() for l in text.splitlines() if l.strip()]
-    kept: List[str] = []
+    kept = []
     for ln in lines:
         if any(SequenceMatcher(None, ln, k).ratio() >= th for k in kept):
             continue
@@ -64,87 +60,102 @@ def deduplicate_similar_lines(text: str, th: float = 0.92) -> str:
     return "\n".join(kept)
 
 
-def drop_noise_lines(text: str) -> str:
-    lines: List[str] = []
+def restore_korean_spacing(text: str) -> str:
+    text = re.sub(r"(은|는|이|가|을|를|에|에서|으로|로|와|과)", r" \1", text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def drop_garbled_tokens(text: str) -> str:
+    lines = []
     for ln in text.splitlines():
-        s = ln.strip()
-        if len(s) < 8:
+        if re.search(r"[A-Z]{3,}[^가-힣]{2,}", ln):
             continue
-        if re.search(r"[|~_]{2,}", s):
+        if re.search(r"[|~_]{2,}", ln):
             continue
-        lines.append(s)
+        lines.append(ln)
     return "\n".join(lines)
 
 
-def restore_spacing_soft(text: str) -> str:
-    text = re.sub(r"([가-힣])\s+([을를은는이가])", r"\1\2", text)
-    text = re.sub(r"\s{2,}", " ", text)
-    return text.strip()
+IMAGE_META_KEYWORDS = [
+    "이미지는", "이 이미지는", "위 이미지는",
+    "사진에는", "그림에는", "도표에는", "그래프에는"
+]
+
+
+def remove_image_meta_sentences(text: str) -> str:
+    return "\n".join(
+        ln for ln in text.splitlines()
+        if not any(k in ln for k in IMAGE_META_KEYWORDS)
+    )
 
 
 def final_ocr_postprocess(text: str) -> str:
     text = deduplicate_similar_lines(text)
-    text = drop_noise_lines(text)
-    text = restore_spacing_soft(text)
+    text = drop_garbled_tokens(text)
+    text = restore_korean_spacing(text)
+    text = remove_image_meta_sentences(text)
     return text.strip()
 
 
 # ============================================================
-# split → merge 핵심 로직
+# text utils
 # ============================================================
+def simple_clean_text(text: str) -> str:
+    if not text:
+        return ""
+    s = text.replace("\t", " ")
+    while "  " in s:
+        s = s.replace("  ", " ")
+    return "\n".join(ln.rstrip() for ln in s.splitlines()).strip()
+
+
 def split_paragraphs(text: str) -> List[str]:
-    """
-    1차 분리: 문장 단위
-    """
-    text = re.sub(r"([.!?])\s+", r"\1\n", text)
-    return [ln.strip() for ln in text.splitlines() if len(ln.strip()) >= 25]
-
-
-def merge_short_chunks(
-    texts: List[str],
-    min_len: int = 120,
-    max_len: int = 800,
-) -> List[str]:
-    """
-    🔥 핵심 병합 단계
-
-    - 너무 짧은 문장/제목/캡션을 앞뒤와 자동 병합
-    - RAG에 적합한 문단 길이로 정규화
-    """
-    merged: List[str] = []
-    buffer = ""
-
-    for t in texts:
-        if not buffer:
-            buffer = t
-            continue
-
-        # buffer + t 가 너무 길어지면 buffer 확정
-        if len(buffer) + len(t) > max_len:
-            if len(buffer) >= min_len:
-                merged.append(buffer)
-                buffer = t
-            else:
-                buffer = buffer + " " + t
-        else:
-            buffer = buffer + " " + t
-
-    if buffer and len(buffer) >= min_len:
-        merged.append(buffer)
-
-    return merged
+    return [
+        p.strip()
+        for p in text.split("\n\n")
+        if len(p.strip()) >= 45
+    ]
 
 
 def is_text_unreliable(q: float, text: str) -> bool:
-    return q < 0.20 or len(text.strip()) < 25
+    return q < 0.25 or len(text.strip()) < 25
 
 
-def is_duplicate(a: str, b: str, th: float = 0.88) -> bool:
+_TOKEN_RE = re.compile(r"[가-힣]{2,}")
+
+
+def compute_anomaly_score(text: str, vocab: Set[str]) -> float:
+    tokens = _TOKEN_RE.findall(text)
+    if not tokens:
+        return 0.0
+    unknown = [t for t in tokens if t not in vocab]
+    return min(len(unknown) / max(len(tokens), 1), 1.0)
+
+
+def is_duplicate(a: str, b: str, th: float = 0.85) -> bool:
     return SequenceMatcher(None, a, b).ratio() >= th
 
 
 # ============================================================
-# Pipeline
+# question type tagging
+# ============================================================
+QUESTION_PATTERNS = {
+    "definition": ["정의", "이란", "의미"],
+    "procedure": ["절차", "방법", "단계", "처리"],
+    "sanction": ["제재", "처벌", "징계", "과태료"],
+    "case": ["사례", "판결", "예시"],
+}
+
+
+def compute_question_type_scores(text: str) -> Dict[str, float]:
+    scores = {}
+    for k, words in QUESTION_PATTERNS.items():
+        scores[k] = sum(text.count(w) for w in words) / max(len(text) / 80, 1)
+    return scores
+
+
+# ============================================================
+# PreprocessPipeline
 # ============================================================
 class PreprocessPipeline:
     def __init__(
@@ -156,9 +167,10 @@ class PreprocessPipeline:
         self.llm = LLMCorrector()
         self.use_llm = use_llm
         self.image_storage_root = Path(image_storage_root)
-        self.global_image_hashes: Dict[str, str] = {}
 
-    # -------------------------
+        self.vocab: Set[str] = set()
+        self.global_image_hashes: Set[str] = set()
+
     @staticmethod
     def _page_has_text_layer(page: fitz.Page) -> Optional[str]:
         txt = page.get_text("text")
@@ -169,41 +181,45 @@ class PreprocessPipeline:
         pix = page.get_pixmap(matrix=fitz.Matrix(zoom, zoom), alpha=False)
         return Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
 
-    # -------------------------
+    def _update_vocab(self, text: str):
+        self.vocab.update(_TOKEN_RE.findall(text))
+
+    # --------------------------------------------------------
+    # main
+    # --------------------------------------------------------
     def run(self, pdf_path: str) -> Dict[str, Any]:
         pdf_path = Path(pdf_path)
         doc = fitz.open(pdf_path)
+        page_count = doc.page_count
 
         image_dir = self.image_storage_root / pdf_path.stem
         image_dir.mkdir(parents=True, exist_ok=True)
 
-        chunks: List[Dict[str, Any]] = []
-        prev_text: Optional[str] = None
+        chunks = []
+        prev_text = None
 
-        for page_idx in range(doc.page_count):
+        for page_idx in range(page_count):
             page = doc.load_page(page_idx)
 
-            # ================= TEXT =================
+            # ---------- OCR ----------
             text_layer = self._page_has_text_layer(page)
             if text_layer:
-                raw_text = text_layer
-                logger.info(f"[PAGE {page_idx}] text-layer 사용")
+                raw = text_layer
             else:
                 img = self._page_to_pil(page)
-                raw_text, _ = self.ocr.strong_ocr(img, page_idx)
+                raw, _ = self.ocr.strong_ocr(img, page_idx)
 
-            clean = final_ocr_postprocess(raw_text)
+            # ---------- text clean ----------
+            clean = simple_clean_text(raw)
+            clean = final_ocr_postprocess(clean)
+            self._update_vocab(clean)
 
-            # 1️⃣ split
-            splitted = split_paragraphs(clean)
-
-            # 2️⃣ merge (🔥 과분리 해결 핵심)
-            merged = merge_short_chunks(splitted)
-
-            for para in merged:
+            # ---------- text chunks ----------
+            for para in split_paragraphs(clean):
                 q = text_quality_score(para)
+                anomaly = compute_anomaly_score(para, self.vocab)
 
-                if self.use_llm and q < 0.26:
+                if self.use_llm and q < 0.45 and anomaly > 0.6:
                     para, _ = self.llm.correct_page(para, page_idx, q)
 
                 if is_text_unreliable(q, para):
@@ -212,13 +228,15 @@ class PreprocessPipeline:
                     continue
 
                 prev_text = para
+
                 chunks.append({
                     "type": "text",
                     "text": para,
                     "page_index": page_idx,
+                    "question_type_scores": compute_question_type_scores(para),
                 })
 
-            # ================= IMAGE =================
+            # ---------- image chunks ----------
             visuals = extract_visual_blocks(
                 page=page,
                 page_idx=page_idx,
@@ -228,24 +246,24 @@ class PreprocessPipeline:
 
             for v in visuals:
                 caption = generate_image_caption(
-                    image_path=v["image_path"],
-                    near_text=clean,
-                    llm=self.llm,
+                    v["image_path"], clean, self.llm
                 )
                 if not caption:
                     continue
 
                 chunks.append({
-                    "type": "image_caption",
+                    "type": "image",
                     "text": caption,
                     "image_path": v["image_path"],
                     "page_index": page_idx,
                 })
 
         doc.close()
+
         logger.info("→ PreprocessPipeline 완료 (chunks=%d)", len(chunks))
 
         return {
             "pdf_path": str(pdf_path),
+            "page_count": page_count,
             "chunks": chunks,
         }
