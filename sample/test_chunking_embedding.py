@@ -629,52 +629,82 @@ def compare_with_solution(dataset_dir: Path, fpath: Path, chunks: list[str]):
 def add_chunks_safe(
     doc,
     chunks,
-    milvus=None,
-    dataset_id=None,
-    doc_id=None,
+    milvus: "MilvusProxy | None" = None,
+    dataset_id: str | None = None,
+    doc_id: str | None = None,
 ):
+    """
+    - text / image_caption 모두 처리
+    - image는 caption 텍스트를 embedding
+    - image_path, page_index는 metadata로 저장
+    - chunks는 List[str] 또는 List[dict] 모두 지원
+    """
     print(f"→ 생성된 청크 수: {len(chunks)}")
 
     milvus_payload = []
     added = 0
 
     for idx, chunk in enumerate(chunks, start=1):
-        text = chunk.get("text", "").strip()
+        # ----------------------------
+        # chunk 파싱 (dict or str)
+        # ----------------------------
+        if isinstance(chunk, dict):
+            text = (chunk.get("text") or "").strip()
+            chunk_type = chunk.get("type", "text")
+            metadata = {
+                "source": chunk_type,
+                "page_index": chunk.get("page_index"),
+                "image_path": chunk.get("image_path"),
+            }
+        else:
+            text = str(chunk).strip()
+            chunk_type = "text"
+            metadata = {"source": "text"}
+
         if not text:
             continue
 
-        chunk_type = chunk.get("type", "text")
-        metadata = {
-            "source": chunk_type,
-            "page_index": chunk.get("page_index"),
-            "image_path": chunk.get("image_path"),
-        }
-
-        # RAGFlow
+        # ----------------------------
+        # 1) RAGFlow 저장
+        # ----------------------------
         doc.add_chunk(content=text)
         added += 1
 
-        # Milvus
+        # ----------------------------
+        # 2) Milvus 저장
+        # ----------------------------
         if milvus and dataset_id and doc_id:
-            embedding = embed_text(text)
-            milvus_payload.append({
-                "dataset_id": dataset_id,
-                "doc_id": doc_id,
-                "chunk_id": idx,
-                "type": chunk_type,
-                "text": text,
-                "embedding": embedding,
-                "metadata": metadata,
-            })
+            try:
+                embedding = embed_text(text)
+                milvus_payload.append({
+                    "dataset_id": dataset_id,
+                    "doc_id": doc_id,
+                    "chunk_id": idx,
+                    "type": chunk_type,
+                    "text": text,
+                    "embedding": embedding,
+                    "metadata": metadata,
+                })
+            except Exception as e:
+                print(f"⚠️ embedding 실패 (chunk {idx}): {e}")
 
+        # ----------------------------
+        # 미리보기
+        # ----------------------------
         if idx <= 2:
             print(f"\n[미리보기 {idx}] ({chunk_type})")
-            print(text[:200])
+            print(text[:200] + ("..." if len(text) > 200 else ""))
 
     print(f"→ 총 {added}개 청크 추가 완료")
 
+    # ----------------------------
+    # Milvus 일괄 insert
+    # ----------------------------
     if milvus and milvus_payload:
-        milvus.insert_chunks(dataset_id=dataset_id, chunks=milvus_payload)
+        milvus.insert_chunks(
+            dataset_id=dataset_id,
+            chunks=milvus_payload,
+        )
 
 # ===========================================================
 # 메인
@@ -838,7 +868,8 @@ def main():
 
                 print("→ PreprocessPipeline 완료")
 
-                chunks = [c["text"] for c in pipeline_result.get("chunks", [])]
+                chunks = pipeline_result.get("chunks", [])
+                add_chunks_safe(doc, chunks, milvus=milvus, dataset_id=domain, doc_id=fpath.name)
                 print(f"→ 파이프라인 청크 {len(chunks)}개 반환")
 
                 add_chunks_safe(

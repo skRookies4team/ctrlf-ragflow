@@ -124,7 +124,13 @@ def extract_visual_blocks(
         # 5. 저장
         # ------------------------------
         out = save_dir / f"page_{page_idx:03d}_img_{idx:02d}.png"
+        if pix.colorspace is None:
+            pix = fitz.Pixmap(fitz.csRGB, pix)
+        elif pix.colorspace.n != 3:
+            pix = fitz.Pixmap(fitz.csRGB, pix)
+
         pix.save(str(out))
+
 
         results.append({
             "page_index": page_idx,

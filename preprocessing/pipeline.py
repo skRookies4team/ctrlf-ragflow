@@ -97,13 +97,13 @@ def split_paragraphs(text: str) -> List[str]:
     1차 분리: 문장 단위
     """
     text = re.sub(r"([.!?])\s+", r"\1\n", text)
-    return [ln.strip() for ln in text.splitlines() if len(ln.strip()) >= 25]
+    return [ln.strip() for ln in text.splitlines() if len(ln.strip()) >= 40]
 
 
 def merge_short_chunks(
     texts: List[str],
-    min_len: int = 120,
-    max_len: int = 800,
+    min_len: int = 200,
+    max_len: int = 700,
 ) -> List[str]:
     """
     🔥 핵심 병합 단계

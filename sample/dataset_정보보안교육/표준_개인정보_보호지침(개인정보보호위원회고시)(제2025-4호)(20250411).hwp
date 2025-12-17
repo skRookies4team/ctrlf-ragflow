@@ -1,0 +1,1083 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE HWPML [
+	<!ENTITY nbsp	"&#160;">
+]>
+<HWPML Version="2.1"><HEAD SecCnt="1"><DOCSUMMARY><TITLE>표준 개인정보 보호지침</TITLE>
+<AUTHOR>법제처 법령정보센터</AUTHOR>
+<DATE>2025.08.18</DATE>
+</DOCSUMMARY>
+<DOCSETTING><BEGINNUMBER Page="1" Footnote="1" Endnote="1" Picture="1" Table="1" Equation="1"/>
+<CARETPOS List="0" Para="0" Pos="24"/>
+</DOCSETTING>
+<MAPPINGTABLE><BINDATALIST Count="4"><BINITEM Type="Embedding" BinData="1" Format="bmp"/>
+<BINITEM Type="Embedding" BinData="2" Format="bmp"/>
+<BINITEM Type="Embedding" BinData="3" Format="bmp"/>
+{이미지파일목록}
+<BINITEM Type="Embedding" BinData="4" Format="png"/>
+</BINDATALIST>
+<FACENAMELIST><FONTFACE Lang="Hangul" Count="5"><FONT Id="0" Type="ttf" Name="굴림"><TYPEINFO FamilyType="2" SerifStyle="11" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="1" Type="ttf" Name="바탕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="2" Type="hft" Name="한양견고딕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="3" Type="hft" Name="한양신명조"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="4" Type="hft" Name="한양중고딕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+</FONTFACE>
+<FONTFACE Lang="Latin" Count="5"><FONT Id="0" Type="ttf" Name="굴림"><TYPEINFO FamilyType="2" SerifStyle="11" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="1" Type="ttf" Name="바탕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="2" Type="hft" Name="한양견고딕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="3" Type="hft" Name="한양신명조"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="4" Type="hft" Name="한양중고딕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+</FONTFACE>
+<FONTFACE Lang="Hanja" Count="4"><FONT Id="0" Type="ttf" Name="굴림"><TYPEINFO FamilyType="2" SerifStyle="11" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="1" Type="ttf" Name="바탕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="2" Type="hft" Name="한양중고딕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="3" Type="hft" Name="한양신명조"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+</FONTFACE>
+<FONTFACE Lang="Japanese" Count="4"><FONT Id="0" Type="ttf" Name="굴림"><TYPEINFO FamilyType="2" SerifStyle="11" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="1" Type="ttf" Name="바탕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="2" Type="hft" Name="한양중고딕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="3" Type="hft" Name="한양신명조"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+</FONTFACE>
+<FONTFACE Lang="Other" Count="5"><FONT Id="0" Type="ttf" Name="굴림"><TYPEINFO FamilyType="2" SerifStyle="11" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="1" Type="ttf" Name="바탕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="2" Type="hft" Name="한양신명조"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="3" Type="hft" Name="한양신명조"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="4" Type="hft" Name="한양중고딕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+</FONTFACE>
+<FONTFACE Lang="Symbol" Count="5"><FONT Id="0" Type="ttf" Name="굴림"><TYPEINFO FamilyType="2" SerifStyle="11" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="1" Type="ttf" Name="바탕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="2" Type="hft" Name="한양중고딕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="3" Type="hft" Name="한양신명조"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="4" Type="hft" Name="한양중고딕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+</FONTFACE>
+<FONTFACE Lang="User" Count="5"><FONT Id="0" Type="ttf" Name="굴림"><TYPEINFO FamilyType="2" SerifStyle="11" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="1" Type="ttf" Name="바탕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="2" Type="hft" Name="한양견고딕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="3" Type="hft" Name="한양신명조"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+<FONT Id="4" Type="hft" Name="한양중고딕"><TYPEINFO FamilyType="2" SerifStyle="3" Weight="6" Proportion="0" Contrast="0" StrokeVariation="1" ArmStyle="1" Letterform="1" Midline="1" XHeight="1"/>
+</FONT>
+</FONTFACE>
+</FACENAMELIST>
+<BORDERFILLLIST Count="11"><BORDERFILL Id="1" ThreeD="false" Shadow="false" Slash="0" BackSlash="0" CrookedSlash="0"><LEFTBORDER Type="None" Width="0.1mm" Color="0"/>
+<RIGHTBORDER Type="None" Width="0.1mm" Color="0"/>
+<TOPBORDER Type="None" Width="0.1mm" Color="0"/>
+<BOTTOMBORDER Type="None" Width="0.1mm" Color="0"/>
+<DIAGONAL Type="Solid" Width="0.1mm" Color="0"/>
+<FILLBRUSH><WINDOWBRUSH FaceColor="4294967295" HatchColor="0"/>
+</FILLBRUSH>
+</BORDERFILL>
+<BORDERFILL Id="2" ThreeD="false" Shadow="false" Slash="0" BackSlash="0" CrookedSlash="0"><LEFTBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<RIGHTBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<TOPBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<BOTTOMBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<DIAGONAL Type="Solid" Width="0.1mm" Color="0"/>
+</BORDERFILL>
+<BORDERFILL Id="3" ThreeD="false" Shadow="false" Slash="0" BackSlash="0" CrookedSlash="0"><LEFTBORDER Type="None" Width="0.12mm" Color="0"/>
+<RIGHTBORDER Type="None" Width="0.12mm" Color="0"/>
+<TOPBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<BOTTOMBORDER Type="None" Width="0.12mm" Color="0"/>
+<DIAGONAL Type="Solid" Width="0.1mm" Color="0"/>
+</BORDERFILL>
+<BORDERFILL Id="4" ThreeD="false" Shadow="false" Slash="0" BackSlash="0" CrookedSlash="0"><LEFTBORDER Type="None" Width="0.12mm" Color="0"/>
+<RIGHTBORDER Type="None" Width="0.12mm" Color="0"/>
+<TOPBORDER Type="None" Width="0.12mm" Color="0"/>
+<BOTTOMBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<DIAGONAL Type="Solid" Width="0.1mm" Color="0"/>
+</BORDERFILL>
+<BORDERFILL Id="5" ThreeD="false" Shadow="false" Slash="0" BackSlash="0" CrookedSlash="0"><LEFTBORDER Type="None" Width="0.12mm" Color="0"/>
+<RIGHTBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<TOPBORDER Type="None" Width="0.12mm" Color="0"/>
+<BOTTOMBORDER Type="None" Width="0.12mm" Color="0"/>
+<DIAGONAL Type="Solid" Width="0.1mm" Color="0"/>
+</BORDERFILL>
+<BORDERFILL Id="6" ThreeD="false" Shadow="false" Slash="0" BackSlash="0" CrookedSlash="0"><LEFTBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<RIGHTBORDER Type="None" Width="0.12mm" Color="0"/>
+<TOPBORDER Type="None" Width="0.12mm" Color="0"/>
+<BOTTOMBORDER Type="None" Width="0.12mm" Color="0"/>
+<DIAGONAL Type="Solid" Width="0.1mm" Color="0"/>
+</BORDERFILL>
+<BORDERFILL Id="7" ThreeD="false" Shadow="false" Slash="0" BackSlash="0" CrookedSlash="0"><LEFTBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<RIGHTBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<TOPBORDER Type="None" Width="0.12mm" Color="0"/>
+<BOTTOMBORDER Type="None" Width="0.12mm" Color="0"/>
+<DIAGONAL Type="Solid" Width="0.1mm" Color="0"/>
+</BORDERFILL>
+<BORDERFILL Id="8" ThreeD="false" Shadow="false" Slash="0" BackSlash="0" CrookedSlash="0"><LEFTBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<RIGHTBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<TOPBORDER Type="None" Width="0.12mm" Color="0"/>
+<BOTTOMBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<DIAGONAL Type="Solid" Width="0.1mm" Color="0"/>
+</BORDERFILL>
+<BORDERFILL Id="9" ThreeD="false" Shadow="false" Slash="0" BackSlash="0" CrookedSlash="0"><LEFTBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<RIGHTBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<TOPBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<BOTTOMBORDER Type="None" Width="0.12mm" Color="0"/>
+<DIAGONAL Type="Solid" Width="0.1mm" Color="0"/>
+</BORDERFILL>
+<BORDERFILL Id="10" ThreeD="false" Shadow="false" Slash="0" BackSlash="0" CrookedSlash="0"><LEFTBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<RIGHTBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<TOPBORDER Type="Solid" Width="0.12mm" Color="0"/>
+<BOTTOMBORDER Type="Solid" Width="0.12mm" Color="0"/>
+</BORDERFILL>
+<BORDERFILL Id="11" ThreeD="false" Shadow="false" Slash="0" BackSlash="0" CrookedSlash="0"><LEFTBORDER Type="None" Width="0.12mm" Color="0"/>
+<RIGHTBORDER Type="None" Width="0.12mm" Color="0"/>
+<TOPBORDER Type="None" Width="0.12mm" Color="0"/>
+<BOTTOMBORDER Type="None" Width="0.12mm" Color="0"/>
+</BORDERFILL>
+</BORDERFILLLIST>
+<CHARSHAPELIST Count="26"><CHARSHAPE Id="0" Height="1000" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RATIO Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="1" Height="1000" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="1" Latin="1" Hanja="1" Japanese="1" Other="1" Symbol="1" User="1"/>
+<RATIO Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="2" Height="900" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RATIO Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="3" Height="900" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="1" Latin="1" Hanja="1" Japanese="1" Other="1" Symbol="1" User="1"/>
+<RATIO Hangul="95" Latin="95" Hanja="95" Japanese="95" Other="95" Symbol="95" User="95"/>
+<CHARSPACING Hangul="-5" Latin="-5" Hanja="-5" Japanese="-5" Other="-5" Symbol="-5" User="-5"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="4" Height="900" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RATIO Hangul="95" Latin="95" Hanja="95" Japanese="95" Other="95" Symbol="95" User="95"/>
+<CHARSPACING Hangul="-5" Latin="-5" Hanja="-5" Japanese="-5" Other="-5" Symbol="-5" User="-5"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="5" Height="1000" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="3" Latin="3" Hanja="3" Japanese="3" Other="3" Symbol="3" User="3"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="6" Height="1000" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="2" Latin="2" Hanja="2" Japanese="2" Other="2" Symbol="2" User="2"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="7" Height="1000" TextColor="16711680" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="3" Latin="3" Hanja="0" Japanese="0" Other="3" Symbol="3" User="3"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="8" Height="1000" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="3" Latin="3" Hanja="0" Japanese="0" Other="3" Symbol="3" User="3"/>
+<RATIO Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="9" Height="1000" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="3" Latin="3" Hanja="0" Japanese="0" Other="3" Symbol="3" User="3"/>
+<RATIO Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHARSPACING Hangul="-50" Latin="-50" Hanja="-50" Japanese="-50" Other="-50" Symbol="-50" User="-50"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="10" Height="1200" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="2" Latin="2" Hanja="2" Japanese="2" Other="2" Symbol="2" User="2"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="11" Height="1200" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="2" Latin="2" Hanja="2" Japanese="2" Other="2" Symbol="2" User="2"/>
+<RATIO Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="12" Height="1000" TextColor="16711680" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="3" Latin="3" Hanja="0" Japanese="0" Other="3" Symbol="3" User="3"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="13" Height="1100" TextColor="255" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="3" Latin="3" Hanja="0" Japanese="0" Other="3" Symbol="3" User="3"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="14" Height="1600" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="2" Latin="2" Hanja="2" Japanese="2" Other="2" Symbol="2" User="2"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="15" Height="1400" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="3" Latin="3" Hanja="0" Japanese="0" Other="3" Symbol="3" User="3"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="16" Height="1000" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="true" SymMark="0"><FONTID Hangul="3" Latin="3" Hanja="0" Japanese="0" Other="3" Symbol="3" User="3"/>
+<RATIO Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="17" Height="1200" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="true" SymMark="0"><FONTID Hangul="3" Latin="3" Hanja="0" Japanese="0" Other="3" Symbol="3" User="3"/>
+<RATIO Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="18" Height="1400" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="3" Latin="3" Hanja="3" Japanese="3" Other="3" Symbol="3" User="3"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<BOLD/>
+</CHARSHAPE>
+<CHARSHAPE Id="19" Height="1200" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="4" Latin="4" Hanja="3" Japanese="3" Other="4" Symbol="4" User="4"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="20" Height="1200" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="3" Latin="3" Hanja="3" Japanese="3" Other="3" Symbol="3" User="3"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<BOLD/>
+</CHARSHAPE>
+<CHARSHAPE Id="21" Height="1200" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="4" Latin="4" Hanja="1" Japanese="1" Other="4" Symbol="4" User="4"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="22" Height="1200" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="4" Latin="4" Hanja="1" Japanese="1" Other="4" Symbol="4" User="4"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="23" Height="900" TextColor="16711680" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="3" Latin="3" Hanja="0" Japanese="0" Other="3" Symbol="3" User="3"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="24" Height="1200" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="3" Latin="3" Hanja="3" Japanese="3" Other="3" Symbol="3" User="3"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="25" Height="1000" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="3" Latin="3" Hanja="0" Japanese="0" Other="3" Symbol="3" User="3"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="26" Height="900" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="2" Latin="2" Hanja="2" Japanese="2" Other="2" Symbol="2" User="2"/>
+<RATIO Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="74" Height="1000" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="4" Latin="4" Hanja="0" Japanese="0" Other="4" Symbol="4" User="4"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+<CHARSHAPE Id="99" Height="1200" TextColor="0" ShadeColor="4294967295" UseFontSpace="false" UseKerning="false" SymMark="0"><FONTID Hangul="3" Latin="3" Hanja="3" Japanese="3" Other="3" Symbol="3" User="3"/>
+<RATIO Hangul="97" Latin="97" Hanja="97" Japanese="97" Other="97" Symbol="97" User="97"/>
+<CHARSPACING Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+<RELSIZE Hangul="100" Latin="100" Hanja="100" Japanese="100" Other="100" Symbol="100" User="100"/>
+<CHAROFFSET Hangul="0" Latin="0" Hanja="0" Japanese="0" Other="0" Symbol="0" User="0"/>
+</CHARSHAPE>
+</CHARSHAPELIST>
+<TABDEFLIST Count="3"><TABDEF Id="0" AutoTabLeft="false" AutoTabRight="false"/>
+<TABDEF Id="1" AutoTabLeft="true" AutoTabRight="false"/>
+<TABDEF Id="2" AutoTabLeft="false" AutoTabRight="true"/>
+</TABDEFLIST>
+<NUMBERINGLIST Count="1"><NUMBERING Id="1" Start="0"><PARAHEAD Level="1" Alignment="Left" UseInstWidth="true" AutoIndent="true" WidthAdjust="0" TextOffsetType="percent" TextOffset="50" NumFormat="Digit">^1.</PARAHEAD>
+<PARAHEAD Level="2" Alignment="Left" UseInstWidth="true" AutoIndent="true" WidthAdjust="0" TextOffsetType="percent" TextOffset="50" NumFormat="HangulSyllable">^2.</PARAHEAD>
+<PARAHEAD Level="3" Alignment="Left" UseInstWidth="true" AutoIndent="true" WidthAdjust="0" TextOffsetType="percent" TextOffset="50" NumFormat="Digit">^3)</PARAHEAD>
+<PARAHEAD Level="4" Alignment="Left" UseInstWidth="true" AutoIndent="true" WidthAdjust="0" TextOffsetType="percent" TextOffset="50" NumFormat="HangulSyllable">^4)</PARAHEAD>
+<PARAHEAD Level="5" Alignment="Left" UseInstWidth="false" AutoIndent="true" WidthAdjust="0" TextOffsetType="percent" TextOffset="50" NumFormat="Digit"></PARAHEAD>
+<PARAHEAD Level="6" Alignment="Left" UseInstWidth="false" AutoIndent="true" WidthAdjust="0" TextOffsetType="percent" TextOffset="50" NumFormat="Digit"></PARAHEAD>
+<PARAHEAD Level="7" Alignment="Left" UseInstWidth="false" AutoIndent="true" WidthAdjust="0" TextOffsetType="percent" TextOffset="50" NumFormat="Digit"></PARAHEAD>
+</NUMBERING>
+</NUMBERINGLIST>
+<PARASHAPELIST Count="41"><PARASHAPE Id="0" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="1" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-2620" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="1" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="true"><PARAMARGIN Indent="0" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="160"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="2" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="3" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="3000" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="160"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="4" Align="Justify" VerAlign="Baseline" HeadingType="Outline" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="20" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="2000" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="160"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="5" Align="Justify" VerAlign="Baseline" HeadingType="Outline" Heading="0" Level="1" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="20" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="4000" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="160"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="6" Align="Justify" VerAlign="Baseline" HeadingType="Outline" Heading="0" Level="2" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="20" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="6000" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="160"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="7" Align="Justify" VerAlign="Baseline" HeadingType="Outline" Heading="0" Level="3" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="20" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="8000" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="160"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="8" Align="Justify" VerAlign="Baseline" HeadingType="Outline" Heading="0" Level="4" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="20" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="10000" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="160"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="9" Align="Justify" VerAlign="Baseline" HeadingType="Outline" Heading="0" Level="5" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="20" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="12000" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="160"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="10" Align="Justify" VerAlign="Baseline" HeadingType="Outline" Heading="0" Level="6" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="20" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="14000" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="160"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="11" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="2" BreakLatinWord="KeepWord" BreakNonLatinWord="false" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="150"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="12" Align="Right" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="false" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="160"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="13" Align="Right" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="false" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="100"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="14" Align="Right" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="false" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="15" Align="Center" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="false" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="16" Align="Center" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="false" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="17" Align="Right" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="false" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="180"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="18" Align="Center" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="2" BreakLatinWord="KeepWord" BreakNonLatinWord="false" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="150"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="19" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="2" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="150"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="20" Align="Right" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="2" BreakLatinWord="KeepWord" BreakNonLatinWord="false" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="150"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="21" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-4600" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="22" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-2400" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="23" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-1936" Left="0" Right="0" Prev="1000" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="24" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-2336" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="25" Align="Center" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="false" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="160"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="26" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-3904" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="160"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="27" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-2400" Left="0" Right="0" Prev="1400" Next="0" LineSpacingType="Percent" LineSpacing="180"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="28" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-4600" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="180"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="29" Align="Right" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="false" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="0" Right="2296" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="180"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="30" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-7800" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="31" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-10400" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="32" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="2000" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="160"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="33" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="4000" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="160"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="34" Align="Center" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="false" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="0" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="35" Align="Center" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="false" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-1000" Left="11496" Right="12552" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="36" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-1900" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="37" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-3600" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="38" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-6500" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="39" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-8000" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="40" Align="Justify" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="true" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-10500" Left="0" Right="0" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+<PARASHAPE Id="74" Align="Center" VerAlign="Baseline" HeadingType="None" Heading="0" Level="0" TabDef="0" BreakLatinWord="KeepWord" BreakNonLatinWord="false" Condense="0" WidowOrphan="false" KeepWithNext="false" KeepLines="false" PageBreakBefore="false" FontLineHeight="false" SnapToGrid="false"><PARAMARGIN Indent="-1000" Left="11496" Right="12552" Prev="0" Next="0" LineSpacingType="Percent" LineSpacing="130"/>
+<PARABORDER BorderFill="1" OffsetLeft="0" OffsetRight="0" OffsetTop="0" OffsetBottom="0" Connect="false" IgnoreMargin="false"/>
+</PARASHAPE>
+</PARASHAPELIST>
+<STYLELIST Count="14"><STYLE Id="0" Type="Para" Name="바탕글" EngName="Normal" ParaShape="2" CharShape="1" NextStyle="0" LangId="1042"/>
+<STYLE Id="1" Type="Para" Name="본문" EngName="Body" ParaShape="3" CharShape="1" NextStyle="1" LangId="1042"/>
+<STYLE Id="2" Type="Para" Name="개요 1" EngName="Outline 1" ParaShape="4" CharShape="1" NextStyle="2" LangId="1042"/>
+<STYLE Id="3" Type="Para" Name="개요 2" EngName="Outline 2" ParaShape="5" CharShape="1" NextStyle="3" LangId="1042"/>
+<STYLE Id="4" Type="Para" Name="개요 3" EngName="Outline 3" ParaShape="6" CharShape="1" NextStyle="4" LangId="1042"/>
+<STYLE Id="5" Type="Para" Name="개요 4" EngName="Outline 4" ParaShape="7" CharShape="1" NextStyle="5" LangId="1042"/>
+<STYLE Id="6" Type="Para" Name="개요 5" EngName="Outline 5" ParaShape="8" CharShape="1" NextStyle="6" LangId="1042"/>
+<STYLE Id="7" Type="Para" Name="개요 6" EngName="Outline 6" ParaShape="9" CharShape="1" NextStyle="7" LangId="1042"/>
+<STYLE Id="8" Type="Para" Name="개요 7" EngName="Outline 7" ParaShape="10" CharShape="1" NextStyle="8" LangId="1042"/>
+<STYLE Id="9" Type="Para" Name="쪽 번호" EngName="Page Number" ParaShape="2" CharShape="0" NextStyle="9" LangId="1042"/>
+<STYLE Id="10" Type="Para" Name="머리말" EngName="Header" ParaShape="11" CharShape="2" NextStyle="10" LangId="1042"/>
+<STYLE Id="11" Type="Para" Name="각주" EngName="Footnote" ParaShape="0" CharShape="3" NextStyle="11" LangId="1042"/>
+<STYLE Id="12" Type="Para" Name="미주" EngName="Endnote" ParaShape="0" CharShape="3" NextStyle="12" LangId="1042"/>
+<STYLE Id="13" Type="Para" Name="메모" EngName="Memo" ParaShape="1" CharShape="4" NextStyle="13" LangId="1042"/>
+</STYLELIST>
+</MAPPINGTABLE>
+</HEAD>
+<BODY><SECTION Id="0">
+
+<P ParaShape="34"><TEXT CharShape="10"><SECDEF SpaceColumns="1134" TabStop="8000" OutlineShape="1"><STARTNUMBER PageStartsOn="Both" Page="0" Figure="0" Table="0" Equation="0"/>
+<HIDE Header="false" Footer="false" MasterPage="false" Border="false" Fill="false" PageNumPos="false" EmptyLine="false"/>
+<PAGEDEF Landscape="0" Width="59528" Height="84188" GutterType="LeftOnly"><PAGEMARGIN Left="4252" Right="4252" Top="5669" Bottom="4252" Header="3600" Footer="3600" Gutter="0"/>
+</PAGEDEF>
+<FOOTNOTESHAPE><AUTONUMFORMAT Type="Digit" SuffixChar=")" Superscript="false"/>
+<NOTELINE Length="5cm" Type="Solid" Width="0.12mm" Color="0"/>
+<NOTESPACING AboveLine="850" BelowLine="567" BetweenNotes="283"/>
+<NOTENUMBERING Type="Continuous"/>
+<NOTEPLACEMENT Place="EachColumn" BeneathText="false"/>
+</FOOTNOTESHAPE>
+<ENDNOTESHAPE><AUTONUMFORMAT Type="Digit" SuffixChar=")" Superscript="false"/>
+<NOTELINE Length="14692344" Type="Solid" Width="0.12mm" Color="0"/>
+<NOTESPACING AboveLine="850" BelowLine="567" BetweenNotes="0"/>
+<NOTENUMBERING Type="Continuous"/>
+<NOTEPLACEMENT Place="EndOfDocument" BeneathText="false"/>
+</ENDNOTESHAPE>
+<PAGEBORDERFILL Type="Both" BorferFill="0" TextBorder="true" HeaderInside="false" FooterInside="false" FillArea="Paper"><PAGEOFFSET Left="1417" Right="1417" Top="1417" Bottom="1417"/>
+</PAGEBORDERFILL>
+<PAGEBORDERFILL Type="Even" BorferFill="0" TextBorder="true" HeaderInside="false" FooterInside="false" FillArea="Paper"><PAGEOFFSET Left="1417" Right="1417" Top="1417" Bottom="1417"/>
+</PAGEBORDERFILL>
+<PAGEBORDERFILL Type="Odd" BorferFill="0" TextBorder="true" HeaderInside="false" FooterInside="false" FillArea="Paper"><PAGEOFFSET Left="1417" Right="1417" Top="1417" Bottom="1417"/>
+</PAGEBORDERFILL>
+</SECDEF>
+<COLDEF Type="Newspaper" Count="1" Layout="Left" SameSize="true"/>
+<PICTURE><SHAPEOBJECT InstId="1517942632" ZOrder="14" NumberingType="Figure" TextWrap="BehindText" Lock="false"><SIZE Width="5556" Height="5556" WidthRelTo="Absolute" HeightRelTo="Absolute" Protect="false"/><POSITION TreatAsChar="false" VertRelTo="Para" HorzRelTo="Column" VertAlign="Top" HorzAlign="Left" VertOffset="-901" HorzOffset="45187" FlowWithText="false" AllowOverlap="true"/><OUTSIDEMARGIN Left="0" Right="0" Top="0" Bottom="0"/></SHAPEOBJECT><SHAPECOMPONENT XPos="-2647" YPos="-2016" GroupLevel="0" OriWidth="10208" OriHeight="12300" CurWidth="10681" CurHeight="12870" HorzFlip="false" VertFlip="false"><ROTATIONINFO Angle="0" CenterX="2778" CenterY="2778"/><RENDERINGINFO><TRANSMATRIX E1="1.00" E2="0.00" E3="-2647.00" E4="0.00" E5="1.00" E6="-2016.00"/><SCAMATRIX E1="1.05" E2="0.00" E3="0.00" E4="0.00" E5="1.05" E6="0.00"/><ROTMATRIX E1="1.04" E2="0.00" E3="-102.42" E4="0.00" E5="1.04" E6="-76.05"/><SCAMATRIX E1="1.00" E2="0.00" E3="0.00" E4="0.00" E5="1.00" E6="0.00"/><ROTMATRIX E1="1.00" E2="0.00" E3="0.00" E4="0.00" E5="1.00" E6="0.00"/><SCAMATRIX E1="1.00" E2="0.00" E3="0.00" E4="0.00" E5="1.00" E6="0.00"/><ROTMATRIX E1="1.00" E2="0.00" E3="0.00" E4="0.00" E5="1.00" E6="0.00"/><SCAMATRIX E1="1.01" E2="0.00" E3="-22.70" E4="0.00" E5="1.01" E6="-15.04"/><ROTMATRIX E1="1.00" E2="0.00" E3="0.00" E4="0.00" E5="1.00" E6="0.00"/><SCAMATRIX E1="0.75" E2="0.00" E3="0.00" E4="0.00" E5="0.75" E6="0.00"/><ROTMATRIX E1="1.19" E2="0.00" E3="-494.20" E4="0.00" E5="1.19" E6="-374.90"/><SCAMATRIX E1="0.80" E2="0.00" E3="-166.00" E4="0.00" E5="0.80" E6="2941.00"/><ROTMATRIX E1="1.00" E2="0.00" E3="0.00" E4="0.00" E5="1.00" E6="-0.45"/><SCAMATRIX E1="0.82" E2="0.00" E3="-17.00" E4="0.00" E5="0.79" E6="0.00"/><ROTMATRIX E1="1.21" E2="0.00" E3="-927.59" E4="0.00" E5="1.45" E6="227.53"/><SCAMATRIX E1="0.70" E2="0.00" E3="5430.00" E4="0.00" E5="0.73" E6="-584.00"/><ROTMATRIX E1="1.00" E2="0.00" E3="0.00" E4="0.00" E5="0.69" E6="-195.65"/></RENDERINGINFO></SHAPECOMPONENT><LINESHAPE Color="11866128" Width="85" Style="Solid" EndCap="Round" OutlineStyle="Outer"/><IMAGERECT X0="0" Y0="0" X1="10208" Y1="0" X2="10208" Y2="12300" X3="0" Y3="12300"/><IMAGECLIP Left="567" Top="567" Right="14433" Bottom="14433"/><INSIDEMARGIN Left="0" Right="0" Top="0" Bottom="0"/><IMAGE Bright="0" Contrast="0" Effect="RealPic" BinItem="4"/></PICTURE>
+<CHAR></CHAR>
+</TEXT>
+</P>
+<P ParaShape="35"><TEXT CharShape="10"><CHAR>표준 개인정보 보호지침</CHAR>
+</TEXT>
+</P>
+<P ParaShape="16"><TEXT CharShape="12"><HEADER ApplyPageType="Both" TextWidth="48190" TextHeight="2835" HasTextRef="false" HasNumRef="false"><PARALIST TextDirection="0" LineWrap="Break" VertAlign="Top"><P ParaShape="13"><TEXT CharShape="8"><TABLE PageBreak="Cell" RepeatHeader="true" RowCount="1" ColCount="1" CellSpacing="0" BorderFill="2"><SHAPEOBJECT InstId="1201155746" ZOrder="0" NumberingType="Table" Lock="false"><SIZE Width="50929" Height="1982" WidthRelTo="Absolute" HeightRelTo="Absolute" Protect="false"/>
+<POSITION TreatAsChar="true" AffectLSpacing="false" VertAlign="Top" HorzAlign="Left" VertOffset="0" HorzOffset="0" FlowWithText="true" HoldAnchorAndSO="false"/>
+<OUTSIDEMARGIN Left="0" Right="0" Top="0" Bottom="0"/>
+</SHAPEOBJECT>
+<INSIDEMARGIN Left="510" Right="510" Top="141" Bottom="141"/>
+<ROW><CELL ColAddr="0" RowAddr="0" ColSpan="1" RowSpan="1" Width="50929" Height="1982" Header="false" HasMargin="false" Protect="false" Editable="false" Dirty="false" BorderFill="4"><PARALIST TextDirection="0" LineWrap="Break" VertAlign="Center"><P ParaShape="13"><TEXT CharShape="99"><CHAR>표준 개인정보 보호지침</CHAR>
+</TEXT>
+</P>
+</PARALIST>
+</CELL>
+</ROW>
+</TABLE>
+<CHAR></CHAR>
+</TEXT>
+</P>
+<P ParaShape="12"><TEXT CharShape="9"/>
+</P>
+</PARALIST>
+</HEADER>
+<FOOTER ApplyPageType="Both" TextWidth="48190" TextHeight="2835" HasTextRef="false" HasNumRef="false"><PARALIST TextDirection="0" LineWrap="Break" VertAlign="Bottom"><P ParaShape="14"><TEXT CharShape="9"/>
+</P>
+<P ParaShape="15"><TEXT CharShape="9"><TABLE PageBreak="Cell" RepeatHeader="true" RowCount="1" ColCount="3" CellSpacing="0" BorderFill="2"><SHAPEOBJECT InstId="1201155747" ZOrder="1" NumberingType="Table" Lock="false"><SIZE Width="51024" Height="1982" WidthRelTo="Absolute" HeightRelTo="Absolute" Protect="false"/>
+<POSITION TreatAsChar="true" AffectLSpacing="false" VertAlign="Top" HorzAlign="Left" VertOffset="0" HorzOffset="0" FlowWithText="true" HoldAnchorAndSO="false"/>
+<OUTSIDEMARGIN Left="0" Right="0" Top="0" Bottom="0"/>
+</SHAPEOBJECT>
+<INSIDEMARGIN Left="510" Right="510" Top="141" Bottom="141"/>
+<ROW><CELL ColAddr="0" RowAddr="0" ColSpan="1" RowSpan="1" Width="12623" Height="1982" Header="false" HasMargin="false" Protect="false" Editable="false" Dirty="false" BorderFill="3"><PARALIST TextDirection="0" LineWrap="Break" VertAlign="Center"><P ParaShape="19" Style="10"><TEXT CharShape="99"><PICTURE><SHAPEOBJECT InstId="1201155748" ZOrder="2" NumberingType="Figure" Lock="false"><SIZE Width="1828" Height="1131" WidthRelTo="Absolute" HeightRelTo="Absolute" Protect="false"/>
+<POSITION TreatAsChar="true" AffectLSpacing="false" VertAlign="Top" HorzAlign="Left" VertOffset="0" HorzOffset="0" FlowWithText="true"/>
+<OUTSIDEMARGIN Left="0" Right="0" Top="0" Bottom="0"/>
+</SHAPEOBJECT>
+<SHAPECOMPONENT XPos="0" YPos="-2469" GroupLevel="0" OriWidth="23760" OriHeight="14700" CurWidth="22847" CurHeight="14137" HorzFlip="false" VertFlip="false"><ROTATIONINFO Angle="0" CenterX="914" CenterY="565"/>
+<RENDERINGINFO><TRANSMATRIX E1="1.00" E2="0.00" E3="0.00" E4="0.00" E5="1.00" E6="-2469.00"/>
+<SCAMATRIX E1="0.96" E2="0.00" E3="0.00" E4="0.00" E5="0.96" E6="94.48"/>
+<ROTMATRIX E1="1.00" E2="0.00" E3="0.00" E4="0.00" E5="1.00" E6="0.00"/>
+<SCAMATRIX E1="0.08" E2="0.00" E3="0.00" E4="0.00" E5="0.08" E6="2469.00"/>
+<ROTMATRIX E1="1.00" E2="0.00" E3="0.00" E4="0.00" E5="1.00" E6="0.00"/>
+</RENDERINGINFO>
+</SHAPECOMPONENT>
+<IMAGERECT X0="0" Y0="0" X1="23760" Y1="0" X2="23760" Y2="14700" X3="0" Y3="14700"/>
+<IMAGECLIP Left="0" Top="0" Right="23700" Bottom="14640"/>
+<INSIDEMARGIN Left="0" Right="0" Top="0" Bottom="0"/>
+<IMAGE Bright="0" Contrast="0" Effect="RealPic" BinItem="3"/>
+</PICTURE>
+<CHAR>&nbsp;법제처</CHAR>
+</TEXT>
+<TEXT CharShape="99"><CHAR></CHAR>
+</TEXT>
+</P>
+</PARALIST>
+</CELL>
+<CELL ColAddr="1" RowAddr="0" ColSpan="1" RowSpan="1" Width="25701" Height="1982" Header="false" HasMargin="false" Protect="false" Editable="false" Dirty="false" BorderFill="3"><PARALIST TextDirection="0" LineWrap="Break" VertAlign="Center"><P ParaShape="18" Style="10"><TEXT CharShape="26"><CHAR>-&nbsp;</CHAR>
+<AUTONUM Number="1" NumberType="Page"><AUTONUMFORMAT Type="Digit" Superscript="false"/>
+</AUTONUM>
+<CHAR>&nbsp;/&nbsp;</CHAR>
+<AUTONUM Number="1" NumberType="TotalPage"><AUTONUMFORMAT Type="Digit" Superscript="false"/>
+</AUTONUM>
+<CHAR>&nbsp;-</CHAR>
+</TEXT>
+</P>
+</PARALIST>
+</CELL>
+<CELL ColAddr="2" RowAddr="0" ColSpan="1" RowSpan="1" Width="12623" Height="1982" Header="false" HasMargin="false" Protect="false" Editable="false" Dirty="false" BorderFill="3"><PARALIST TextDirection="0" LineWrap="Break" VertAlign="Center"><P ParaShape="20" Style="10"><TEXT CharShape="99"><PICTURE><SHAPEOBJECT InstId="1310949373" ZOrder="3" NumberingType="Figure" Lock="false"><SIZE Width="1417" Height="1417" WidthRelTo="Absolute" HeightRelTo="Absolute" Protect="false"/>
+<POSITION TreatAsChar="true" AffectLSpacing="false" VertAlign="Top" HorzAlign="Left" VertOffset="0" HorzOffset="0" FlowWithText="true"/>
+<OUTSIDEMARGIN Left="0" Right="0" Top="0" Bottom="0"/>
+</SHAPEOBJECT>
+<SHAPECOMPONENT XPos="0" YPos="-887" GroupLevel="0" OriWidth="2760" OriHeight="2760" CurWidth="1416" CurHeight="1416" HorzFlip="false" VertFlip="false"><ROTATIONINFO Angle="0" CenterX="708" CenterY="708"/>
+<RENDERINGINFO><TRANSMATRIX E1="1.00" E2="0.00" E3="0.00" E4="0.00" E5="1.00" E6="-887.00"/>
+<SCAMATRIX E1="0.51" E2="0.00" E3="0.00" E4="0.00" E5="0.51" E6="887.00"/>
+<ROTMATRIX E1="1.00" E2="0.00" E3="0.00" E4="0.00" E5="1.00" E6="0.00"/>
+</RENDERINGINFO>
+</SHAPECOMPONENT>
+<IMAGERECT X0="0" Y0="0" X1="2760" Y1="0" X2="2760" Y2="2760" X3="0" Y3="2760"/>
+<IMAGECLIP Left="0" Top="0" Right="2700" Bottom="2700"/>
+<INSIDEMARGIN Left="0" Right="0" Top="0" Bottom="0"/>
+<IMAGE Bright="0" Contrast="0" Effect="RealPic" BinItem="2"/>
+</PICTURE>
+<CHAR>&nbsp;국가법령정보센터</CHAR>
+</TEXT>
+</P>
+</PARALIST>
+</CELL>
+</ROW>
+</TABLE>
+<CHAR></CHAR>
+</TEXT>
+</P>
+</PARALIST>
+</FOOTER>
+</TEXT>
+<TEXT CharShape="12"><CHAR>[시행 2025. 4. 11.] [개인정보보호위원회고시 제2025-4호, 2025. 4. 11., 일부개정.]</CHAR>
+</TEXT>
+</P>
+<P ParaShape="16"><TEXT CharShape="6"/></P>
+<P ParaShape="17"><TEXT CharShape="25"><CHAR>개인정보보호위원회(개인정보보호정책과), 02-2100-3057</CHAR></TEXT></P>
+<P ParaShape="2"><TEXT CharShape="5"/>
+</P>
+{전문}
+<P ParaShape="23"><TEXT CharShape="6"><CHAR>         제1장 총칙</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제1조(목적)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 이 지침은 「개인정보 보호법」(이하 "법"이라 한다) 제12조제1항에 따른 개인정보의 처리에 관한 기준, 개인정보 침해의 유형 및 예방조치 등에 관한 세부적인 사항을 규정함을 목적으로 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제2조(용어의 정의)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 이 지침에서 사용하는 용어의 뜻은 다음과 같다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. "처리"란 개인정보의 수집, 생성, 연계, 연동, 기록, 저장, 보유, 가공, 편집, 검색, 출력, 정정(訂正), 복구, 이용, 제공, 공개, 파기(破棄), 그 밖에 이와 유사한 행위를 말한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. "개인정보처리자"란 업무를 목적으로 법 제2조제4호에 따른 개인정보파일을 운용하기 위하여 스스로 또는 다른 사람을 통하여 개인정보를 처리하는 모든 공공기관, 법인ㆍ단체, 개인 등을 말한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. "공공기관"이란 법 제2조제6호 및 「개인정보 보호법 시행령」(이하 "영"이라 한다) 제2조에 따른 기관을 말한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. "친목단체"란 학교, 지역, 기업, 인터넷 커뮤니티 등을 단위로 구성되는 것으로서 자원봉사, 취미, 정치, 종교 등 공통의 관심사나 목표를 가진 사람간의 친목도모를 위한 각종 동창회, 동호회, 향우회, 반상회 및 동아리 등의 모임을 말한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  5. "개인정보 보호책임자"란 개인정보처리자의 개인정보 처리에 관한 업무를 총괄해서 책임지는 자로서 영 제32조제1항 또는 제3항에 해당하는 자를 말한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  6. "개인정보취급자"란 개인정보처리자의 지휘ㆍ감독을 받아 개인정보를 처리하는 업무를 담당하는 자로서 임직원, 파견근로자, 시간제근로자 등을 말한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  7. "개인정보처리시스템"이란 데이터베이스 시스템 등 개인정보를 처리할 수 있도록 체계적으로 구성한 시스템을 말한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  8. "고정형 영상정보처리기기"란 일정한 공간에 설치되어 지속적 또는 주기적으로 사람 또는 사물의 영상 등을 촬영하거나 이를 유ㆍ무선망을 통하여 전송하는 장치로서 영 제3조제1항에 따른 폐쇄회로 텔레비전 및 네트워크 카메라를 말한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  8의2. "이동형 영상정보처리기기"란 사람이 신체에 착용 또는 휴대하거나 이동 가능한 물체에 부착 또는 거치(据置)하여 사람 또는 사물의 영상 등을 촬영하거나 이를 유ㆍ무선망을 통하여 전송하는 장치로서 영 제3조제2항에 따른 착용형, 휴대형, 부착ㆍ거치형 장치를 말한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  9. "개인영상정보"란 법 제2조제1호에 따른 개인정보 중 고정형 영상정보처리기기 또는 이동형 영상정보처리기기에 의하여 촬영ㆍ처리되는 영상 형태의 개인정보를 말한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  10. "고정형영상정보처리기기운영자"란 법 제25조제1항 각 호에 따라 고정형 영상정보처리기기를 설치ㆍ운영하는 자를 말한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  10의2. "이동형영상정보처리기기운영자"란 법 제25조의2제1항 각 호에 따라 업무를 목적으로 이동형 영상정보처리기기를 운영하는 자를 말한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  11. "공개된 장소"란 공원, 도로, 지하철, 상가 내부, 주차장 등 불특정 또는 다수가 접근하거나 통행하는 데에 제한을 받지 아니하는 장소를 말한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제3조(적용범위)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 이 지침은 전자적 파일과 인쇄물, 서면 등 모든 형태의 개인정보파일을 운용하는 개인정보처리자에게 적용된다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제4조(개인정보 보호 원칙)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자는 개인정보 처리 목적을 명확하게 하여야 하고 그 목적에 필요한 범위에서 최소한의 개인정보만을 적법하고 정당하게 수집하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 개인정보처리자는 개인정보의 처리 목적에 필요한 범위에서 적합하게 개인정보를 처리하여야 하며, 그 목적 외의 용도로 활용하여서는 아니 된다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 개인정보처리자는 개인정보의 처리 목적에 필요한 범위에서 개인정보의 정확성과 최신성을 유지하도록 하여야 하고, 개인정보를 처리하는 과정에서 고의 또는 과실로 부당하게 변경 또는 훼손되지 않도록 하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ④ 개인정보처리자는 개인정보의 처리 방법 및 종류 등에 따라 정보주체의 권리가 침해받을 가능성과 그 위험 정도를 고려하여 그에 상응하는 적절한 기술적ㆍ관리적 및 물리적 보호조치를 통하여 개인정보를 안전하게 관리하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ⑤ 개인정보처리자는 개인정보 처리방침 등 개인정보의 처리에 관한 사항을 공개하여야 하며, 열람청구권 등 정보주체의 권리가 보장될 수 있도록 합리적인 절차와 방법 등을 마련하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ⑥ 개인정보처리자는 개인정보의 처리 목적에 필요한 범위에서 적법하게 개인정보를 처리하는 경우에도 정보주체의 사생활 침해를 최소화하는 방법으로 개인정보를 처리하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ⑦ 개인정보처리자는 개인정보를 적법하게 수집한 경우에도 개인정보를 익명 또는 가명으로 처리하여도 개인정보 수집목적을 달성할 수 있는 경우 익명처리가 가능한 경우에는 익명에 의하여, 익명처리로 목적을 달성할 수 없는 경우에는 가명에 의하여 처리될 수 있도록 하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ⑧ 개인정보처리자는 관계 법령에서 규정하고 있는 책임과 의무를 준수하고 실천함으로써 정보주체의 신뢰를 얻기 위하여 노력하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제5조(다른 지침과의 관계)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 중앙행정기관의 장이 소관 분야의 개인정보 처리와 관련한 개인정보 보호지침을 정하는 경우에는 이 지침에 부합되도록 하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>         제2장 개인정보 처리 기준</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>           제1절 개인정보의 처리</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제6조(개인정보의 수집ㆍ이용)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보의 "수집"이란 정보주체로부터 직접 이름, 주소, 전화번호 등의 개인정보를 제공받는 것뿐만 아니라 정보주체에 관한 모든 형태의 개인정보를 취득하는 것을 말한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 개인정보처리자는 다음 각 호의 경우에 개인정보를 수집할 수 있으며, 그 수집 목적의 범위에서 이용할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 정보주체로부터 사전에 동의를 받은 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 법률에서 개인정보를 수집ㆍ이용할 수 있음을 구체적으로 명시하거나 허용하고 있는 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 법령에서 개인정보처리자에게 구체적인 의무를 부과하고 있고, 개인정보처리자가 개인정보를 수집ㆍ이용하지 않고는 그 의무를 이행하는 것이 불가능하거나 현저히 곤란한 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 공공기관이 개인정보를 수집ㆍ이용하지 않고는 법령 등에서 정한 소관 업무를 수행하는 것이 불가능하거나 현저히 곤란한 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  5. 개인정보를 수집ㆍ이용하지 않고는 정보주체와 체결한 계약을 이행하거나 계약을 체결하는 과정에서 정보주체의 요청에 따른 조치를 이행하기 곤란한 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  6. 명백히 정보주체 또는 제3자(정보주체를 제외한 그 밖의 모든 자를 말한다)의 급박한 생명, 신체, 재산의 이익을 위하여 필요하다고 인정되는 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  7. 개인정보처리자가 법령 또는 정보주체와의 계약 등에 따른 정당한 이익을 달성하기 위하여 필요한 경우로서 명백하게 정보주체의 권리보다 우선하는 경우. 다만, 이 경우 개인정보의 수집ㆍ이용은 개인정보처리자의 정당한 이익과 상당한 관련이 있고 합리적인 범위를 초과하지 아니한 경우에 한한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  8. 공중위생 등 공공의 안전과 안녕을 위하여 긴급히 필요한 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 개인정보처리자는 정보주체로부터 직접 명함 또는 그와 유사한 매체(이하 "명함등"이라 함)를 제공받음으로써 개인정보를 수집하는 경우 명함등을 제공하는 정황 등에 비추어 사회통념상 동의 의사가 있었다고 인정되는 범위 내에서만 이용할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ④ 개인정보처리자는 인터넷 홈페이지 등 공개된 매체 또는 장소(이하 "인터넷 홈페이지등"이라 함)에서 개인정보를 수집하는 경우 정보주체의 동의 의사가 명확히 표시되거나 인터넷 홈페이지등의 표시 내용에 비추어 사회통념상 동의 의사가 있었다고 인정되는 범위 내에서만 이용할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ⑤ 개인정보처리자는 계약 등의 상대방인 정보주체가 대리인을 통하여 법률행위 또는 의사표시를 하는 경우 대리인의 대리권 확인을 위한 목적으로만 대리인의 개인정보를 수집ㆍ이용할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ⑥ 근로자와 사용자가 근로계약을 체결하는 경우 「근로기준법」에 따른 임금지급, 교육, 증명서 발급, 근로자 복지제공을 위하여 근로자의 동의 없이 개인정보를 수집ㆍ이용할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제7조(개인정보의 제공)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보의 "제공"이란 개인정보의 저장 매체나 개인정보가 담긴 출력물ㆍ책자 등을 물리적으로 이전하거나 네트워크를 통한 개인정보의 전송, 개인정보에 대한 제3자의 접근권한 부여, 개인정보처리자와 제3자의 개인정보 공유 등 개인정보의 이전 또는 공동 이용 상태를 초래하는 모든 행위를 말한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 법 제17조의 "제3자"란 정보주체와 정보주체에 관한 개인정보를 수집ㆍ보유하고 있는 개인정보처리자를 제외한 모든 자를 의미하며, 정보주체의 대리인(명백히 대리의 범위 내에 있는 것에 한한다)과 법 제26조제2항에 따른 수탁자는 제외한다(이하 같다).</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 개인정보처리자가 법 제17조제2항제1호에 따라 정보주체에게 개인정보를 제공받는 자를 알리는 경우에는 그 성명(법인 또는 단체인 경우에는 그 명칭)과 연락처를 함께 알려야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제8조(개인정보의 목적 외 이용ㆍ제공)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자가 법 제18조제2항에 따라 개인정보를 목적 외의 용도로 제3자에게 제공하는 경우에는 개인정보를 제공받는 자에게 이용 목적, 이용 방법, 이용 기간, 이용 형태 등을 제한하거나, 개인정보의 안전성 확보를 위하여 필요한 구체적인 조치를 마련하도록 문서(전자문서를 포함한다. 이하 같다)로 요청하여야 한다. 이 경우 요청을 받은 자는 그에 따른 조치를 취하고 그 사실을 개인정보를 제공한 개인정보처리자에게 문서로 알려야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 법 제18조제2항에 따라 개인정보를 목적 외의 용도로 제3자에게 제공하는 자는 해당 개인정보를 제공받는 자와 개인정보의 안전성 확보 조치에 관한 책임관계를 명확히 하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 개인정보처리자가 법 제18조제3항제1호에 따라 정보주체에게 개인정보를 제공받는 자를 알리는 경우에는 그 성명(법인 또는 단체인 경우에는 그 명칭)과 연락처를 함께 알려야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제9조(개인정보 수집 출처 등 통지)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자가 정보주체 이외로부터 수집한 개인정보를 처리하는 때에는 정당한 사유가 없는 한 정보주체의 요구가 있은 날로부터 3일 이내에 법 제20조제1항 각 호의 모든 사항을 정보주체에게 알려야 한다. 다만, 다음 각 호의 어느 하나에 해당하는 경우에는 그러하지 아니 하다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 통지를 요구하는 대상이 되는 개인정보가 법 제32조제2항 각 호의 어느 하나에 해당하는 개인정보파일에 포함되어 있는 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 통지로 인하여 다른 사람의 생명ㆍ신체를 해할 우려가 있거나 다른 사람의 재산과 그 밖의 이익을 부당하게 침해할 우려가 있는 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 개인정보처리자는 제1항 단서에 따라 제1항 전문에 따른 정보주체의 요구를 거부하는 경우에는 정당한 사유가 없는 한 정보주체의 요구가 있은 날로부터 3일 이내에 그 거부의 근거와 사유를 정보주체에게 알려야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제10조(개인정보의 파기방법 및 절차)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자는 개인정보의 보유 기간이 경과하거나 개인정보의 처리 목적 달성, 가명정보의 처리 기간 경과, 해당 서비스의 폐지, 사업의 종료 등 그 개인정보가 불필요하게 되었을 때에는 정당한 사유가 없는 한 그로부터 5일 이내에 그 개인정보를 파기하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 영 제16조제1항제1호의 ‘복원이 불가능한 방법’이란 현재의 기술수준에서 사회통념상 적정한 비용으로 파기한 개인정보의 복원이 불가능하도록 조치하는 방법을 말한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 개인정보처리자는 개인정보의 파기에 관한 사항을 기록ㆍ관리하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ④ 개인정보 보호책임자는 개인정보 파기 시행 후 파기 결과를 확인하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ⑤ 개인정보처리자 중 공공기관의 개인정보파일 파기에 관하여는 제55조 및 제56조를 적용한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제11조(법령에 따른 개인정보의 보존)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자가 법 제21조제1항 단서에 따라 법령에 근거하여 개인정보를 파기하지 아니하고 보존하여야 하는 경우에는 물리적 또는 기술적 방법으로 분리하여서 저장ㆍ관리하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 제1항에 따라 개인정보를 분리하여 저장ㆍ관리하는 경우에는 개인정보 처리방침 등을 통하여 법령에 근거하여 해당 개인정보 또는 개인정보파일을 저장ㆍ관리한다는 점을 정보주체가 알 수 있도록 하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제12조(동의를 받는 방법 등)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자가 개인정보의 처리에 대하여 정보주체의 동의를 받을 때에는 법 제22조제1항에 따라 각각의 동의 사항을 구분하여 정보주체가 이를 명확하게 인지할 수 있도록 알리고 동의를 받아야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 개인정보처리자는 법 제22조에 따라 개인정보의 처리에 대하여 정보주체의 동의를 받을 때에는 다음 각 호의 조건을 모두 충족해야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 정보주체가 자유로운 의사에 따라 동의 여부를 결정할 수 있을 것</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 동의를 받으려는 내용이 구체적이고 명확할 것</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 그 내용을 쉽게 읽고 이해할 수 있는 문구를 사용할 것</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 동의 여부를 명확하게 표시할 수 있는 방법을 정보주체에게 제공할 것</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 개인정보처리자는 법 제22조제1항 각 호의 어느 하나에 해당하는 경우에는 동의 사항을 구분하여 각각 동의를 받아야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. ∼5. 삭제</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ④ 개인정보처리자는 제3항에 해당하여 개인정보를 처리하고자 하는 경우에는 정보주체에게 동의 또는 동의 거부를 선택할 수 있음을 명시적으로 알려야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ⑤ 개인정보처리자는 정보주체의 동의 없이 처리할 수 있는 개인정보에 대해서는 그 항목과 처리의 법적 근거를 정보주체의 동의를 받아 처리하는 개인정보와 구분하여 개인정보처리방침에 공개하거나 서면, 전자우편, 팩스, 전화, 문자전송 또는 이에 상당하는 방법(이하 "서면등의 방법"이라 한다)으로 정보주체에게 알려야 한다. 이 경우 동의 없이 처리할 수 있는 개인정보라는 입증책임은 개인정보처리자가 부담한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ⑥ 개인정보처리자가 영 제17조제2항제2호의 규정에 따라 전화에 의한 동의와 관련하여 통화내용을 녹취할 때에는 녹취사실을 정보주체에게 알려야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ⑦ 개인정보처리자가 친목단체를 운영하기 위하여 다음 각 호의 어느 하나에 해당하는 개인정보를 수집하는 경우에는 정보주체의 동의 없이 개인정보를 수집ㆍ이용할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 친목단체의 가입을 위한 성명, 연락처 및 친목단체의 회칙으로 정한 공통의 관심사나 목표와 관련된 인적 사항</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 친목단체의 회비 등 친목유지를 위해 필요한 비용의 납부현황에 관한 사항</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 친목단체의 활동에 대한 구성원의 참석여부 및 활동내용에 관한 사항</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 기타 친목단체의 구성원 상호 간의 친교와 화합을 위해 구성원이 다른 구성원에게 알리기를 원하는 생일, 취향 및 가족의 애경사 등에 관한 사항</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ⑧ 개인정보처리자가 정보주체의 동의를 받기 위하여 동의서를 작성하는 경우에는 개인정보 처리 동의 안내서를 준수하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제13조(법정대리인의 동의)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 영 제17조의2제1항에 따라 개인정보처리자가 법정대리인의 성명ㆍ연락처를 수집할 때에는 해당 아동에게 자신의 신분과 연락처, 법정대리인의 성명과 연락처를 수집하고자 하는 이유를 알려야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 개인정보처리자는 법 제22조의2제2항에 따라 수집한 법정대리인의 개인정보를 법정대리인의 동의를 얻기 위한 목적으로만 이용하여야 하며, 법정대리인의 동의 거부가 있거나 법정대리인의 동의 의사가 확인되지 않는 경우 수집일로부터 5일 이내에 파기해야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제14조(정보주체의 사전 동의를 받을 수 없는 경우)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 개인정보처리자가 법 제15조제1항제5호 및 법 제18조제2항제3호에 따라 정보주체의 사전 동의 없이 개인정보를 수집ㆍ이용 또는 제공한 경우 해당 사유가 해소된 때에는 개인정보의 처리를 즉시 중단하여야 하며, 정보주체에게 사전 동의 없이 개인정보를 수집ㆍ이용 또는 제공한 사실과 그 사유 및 이용내역을 알려야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제15조(개인정보취급자에 대한 감독)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자는 개인정보취급자를 업무상 필요한 한도 내에서 최소한으로 두어야 하며, 개인정보취급자의 개인정보 처리 범위를 업무상 필요한 한도 내에서 최소한으로 제한하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 개인정보처리자는 개인정보 처리시스템에 대한 접근권한을 업무의 성격에 따라 해당 업무수행에 필요한 최소한의 범위로 업무담당자에게 차등 부여하고 접근권한을 관리하기 위한 조치를 취해야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 개인정보처리자는 개인정보취급자에게 보안서약서를 제출하도록 하는 등 적절한 관리ㆍ감독을 해야 하며, 인사이동 등에 따라 개인정보취급자의 업무가 변경되는 경우에는 개인정보에 대한 접근권한을 변경 또는 말소해야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>         제2절 개인정보 처리의 위탁</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제16조(수탁자의 선정 시 고려사항)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 개인정보의 처리 업무를 위탁하는 개인정보처리자(이하 "위탁자"라 한다)가 개인정보 처리 업무를 위탁받아 처리하는 자(이하 "수탁자"라 한다)를 선정할 때에는 인력과 물적 시설, 재정 부담능력, 기술 보유의 정도, 책임능력 등 개인정보 처리 및 보호 역량을 종합적으로 고려하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제17조(개인정보 보호 조치의무)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 수탁자는 위탁받은 개인정보를 보호하기 위하여 「개인정보의 안전성 확보조치 기준 고시」에 따른 관리적ㆍ기술적ㆍ물리적 조치를 하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>         제3절 개인정보 처리방침 작성</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제18조(개인정보 처리방침의 작성기준 등)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자가 개인정보 처리방침을 작성하는 때에는 법 제30조제1항 각 호 및 영 제31조제1항 각 호의 사항을 명시적으로 구분하되, 알기 쉬운 용어로 구체적이고 명확하게 표현하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 개인정보처리자는 처리하는 개인정보가 개인정보의 처리 목적에 필요한 최소한이라는 점을 밝혀야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제19조(개인정보 처리방침의 기재사항)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 개인정보처리자가 개인정보 처리방침을 작성할 때에는 법 제30조제1항에 따라 다음 각 호의 사항을 모두 포함하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 개인정보의 처리 목적</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 처리하는 개인정보의 항목</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 개인정보의 처리 및 보유 기간</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 개인정보의 제3자 제공에 관한 사항(해당되는 경우에만 정한다)</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  5. 영 제14조의2제2항에 따라 개인정보의 추가적인 이용 또는 제공이 지속적으로 발생하는 경우 같은 조 제1항 각 호의 고려사항에 대한 판단 기준(해당되는 경우에만 정한다)</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  6. 인터넷 접속정보파일 등 개인정보를 자동으로 수집하는 장치의 설치ㆍ운영 및 그 거부에 관한 사항(해당되는 경우에만 정한다)</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  7. 개인정보의 파기절차 및 파기방법(법 제21조제1항 단서에 따라 개인정보를 보존하여야 하는 경우에는 그 보존근거와 보존하는 개인정보 항목을 포함한다)</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  8. 법 제23조제3항에 따른 민감정보의 공개 가능성 및 비공개를 선택하는 방법(해당되는 경우에만 정한다)</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  9. 개인정보처리의 위탁에 관한 사항(해당되는 경우에만 정한다)</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  10. 법 제28조의2 및 제28조의3에 따른 가명정보의 처리 등에 관한 사항(해당되는 경우에만 정한다)</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  11. 영 제30조제1항에 따른 개인정보의 안전성 확보조치에 관한 사항</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  12. 개인정보 처리방침의 변경에 관한 사항</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  13. 법 제31조에 따른 개인정보 보호책임자의 성명 또는 개인정보 보호업무 및 관련 고충사항을 처리하는 부서의 명칭과 전화번호 등 연락처</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  14. 법 제31조의2제1항에 따라 국내대리인을 지정하는 경우 국내대리인의 성명, 주소, 전화번호 및 전자우편 주소(해당되는 경우에만 정한다)</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  15. 개인정보의 열람, 정정ㆍ삭제, 처리정지 요구권 등 정보주체와 법정대리인의 권리ㆍ의무 및 그 행사방법에 관한 사항</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  16. 개인정보의 열람청구를 접수ㆍ처리하는 부서</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  17. 정보주체의 권익침해에 대한 구제방법</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제20조(개인정보 처리방침의 공개)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자가 법 제30조제2항에 따라 개인정보 처리방침을 수립하는 경우에는 인터넷 홈페이지를 통해 지속적으로 게재하여야 하며, 이 경우 "개인정보 처리방침"이라는 명칭을 사용하되, 글자 크기, 색상 등을 활용하여 다른 고지사항과 구분함으로써 정보주체가 쉽게 확인할 수 있도록 하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 개인정보처리자가 인터넷 홈페이지를 운영하지 않는 경우 또는 인터넷 홈페이지 관리상의 하자가 있는 경우에는 영 제31조제3항 각 호의 어느 하나 이상의 방법으로 개인정보 처리방침을 공개하여야 한다. 이 경우에도 "개인정보 처리방침"이라는 명칭을 사용하되, 글자 크기, 색상 등을 활용하여 다른 고지사항과 구분함으로써 정보주체가 쉽게 확인할 수 있도록 하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 개인정보처리자가 영 제31조제3항제3호의 방법으로 개인정보 처리방침을 공개하는 경우에는 간행물ㆍ소식지ㆍ홍보지ㆍ청구서 등이 발행될 때마다 계속하여 게재하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제21조(개인정보 처리방침의 변경)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 개인정보처리자가 개인정보 처리방침을 변경하는 경우에는 변경 및 시행의 시기, 변경된 내용을 지속적으로 공개하여야 하며, 변경된 내용은 정보주체가 쉽게 확인할 수 있도록 변경 전ㆍ후를 비교하여 공개하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>         제4절 개인정보 보호책임자</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제22조(개인정보 보호책임자의 공개)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자가 개인정보 보호책임자를 지정하거나 변경하는 경우 개인정보 보호책임자의 지정 및 변경 사실, 성명과 부서의 명칭, 전화번호 등 연락처를 공개하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 개인정보처리자는 개인정보 보호책임자를 공개하는 경우 개인정보 보호와 관련한 고충처리 및 상담을 실제로 처리할 수 있는 연락처를 공개하여야 한다. 이 경우 개인정보 보호책임자와 개인정보 보호 업무를 처리하는 담당자의 성명, 부서의 명칭, 전화번호 등 연락처를 함께 공개할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제23조(개인정보 보호책임자의 교육)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 영 제32조제5항에 따라 보호위원회가 개설 운영할 수 있는 개인정보 보호책임자에 대한 교육의 내용은 다음 각 호와 같다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 개인정보 보호 관련 법령 및 제도의 내용</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 법 제31조제3항 및 영 제32조제1항 각 호의 업무수행에 필요한 사항</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 그 밖에 개인정보처리자의 개인정보 보호를 위하여 필요한 사항</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제24조(교육계획의 수립 및 시행)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 보호위원회는 매년 초 해당 연도 개인정보 보호책임자 교육계획을 수립하여 시행한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 보호위원회는 제1항의 교육계획에 따라 개인정보 처리 및 보호에 관한 전문성을 갖춘 단체에 개인정보 보호책임자 교육을 실시하게 할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 보호위원회는 개인정보 보호책임자가 지리적ㆍ경제적 여건에 구애받지 않고 편리하게 교육을 받을 수 있는 여건 조성을 위해 노력하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>         제5절 개인정보 유출 통지 및 신고 등</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제25조(개인정보의 유출등)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 개인정보의 분실ㆍ도난ㆍ유출(이하 "유출등"이라 한다)은 법령이나 개인정보처리자의 자유로운 의사에 의하지 않고 개인정보가 해당 개인정보처리자의 관리ㆍ통제권을 벗어나 제3자가 그 내용을 알 수 있는 상태에 이르게 된 것을 말한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제26조(유출등의 통지시기 및 항목)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자는 개인정보가 유출등이 되었음을 알게 된 때에는 72시간 이내에 해당 정보주체에게 다음 각 호의 사항을 알려야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 유출등이 된 개인정보의 항목</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 유출등이 된 시점과 그 경위</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 유출등으로 인하여 발생할 수 있는 피해를 최소화하기 위하여 정보주체가 할 수 있는 방법 등에 관한 정보</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 개인정보처리자의 대응조치 및 피해구제절차</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  5. 정보주체에게 피해가 발생한 경우 신고 등을 접수할 수 있는 담당부서 및 연락처</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 제1항에도 불구하고 개인정보처리자는 다음 각 호의 어느 하나에 해당하는 경우에는 해당 사유가 해소된 후 지체 없이 정보주체에게 알릴 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 유출등이 된 개인정보의 확산 및 추가 유출등을 방지하기 위하여 접속경로의 차단, 취약점 점검ㆍ보완, 유출등이 된 개인정보의 회수ㆍ삭제 등 긴급한 조치가 필요한 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 천재지변이나 그 밖에 부득이한 사유로 인하여 72시간 이내에 통지하기 곤란한 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 개인정보처리자는 제1항 각 호의 사항을 모두 확인하기 어려운 경우에는 정보주체에게 다음 각 호의 사실만을 우선 알리고, 추후 확인되는 즉시 알릴 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 정보주체에게 유출등이 발생한 사실</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 제1항의 통지항목 중 확인된 사항</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ④ 개인정보처리자는 개인정보 유출등의 사고를 인지하지 못해 유출등의 사고가 발생한 시점으로부터 72시간 이내에 해당 정보주체에게 개인정보 유출등의 통지를 하지 아니한 경우에는 실제 유출등의 사고를 알게 된 시점을 입증하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제27조(유출등의 통지방법)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자는 정보주체에게 제26조제1항 각 호의 사항을 통지할 때에는 서면등의 방법을 통하여 정보주체에게 알려야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 개인정보처리자는 정보주체의 연락처를 알 수 없는 경우 등 정당한 사유가 있는 경우에는 법 제34조제1항 각 호 외의 부분 단서에 따라 같은 항 각 호의 사항을 정보주체가 쉽게 알 수 있도록 자신의 인터넷 홈페이지에 30일 이상 게시하는 것으로 제1항의 통지를 갈음할 수 있다. 다만, 인터넷 홈페이지를 운영하지 아니하는 개인정보처리자의 경우에는 사업장등의 보기 쉬운 장소에 법 제34조제1항 각 호의 사항을 30일 이상 게시하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제28조(개인정보 유출등의 신고)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자는 다음 각 호의 어느 하나에 해당하는 경우로서 개인정보가 유출등이 되었음을 알게 되었을 때에는 72시간 이내에 제26조제1항 각 호의 사항을 서면등의 방법으로 보호위원회 또는 한국인터넷진흥원에 신고해야 한다. 다만, 천재지변이나 그 밖에 부득이한 사유로 인하여 72시간 이내에 신고하기 곤란한 경우에는 해당 사유가 해소된 후 지체 없이 신고할 수 있으며, 개인정보 유출등의 경로가 확인되어 해당 개인정보를 회수ㆍ삭제하는 등의 조치를 통해 정보주체의 권익 침해 가능성이 현저히 낮아진 경우에는 신고하지 않을 수 있다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 1천명 이상의 정보주체에 관한 개인정보가 유출등이 된 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 민감정보, 고유식별정보가 유출등이 된 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 개인정보처리시스템 또는 개인정보취급자가 개인정보 처리에 이용하는 정보기기에 대한 외부로부터의 불법적인 접근에 의해 개인정보가 유출등이 된 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 제1항에 따른 신고는 별지 제1호서식에 따른 개인정보 유출등 신고서를 통하여 하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 개인정보처리자는 개인정보 포털(www.privacy.go.kr)을 통하여 유출등 신고를 할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ④ 개인정보처리자는 제1항에 따른 신고를 하려는 경우로서 법 제34조제1항제1호 또는 제2호의 사항에 관한 구체적인 내용을 확인하지 못한 경우에는 개인정보가 유출등이 된 사실, 그때까지 확인된 내용 및 같은 항 제3호부터 제5호까지의 사항을 서면등의 방법으로 우선 신고해야 하며, 추가로 확인되는 내용에 대해서는 확인되는 즉시 신고해야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제29조(개인정보 유출등 사고 대응 매뉴얼 등)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 다음 각 호의 어느 하나에 해당하는 개인정보처리자는 유출등 사고 발생 시 신속한 대응을 통해 피해 발생을 최소화하기 위해 「개인정보 유출등 대응 매뉴얼」을 마련하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 법 제2조제6호에 따른 공공기관</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 그 밖에 1천명 이상의 정보주체에 관한 개인정보를 처리하는 개인정보처리자</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 제1항에 따른 개인정보 유출등 대응 매뉴얼에는 유출등 통지ㆍ조회 절차, 영업점ㆍ인터넷회선 확충 등 고객 민원 대응조치, 현장 혼잡 최소화 조치, 고객불안 해소조치, 피해자 구제조치 등을 포함하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 개인정보처리자는 개인정보 유출등에 따른 피해복구 조치 등을 수행함에 있어 정보주체의 불편과 경제적 부담을 최소화할 수 있도록 노력하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제30조(개인정보 침해 사실의 신고 처리 등)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자의 개인정보 처리로 인하여 개인정보에 관한 권리 또는 이익을 침해받은 사람은 법 제62조제2항에 따른 개인정보침해 신고센터에 침해 사실을 신고할 수 있다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 제1항에 따른 개인정보침해 신고센터는 다음 각 호의 업무를 수행한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 개인정보 처리와 관련한 신고의 접수ㆍ상담</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 개인정보 침해 신고에 대한 사실 조사ㆍ확인 및 관계자의 의견 청취</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 개인정보처리자에 대한 개인정보 침해 사실 안내 및 시정 유도</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 사실 조사 결과가 정보주체의 권리 또는 이익 침해 사실이 없는 것으로 판단되는 경우 신고의 종결 처리</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  5. 법 제43조에 따른 개인정보 분쟁조정위원회 조정 안내 등을 통한 고충 해소 지원</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>         제6절 정보주체의 권리 보장</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제31조(개인정보 열람 연기 사유의 소멸)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자가 법 제35조제3항 후문에 따라 개인정보의 열람을 연기한 후 그 사유가 소멸한 경우에는 정당한 사유가 없는 한 사유가 소멸한 날로부터 10일 이내에 열람하도록 하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 정보주체로부터 영 제41조제1항제4호의 규정에 따른 개인정보의 제3자 제공 현황의 열람청구를 받은 개인정보처리자는 국가안보에 긴요한 사안으로 법 제35조제4항제3호마목의 규정에 따른 업무를 수행하는데 중대한 지장을 초래하는 경우, 제3자에게 열람청구의 허용 또는 제한, 거부와 관련한 의견을 조회하여 결정할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제32조(개인정보의 정정ㆍ삭제)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자가 법 제36조제1항에 따른 개인정보의 정정ㆍ삭제 요구를 받았을 때는 정당한 사유가 없는 한 요구를 받은 날로부터 10일 이내에 그 개인정보를 조사하여 정보주체의 요구에 따라 정정ㆍ삭제 등 필요한 조치를 한 후 그 결과를 정보주체에게 알려야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 정보주체의 정정ㆍ삭제 요구가 법 제36조제1항 단서에 해당하는 경우에는 정당한 사유가 없는 한 요구를 받은 날로부터 10일 이내에 삭제를 요구할 수 없는 근거법령의 내용을 정보주체에게 알려야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제33조(개인정보의 처리정지)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자가 정보주체로부터 법 제37조제1항에 따라 개인정보처리를 정지하도록 요구받은 때에는 정당한 사유가 없는 한 요구를 받은 날로부터 10일 이내에 개인정보 처리의 일부 또는 전부를 정지하여야 한다. 다만, 법 제37조제2항 단서에 해당하는 경우에는 정보주체의 처리정지 요구를 거절할 수 있다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 개인정보처리자는 정보주체의 요구에 따라 처리가 정지된 개인정보에 대하여 정당한 사유가 없는 한 처리정지의 요구를 받은 날로부터 10일 이내에 해당 개인정보의 파기 등 정보주체의 요구에 상응하는 조치를 취하고 그 결과를 정보주체에게 알려야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제34조(권리행사의 방법 및 절차)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보처리자는 정보주체가 법 제38조제1항에 따른 열람등요구를 하는 경우에는 개인정보를 수집하는 방법과 동일하거나 보다 쉽게 정보주체가 열람요구 등 권리를 행사할 수 있도록 간편한 방법을 제공하여야 하며, 개인정보의 수집시에 요구되지 않았던 증빙서류 등을 요구하거나 추가적인 절차를 요구할 수 없다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 제1항의 규정은 영 제46조에 따라 본인 또는 정당한 대리인임을 확인하고자 하는 경우와 영 제47조에 따른 수수료와 우송료의 정산에도 준용한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>         제3장 영상정보처리기기 설치ㆍ운영</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>           제1절 총칙</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제35조(적용범위)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 이 장은 고정형영상정보처리기기운영자 또는 이동형영상정보처리기기운영자가 설치ㆍ운영하는 고정형 영상정보처리기기 또는 이동형 영상정보처리기기와 그 기기를 통하여 처리되는 개인영상정보를 대상으로 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>         제2절 고정형 영상정보처리기기의 설치</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제36조(고정형 영상정보처리기기 운영ㆍ관리 방침)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 고정형영상정보처리기기운영자가 법 제25조제7항에 따라 고정형 영상정보처리기기 운영ㆍ관리 방침을 마련하거나 변경하는 경우에는 정보주체가 쉽게 확인할 수 있도록 공개하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 고정형영상정보처리기기운영자가 법 제30조에 따른 개인정보 처리방침을 정할 때 고정형 영상정보처리기기 운영ㆍ관리에 관한 사항을 포함시킨 경우에는 제1항에 따른 고정형 영상정보처리기기 운영ㆍ관리 방침을 마련하지 아니할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제37조(관리책임자의 지정)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 고정형영상정보처리기기운영자는 개인영상정보의 처리에 관한 업무를 총괄해서 책임질 관리책임자를 지정하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 제1항의 관리책임자는 법 제31조제3항에 따른 개인정보 보호책임자의 업무에 준하여 다음 각 호의 업무를 수행한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 개인영상정보 보호 계획의 수립 및 시행</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 개인영상정보 처리 실태 및 관행의 정기적인 조사 및 개선</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 개인영상정보 처리와 관련한 불만의 처리 및 피해구제</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 개인영상정보 유출 및 오용ㆍ남용 방지를 위한 내부통제시스템의 구축</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  5. 개인영상정보 보호 교육 계획 수립 및 시행</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  6. 개인영상정보 파일의 보호 및 파기에 대한 관리ㆍ감독</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  7. 그 밖에 개인영상정보의 보호를 위하여 필요한 업무</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 법 제31조에 따른 개인정보 보호책임자는 관리책임자의 업무를 수행할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제38조(사전의견 수렴)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 고정형 영상정보처리기기의 설치 목적 변경에 따른 추가 설치 등의 경우에도 영 제23조제1항에 따라 관계 전문가 및 이해관계인의 의견을 수렴하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제39조(안내판의 설치)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 고정형영상정보처리기기운영자는 정보주체가 고정형 영상정보처리기기가 설치ㆍ운영 중임을 쉽게 알아볼 수 있도록 법 제25조제4항 본문에 따라 다음 각 호의 사항을 기재한 안내판 설치 등 필요한 조치를 하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 설치 목적 및 장소</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 촬영 범위 및 시간</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 관리책임자의 연락처</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 고정형 영상정보처리기기 설치ㆍ운영에 관한 사무를 위탁하는 경우, 수탁자의 명칭 및 연락처</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 제1항에 따른 안내판은 촬영범위 내에서 정보주체가 알아보기 쉬운 장소에 누구라도 용이하게 판독할 수 있게 설치되어야 하며, 이 범위 내에서 고정형영상정보처리기기운영자가 안내판의 크기, 설치위치 등을 자율적으로 정할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 공공기관의 장이 기관 내 또는 기관 간에 고정형 영상정보처리기기의 효율적 관리 및 정보 연계 등을 위해 용도별ㆍ지역별 고정형 영상정보처리기기를 물리적ㆍ관리적으로 통합하여 설치ㆍ운영(이하 ‘통합관리’라 한다)하는 경우에는 설치목적 등 통합관리에 관한 내용을 정보주체가 쉽게 알아볼 수 있도록 제1항에 따른 안내판에 기재하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>         제3절 이동형 영상정보처리기기의 운영</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제39조의2(이동형 영상정보처리기기의 촬영 사실 표시)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 이동형 영상정보처리기기로 사람 또는 그 사람과 관련된 사물의 영상을 촬영하는 경우에는 불빛, 소리, 안내판, 안내서면, 안내방송 또는 그 밖에 이에 준하는 수단이나 방법으로 정보주체가 촬영 사실을 쉽게 알 수 있도록 표시하고 알려야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 드론을 이용한 항공촬영 등 촬영 방법의 특성으로 인해 정보주체에게 촬영 사실을 알리기 어려운 경우에는 보호위원회가 이동형 영상정보처리기기의 촬영 사실 표시를 지원하기 위하여 구축ㆍ운영하는 인터넷 사이트에 촬영 사실 및 목적, 촬영 일시 및 장소 등의 사항을 공지하는 방법으로 알릴 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제39조의3(이동형 영상정보처리기기 운영ㆍ관리 방침)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 이동형영상정보처리기기운영자는 법 제25조의2제4항에 따라 영 제25조제1항을 준용하여 다음 각 호의 사항이 포함된 이동형 영상정보처리기기 운영ㆍ관리 방침을 마련하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 이동형 영상정보처리기기의 운영 근거 및 운영 목적</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 이동형 영상정보처리기기의 운영 대수</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 관리책임자, 담당 부서 및 영상정보에 대한 접근 권한이 있는 사람</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 영상정보의 촬영시간, 보관기간, 보관장소 및 처리방법</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  5. 이동형영상정보처리기기운영자의 영상정보 확인 방법 및 장소</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  6. 정보주체의 영상정보 열람 등 요구에 대한 조치</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  7. 영상정보 보호를 위한 기술적ㆍ관리적 및 물리적 조치</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  8. 그 밖에 이동형 영상정보처리기기의 설치ㆍ운영 및 관리에 필요한 사항</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 이동형영상정보처리기기운영자가 제1항에 따라 이동형 영상정보처리기기 운영ㆍ관리 방침을 마련하거나 변경하는 경우에는 정보주체가 쉽게 확인할 수 있도록 공개하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 이동형영상정보처리기기운영자가 법 제30조에 따른 개인정보 처리방침을 정할 때 이동형 영상정보처리기기 운영ㆍ관리에 관한 사항을 포함시킨 경우에는 제1항에 따른 이동형 영상정보처리기기 운영ㆍ관리 방침을 마련하지 아니할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>         제4절 개인영상정보의 처리</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제40조(개인영상정보 이용ㆍ제3자 제공 등 제한 등)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 고정형영상정보처리기기운영자 또는 이동형영상정보처리기기운영자는 다음 각 호의 경우를 제외하고는 개인영상정보를 수집 목적 이외로 이용하거나 제3자에게 제공하여서는 아니 된다. 다만 제5호부터 제9호까지의 경우는 공공기관의 경우로 한정한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 정보주체에게 동의를 얻은 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 다른 법률에 특별한 규정이 있는 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 명백히 정보주체 또는 제3자의 급박한 생명, 신체, 재산의 이익을 위하여 필요하다고 인정되는 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 통계작성, 과학적 연구, 공익적 기록보존 등을 위하여 필요한 경우로서 법 제28조의2 또는 제28조의3에 따라 가명처리한 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  5. 개인영상정보를 목적 외의 용도로 이용하거나 이를 제3자에게 제공하지 아니하면 다른 법률에서 정하는 소관 업무를 수행할 수 없는 경우로서 보호위원회의 심의ㆍ의결을 거친 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  6. 조약, 그 밖의 국제협정의 이행을 위하여 외국정부 또는 국제기구에 제공하기 위하여 필요한 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  7. 범죄의 수사와 공소의 제기 및 유지를 위하여 필요한 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  8. 법원의 재판업무 수행을 위하여 필요한 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  9. 형(刑) 및 감호, 보호처분의 집행을 위하여 필요한 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  10. 공중위생 등 공공의 안전과 안녕을 위하여 긴급히 필요한 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제41조(보관 및 파기)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 고정형영상정보처리기기운영자 또는 이동형영상정보처리기기운영자는 고정형 영상정보처리기기 또는 이동형 영상정보처리기기 운영ㆍ관리 방침에 명시한 보관 기간이 경과하거나 개인영상정보의 처리 목적 달성, 법 제2조제1호에 따른 가명정보의 처리 기간 경과 등 그 개인영상정보가 불필요하게 되었을 때에는 지체 없이 그 개인영상정보를 파기하여야 한다. 다만, 다른 법령에 특별한 규정이 있는 경우에는 그러하지 아니하다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 고정형영상정보처리기기운영자가 그 사정에 따라 보유 목적의 달성을 위한 최소한의 기간을 산정하기 곤란한 때에는 보관 기간을 개인영상정보 수집 후 30일 이내로 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 개인영상정보의 파기 방법은 다음 각 호의 어느 하나와 같다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 개인영상정보가 기록된 출력물(사진 등) 등은 파쇄 또는 소각</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 전자기적(電磁氣的) 파일 형태의 개인영상정보는 복원이 불가능한 기술적 방법으로 영구 삭제</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제42조(이용ㆍ제3자 제공ㆍ파기의 기록 및 관리)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 고정형영상정보처리기기운영자 또는 이동형영상정보처리기기운영자는 개인영상정보를 수집 목적 이외로 이용하거나 제3자에게 제공하는 경우에는 다음 각 호의 사항을 기록하고 이를 관리하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 개인영상정보 파일의 명칭</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 이용하거나 제공받은 자(공공기관 또는 개인)의 명칭</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 이용 또는 제공의 목적</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 법령상 이용 또는 제공근거가 있는 경우 그 근거</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  5. 이용 또는 제공의 기간이 정해져 있는 경우에는 그 기간</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  6. 이용 또는 제공의 형태</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  7. 이용 또는 제공한 개인영상정보의 업무처리 담당자</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 고정형영상정보처리기기운영자 또는 이동형영상정보처리기기운영자가 개인영상정보를 파기하는 경우에는 다음 사항을 기록하고 관리하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 파기하는 개인영상정보 파일의 명칭</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 개인영상정보 파기 일시 (사전에 파기 시기 등을 정한 자동 삭제의 경우에는 파기 주기 및 자동 삭제 여부에 관한 확인 시기)</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 개인영상정보 파기 담당자</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제43조(영상정보처리기기 설치 및 운영 등의 위탁)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 고정형영상정보처리기기운영자가 영 제26조제1항에 따라 고정형 영상정보처리기기의 설치ㆍ운영에 관한 사무를 제3자에게 위탁하는 경우에는 그 내용을 정보주체가 언제든지 쉽게 확인할 수 있도록 영 제24조에 따른 안내판 및 영 제25조에 따른 고정형 영상정보처리기기 운영ㆍ관리 방침에 수탁자의 명칭 등을 공개하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 이동형영상정보처리기기운영자가 법 제25조의2제4항에 따라 영 제26조를 준용하여 이동형 영상정보처리기기의 운영에 관한 사무를 제3자에게 위탁하는 경우에는 제39조의3에 따른 이동형 영상정보처리기기 운영ㆍ관리 방침에 수탁자의 명칭 등을 공개하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 고정형영상정보처리기기운영자 또는 이동형영상정보처리기기운영자가 영 제26조제1항에 따라 고정형 영상정보처리기기 또는 이동형 영상정보처리기기의 설치ㆍ운영에 관한 사무를 제3자에게 위탁할 경우에는 그 사무를 위탁받은 자가 개인영상정보를 안전하게 처리하고 있는지를 관리ㆍ감독하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>         제5절 개인영상정보의 열람등 요구</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제44조(정보주체의 열람등 요구)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 정보주체는 고정형영상정보처리기기운영자 또는 이동형영상정보처리기기운영자가 처리하는 개인영상정보에 대하여 열람 또는 존재확인(이하 "열람등"이라 한다)을 해당 고정형영상정보처리기기운영자 또는 이동형영상정보처리기기운영자에게 요구할 수 있다. 이 경우 정보주체가 열람등을 요구할 수 있는 개인영상정보는 정보주체 자신이 촬영된 개인영상정보에 한한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 고정형영상정보처리기기운영자 또는 이동형영상정보처리기기운영자가 공공기관인 경우에는 해당 기관의 장에게 별지 제2호서식에 따른 개인영상정보 열람ㆍ존재확인 청구서(전자문서를 포함한다)로 하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 고정형영상정보처리기기운영자 또는 이동형영상정보처리기기운영자는 제1항에 따른 요구를 받았을 때에는 지체 없이 필요한 조치를 취하여야 한다. 이때에 고정형영상정보처리기기운영자 또는 이동형영상정보처리기기운영자는 열람등 요구를 한 자가 본인이거나 정당한 대리인인지를 주민등록증ㆍ운전면허증ㆍ여권 등의 신분증명서를 제출받아 확인하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ④ 제3항의 규정에도 불구하고 법 제35조제4항 각 호의 어느 하나에 해당하는 경우에는 고정형영상정보처리기기운영자 또는 이동형영상정보처리기기운영자는 정보주체의 개인영상정보 열람등 요구를 제한하거나 거부할 수 있다. 이 경우 고정형영상정보처리기기운영자 또는 이동형영상정보처리기기운영자는 10일 이내에 서면 등으로 제한 또는 거부 사유를 정보주체에게 통지하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. ∼3. 삭제</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ⑤ 고정형영상정보처리기기운영자 또는 이동형영상정보처리기기운영자는 제3항 및 제4항에 따른 조치를 취하는 경우 다음 각 호의 사항을 기록하고 관리하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 개인영상정보 열람등을 요구한 정보주체의 성명 및 연락처</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 정보주체가 열람등을 요구한 개인영상정보 파일의 명칭 및 내용</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 개인영상정보 열람등의 목적</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 개인영상정보 열람등을 거부한 경우 그 거부의 구체적 사유</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  5. 정보주체에게 개인영상정보 사본을 제공한 경우 해당 영상정보의 내용과 제공한 사유</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  6. 개인영상정보 열람등의 업무처리 담당자</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ⑥ 삭제</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제45조(개인영상정보 관리대장)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 제42조제1항 및 제2항, 제44조제5항에 따른 기록 및 관리는 별지 제3호서식에 따른 ‘개인영상정보 관리대장’을 활용할 수 있다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제46조(정보주체 이외의 자의 개인영상정보 보호)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 고정형영상정보처리기기운영자 또는 이동형영상정보처리기기운영자는 제44조제2항에 따른 열람등 조치를 취하는 경우, 만일 정보주체 이외의 자를 명백히 알아볼 수 있거나 정보주체 이외의 자의 사생활 침해의 우려가 있는 경우에는 해당되는 정보주체 이외의 자의 개인영상정보를 알아볼 수 없도록 보호조치를 취하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>         제6절 개인영상정보 보호 조치</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제47조(개인영상정보의 안전성 확보를 위한 조치)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 고정형영상정보처리기기운영자 또는 이동형영상정보처리기기운영자는 개인영상정보가 분실ㆍ도난ㆍ유출ㆍ위조ㆍ변조 또는 훼손되지 아니하도록 법 제29조 및 영 제30조제1항에 따라 안전성 확보를 위하여 다음 각 호의 조치를 하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 개인영상정보의 안전한 처리를 위한 내부 관리계획의 수립ㆍ시행. 다만, 1만명 미만의 정보주체의 개인정보를 처리하는 소상공인ㆍ개인ㆍ단체의 경우에는 생략할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 개인영상정보에 대한 접근 통제 및 접근 권한의 제한 조치</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 개인영상정보를 안전하게 저장ㆍ전송할 수 있는 기술의 적용 (네트워크 카메라의 경우 안전한 전송을 위한 암호화 조치, 개인영상정보파일 저장시 비밀번호 설정 등)</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 처리기록의 보관 및 위조ㆍ변조 방지를 위한 조치 (개인영상정보의 생성 일시 및 열람할 경우에 열람 목적ㆍ열람자ㆍ열람 일시 등 기록ㆍ관리 조치 등)</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  5. 개인영상정보의 안전한 물리적 보관을 위한 보관시설 마련 또는 잠금장치 설치</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제48조(개인영상정보처리기기의 설치ㆍ운영에 대한 점검)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 공공기관의 장이 고정형 영상정보처리기기를 설치ㆍ운영하는 경우에는 이 지침의 준수 여부에 대한 자체점검을 실시하여 다음 해 3월 31일까지 그 결과를 보호위원회에게 통보하고 영 제34조제3항에 따른 시스템에 등록하여야 한다. 이 경우 다음 각 호의 사항을 고려하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 고정형 영상정보처리기기의 운영ㆍ관리 방침에 열거된 사항</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 관리책임자의 업무 수행 현황</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 고정형 영상정보처리기기의 설치 및 운영 현황</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 개인영상정보 수집 및 이용ㆍ제공ㆍ파기 현황</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  5. 위탁 및 수탁자에 대한 관리ㆍ감독 현황</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  6. 정보주체의 권리행사에 대한 조치 현황</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  7. 기술적ㆍ관리적ㆍ물리적 조치 현황</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  8. 고정형 영상정보처리기 설치ㆍ운영의 필요성 지속 여부 등</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 공공기관의 장은 제1항과 제3항에 따른 고정형 영상정보처리기기 설치ㆍ운영에 대한 자체점검을 완료한 후에는 그 결과를 홈페이지 등에 공개하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 공공기관 외의 고정형영상정보처리기기운영자는 고정형 영상정보처리기기 설치ㆍ운영으로 인하여 정보주체의 개인영상정보의 침해가 우려되는 경우에는 자체점검 등 개인영상정보의 침해 방지를 위해 적극 노력하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>         제4장 공공기관 개인정보파일 등록ㆍ공개</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>           제1절 총칙</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제49조(적용대상)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 이 장의 적용대상은 다음과 같다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 중앙행정기관(대통령 소속 기관과 국무총리 소속 기관을 포함한다) 및 그 소속 기관, 지방자치단체</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 「국가인권위원회법」에 따른 국가인권위원회</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 「공공기관의 운영에 관한 법률」에 따른 공공기관</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 「지방공기업법」에 따른 지방공사 및 지방공단</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  5. 특별법에 의하여 설립된 특수법인</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  6. 「초ㆍ중등교육법」,「고등교육법」및 그 밖의 다른 법률에 따라 설치된 각급 학교</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제50조(적용제외)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 이 장은 다음 각 호의 어느 하나에 해당하는 개인정보파일에 관하여는 적용하지 아니한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 국회, 법원, 헌법재판소, 중앙선거관리위원회(그 소속기관을 포함한다)에서 관리하는 개인정보파일</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 법 제32조제2항에 따라 적용이 제외되는 다음 각목의 개인정보파일</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="38" Style="0"><TEXT CharShape="5"><CHAR>    가. 국가안전, 외교상 비밀, 그 밖에 국가의 중대한 이익에 관한 사항을 기록한 개인정보파일</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="38" Style="0"><TEXT CharShape="5"><CHAR>    나. 범죄의 수사, 공소의 제기 및 유지, 형 및 감호의 집행, 교정처분, 보호처분, 보안관찰처분과 출입국 관리에 관한 사항을 기록한 개인정보파일</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="38" Style="0"><TEXT CharShape="5"><CHAR>    다. 「조세범처벌법」에 따른 범칙행위 조사 및 「관세법」에 따른 범칙행위 조사에 관한 사항을 기록한 개인정보파일</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="38" Style="0"><TEXT CharShape="5"><CHAR>    라. 회의 참석 수당 지급, 자료ㆍ물품의 송부, 금전의 정산 등 단순 업무 수행을 위해 운영되는 개인정보파일로서 지속적 관리 필요성이 낮은 개인정보파일</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="38" Style="0"><TEXT CharShape="5"><CHAR>    마. 공중위생 등 공공의 안전과 안녕을 위하여 긴급히 필요한 경우로서 일시적으로 처리되는 개인정보파일</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="38" Style="0"><TEXT CharShape="5"><CHAR>    바. 다른 법령에 따라 비밀로 분류된 개인정보파일</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="38" Style="0"><TEXT CharShape="5"><CHAR>    사. 그 밖에 일회적 업무 처리만을 위해 수집된 개인정보파일로서 저장되거나 기록되지 않는 개인정보파일</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 법 제58조제1항제2호에 따라 적용이 제외되는 국가안전보장과 관련된 정보 분석을 목적으로 수집 또는 제공 요청되는 개인정보파일</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="38" Style="0"><TEXT CharShape="5"><CHAR>    가. 삭제</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="38" Style="0"><TEXT CharShape="5"><CHAR>    나. 삭제</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="38" Style="0"><TEXT CharShape="5"><CHAR>    다. 삭제</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 영상정보처리기기를 통하여 처리되는 개인영상정보파일</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  5. 삭제</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  6. 「금융실명거래 및 비밀보장에 관한 법률」에 따른 금융기관이 금융업무 취급을 위해 보유하는 개인정보파일</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>         제2절 개인정보파일의 등록주체와 절차</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제51조(개인정보파일 등록 주체)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보파일을 운용하는 공공기관의 개인정보 보호책임자는 그 현황을 보호위원회에 등록하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 중앙행정기관, 광역자치단체, 특별자치시도, 기초자치단체는 보호위원회에 직접 등록하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 교육청 및 각급 학교 등은 교육부를 통하여 보호위원회에 등록하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ④ 중앙행정기관 및 지방자치단체의 소속기관, 기타 공공기관은 상위 관리기관을 통하여 보호위원회에 등록하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제52조(개인정보파일 등록 및 변경 신청)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보파일을 운용하는 공공기관의 개인정보취급자는 해당 공공기관의 개인정보 보호책임자에게 개인정보파일 등록을 신청하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 개인정보파일 등록 신청 사항은 다음의 각 호와 같다. 신청은 「개인정보 처리 방법에 관한 고시」(이하 이 조에서 "고시"라 한다) 제3조제2항에 따른 별지 제2호서식의 ‘개인정보파일 등록ㆍ변경등록 신청서’를 활용할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 개인정보파일을 운용하는 공공기관의 명칭</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 개인정보파일의 명칭</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 개인정보파일의 운영 근거 및 목적</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 개인정보파일에 기록되는 개인정보의 항목</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  5. 개인정보파일로 보유하고 있는 개인정보의 정보주체 수</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  6. 개인정보의 처리 방법</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  7. 개인정보의 보유 기간</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  8. 개인정보를 통상적 또는 반복적으로 제공하는 경우에는 그 제공받는 자</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  9. 해당 공공기관에서 개인정보 처리 관련 업무를 담당하는 부서</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  10. 개인정보의 열람 요구를 접수ㆍ처리하는 부서</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  11. 개인정보파일의 개인정보 중 법 제35조제4항에 따라 열람을 제한하거나 거절할 수 있는 개인정보의 범위 및 제한 또는 거절 사유</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  12. 법 제33조제1항에 따른 개인정보 영향평가를 받은 개인정보파일의 경우에는 그 영향평가의 결과</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 개인정보취급자는 등록한 사항이 변경된 경우에는 고시 제3조제2항에 따른 별지 제2호서식의 ‘개인정보파일 등록ㆍ변경등록 신청서’를 활용하여 개인정보 보호책임자에게 변경을 신청하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제53조(개인정보파일 등록 및 변경 확인)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보파일 등록 또는 변경 신청을 받은 개인정보 보호책임자는 등록ㆍ변경 사항을 검토하고 그 적정성을 판단한 후 보호위원회에 등록하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 교육청 및 각급 학교 등의 개인정보 보호책임자는 교육부에 제1항에 따른 등록ㆍ변경 사항의 검토 및 적정성 판단을 요청한 후, 교육부의 확인을 받아 보호위원회에 등록하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 중앙행정기관 및 지방자치단체의 소속기관, 기타 공공기관은 상위 관리기관에 제1항에 따른 등록ㆍ변경 사항의 검토 및 적정성 판단을 요청한 후, 상위 관리기관의 확인을 받아 보호위원회에 등록하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ④ 제1항부터 제3항의 등록은 60일 이내에 하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제54조(개인정보파일 표준목록 등록과 관리)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 특별지방행정기관, 지방자치단체, 교육기관(학교 포함) 등 전국적으로 단일한 공통업무를 집행하고 있는 기관은 각 중앙행정기관에서 제공하는 ‘개인정보파일 표준목록’에 따라 등록해야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 전국 단일의 공통업무와 관련된 개인정보파일 표준목록은 해당 중앙행정기관에서 등록ㆍ관리해야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제55조(개인정보파일의 파기)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 공공기관은 개인정보파일의 보유기간 경과, 처리 목적 달성 등 개인정보파일이 불필요하게 되었을 때에는 지체 없이 그 개인정보파일을 파기하여야 한다. 다만, 다른 법령에 따라 보존하여야 하는 경우에는 그러하지 아니하다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 공공기관은 개인정보파일의 보유기간, 처리 목적 등을 반영한 개인정보 파기계획을 수립ㆍ시행하여야 한다. 다만, 영 제30조제1항제1호에 따른 내부 관리계획이 수립되어 있는 경우에는 내부 관리계획에 개인정보 파기계획을 포함하여 시행할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 개인정보취급자는 보유기간 경과, 처리 목적 달성 등 파기 사유가 발생한 개인정보파일을 선정하고, 별지 제4호서식에 따른 개인정보파일 파기요청서에 파기 대상 개인정보파일의 명칭, 파기방법 등을 기재하여 개인정보 보호책임자의 승인을 받아 개인정보를 파기하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ④ 개인정보 보호책임자는 개인정보 파기 시행 후 파기 결과를 확인하고 별지 제5호서식에 따른 개인정보파일 파기 관리대장을 작성하여야 한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제56조(개인정보파일 등록 사실의 삭제)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 개인정보취급자는 제55조에 따라 개인정보파일을 파기한 경우, 법 제32조에 따른 개인정보파일의 등록사실에 대한 삭제를 개인정보 보호책임자에게 요청해야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 개인정보파일 등록의 삭제를 요청받은 개인정보 보호책임자는 그 사실을 확인하고, 지체 없이 등록 사실을 삭제한 후 그 사실을 보호위원회에 통보한다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제57조(등록ㆍ파기에 대한 개선권고)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 공공기관의 개인정보 보호책임자는 제53조제1항에 따라 검토한 개인정보파일이 과다하게 운용되고 있다고 판단되는 경우에는 개선을 권고할 수 있다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 교육청 및 각급 학교, 중앙행정기관 및 지방자치단체의 소속기관, 기타 공공기관의 개인정보 보호책임자는 제53조제2항 및 제3항에 따라 검토한 개인정보파일이 과다하게 운용된다고 판단되거나, 등록되지 않은 파일이 있는 것으로 확인되는 경우에는 개선을 권고할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 보호위원회는 개인정보파일의 등록사항과 그 내용을 검토하고 다음 각 호의 어느 하나에 해당되는 경우에는 법 제32조제3항에 따라 해당 공공기관의 개인정보 보호책임자에게 개선을 권고할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  1. 개인정보파일이 과다하게 운용된다고 판단되는 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  2. 등록하지 않은 개인정보파일이 있는 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  3. 개인정보파일 등록 사실이 삭제되었음에도 불구하고 개인정보파일을 계속 보유하고 있는 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  4. 개인정보 영향평가를 받은 개인정보파일을 보유하고 있음에도 그 결과를 등록사항에 포함하지 않은 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="37" Style="0"><TEXT CharShape="5"><CHAR>  5. 기타 법 제32조에 따른 개인정보파일의 등록 및 공개에 위반되는 사항이 있다고 판단되는 경우</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ④ 보호위원회는 제3항에 따라 개선을 권고한 경우에는 그 내용 및 결과에 대하여 보호위원회의 심의ㆍ의결을 거쳐 공표할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ⑤ 보호위원회는 공공기관의 개인정보파일 등록ㆍ파기 현황에 대한 점검을 실시할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>         제3절 개인정보파일의 관리 및 공개</CHAR></TEXT></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제58조(개인정보파일대장 작성)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 공공기관은 1개의 개인정보파일에 1개의 개인정보파일대장을 작성해야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제59조(개인정보파일 이용ㆍ제공 관리)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 공공기관은 법 제18조제2항 각 호에 따라 제3자가 개인정보파일의 이용ㆍ제공을 요청한 경우에는 각각의 이용ㆍ제공 가능 여부를 확인하고 별지 제6호서식의 ‘개인정보 목적 외 이용ㆍ제공대장’에 기록하여 관리해야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제60조(개인정보파일 보유기간의 산정)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 보유기간은 전체 개인정보가 아닌 개별 개인정보의 수집부터 삭제까지의 생애주기로서 보유목적에 부합된 최소기간으로 산정하되, 개별 법령의 규정에 명시된 자료의 보존기간에 따라 산정해야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 개별 법령에 구체적인 보유기간이 명시되어 있지 않은 경우에는 개인정보 보호책임자의 협의를 거쳐 기관장의 결재를 통하여 산정해야 한다. 다만, 보유기간은 별표 1의 개인정보파일 보유기간 책정 기준표에서 제시한 기준과 「공공기록물 관리에 관한 법률 시행령」 제25조에 따른 기록관리기준표를 상회할 수 없다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 삭제</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제61조(개인정보파일 현황 공개 및 방법)</CHAR></TEXT><TEXT CharShape="5"><CHAR> ① 공공기관의 개인정보 보호책임자는 개인정보파일의 보유ㆍ파기현황을 주기적으로 조사하여 그 결과를 해당 공공기관의 개인정보 처리방침에 포함하여 관리해야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ② 보호위원회는 개인정보파일 등록 현황을 누구든지 쉽게 열람할 수 있도록 공개할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="36" Style="0"><TEXT CharShape="5"><CHAR>  ③ 보호위원회는 전 공공기관의 개인정보파일 등록 및 삭제 현황을 종합하여 매년 공개해야 하며, 개인정보파일 현황 공개에 관한 업무를 전자적으로 처리하기 위하여 정보시스템을 구축ㆍ운영할 수 있다.</CHAR></TEXT><TEXT CharShape="7" /></P><P ParaShape="23"><TEXT CharShape="6"><CHAR>제62조(재검토 기한)</CHAR></TEXT><TEXT CharShape="5"><CHAR> 보호위원회는 이 고시에 대하여 「훈령ㆍ예규 등의 발령 및 관리에 관한 규정」에 따라 2025년 1월 1일을 기준으로 3년마다(매 3년이 되는 해의 1월 1일 전까지를 말한다) 그 타당성을 검토하여 개선 등의 조치를 하여야 한다.</CHAR></TEXT><TEXT CharShape="7"/></P>
+<P ParaShape="2"><TEXT CharShape="5"/></P><P ParaShape="2"><TEXT CharShape="6"><CHAR>&nbsp;&nbsp;&nbsp;&nbsp;부칙&nbsp;</CHAR></TEXT><TEXT CharShape="23"><CHAR>&nbsp;&lt;제2025-4호, 2025. 4. 11.&gt; &nbsp;</CHAR></TEXT></P><P ParaShape="24"><TEXT CharShape="5"><CHAR>이 고시는 발령한 날부터 시행한다.</CHAR></TEXT><TEXT CharShape="7"/></P>
+
+
+</SECTION>
+</BODY>
+<TAIL><BINDATASTORAGE><BINDATA Size="84377" Encoding="Base64" Id="1">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</BINDATA>
+<BINDATA Size="5750" Encoding="Base64" Id="2">Qk1mEAAAAAAAADYAAAAoAAAAJQAAACUAAAABABgAAAAAADAQAAAAAAAAAAAAAAAAAAAAAAAA
+/////////////////////////////////v/+/P///v//////////////////////+f//4v/9
+6e7n9ezk/////////////////////////P/9////////////////////////////////////
+////AP////////////////////////////////////////////7//v349P////D9/0/bsTx/
+S2UyDmknA2UyDmUyDm4+JpNnT9C+uP//////////////////////////////////////////
+/////////wD///////7//v7//v/+/v7+/v78/f////////////++o47Qp5f////Z+vcSq3Ij
+YBJdJANlDwBaFwFaFwFTDQBJAgBJAgBSExNtQTWvlobr5tr///////////////////78////
+/f78//////////8A//////7+/v7+//7//v7+/v7+////////6+bahEsshEMi98/B////Eqty
+AFoBeDsApjwAl1IAjFkBjFIDfUUDeDsAXSQDSQIAMQAASQIAbj4mr5aG//////////////3+
+/v////79/v//////////AP/////9/vz///7+///+/f////////Dk0VoXARsAAMqTd////4rn
+0wBmEpdYAstRALlpAJNmAZxcApdYApFWBIxSA4xSA4BSAXg7AFMNADEAABsAAJNnT/3+9///
+//////7//vz9//7//////////wD////////////9/f3////////w5NFYBwAbAACEQyL////i
+//0Fj1kAeC/EZwG5aQCoZwGfYgGfYgGfYgGXWAKRVgSMUgOESwV9RQOESwV9RQNTDQAbAACH
+WkX////////////+//7+//////////8A/////v///P//////////5NfFZQ8ASQIASQIAtJFx
+////yfTsAINGK4Q8xGcBuWkAq2sBqGcBqGcBqGcBn2IBnFwCl1gCkVYEjFIDfUUDfUUDfUUD
+XSQDMQAAbUE1///+/////P//////////////AP////z//f////////Xs5IRLLDEAAHg7AEkC
+AL6jjv///73q4QB4LyuEPNRlAMRnAatrAahnAatrAahnAahnAaNlAp9iAZxcApdYAoxSA4RL
+BX1FA31FA1oXATEAAG1BNf////////7///z//////wD////+//////////+of2RJAgBpJwOE
+SwVJAgC0kXH////J9OwAeC8AeC/EZwHUZQCrawGebgKrawGrawGrawGoZwGjZQKfYgGcXAKX
+WAKMUgOESwV9RQN9RQNJAgAxAADKtKX////////+//////8A////////////////ezwaMQAA
+mGYNiFUOWAcAhEMi//38////Ta5wAGYSW3Yf6GIA1GUApWsBpWsBpWsBq2sBq2sBq2sBo2UC
+n2IBn2IBl1gCjFIDfUUDhEsFcDUASQIAWhcB/Pr0////////////AP///////////////55y
+VUkCAHAtAJFbDXg7AFgHAMq0pf///+L//QB4LwB4L4xkAOhiANRlAMRnAblpAKtrAatrAatr
+AahnAahnAaNlApxcApdYAoxSA4RLBX1FA10kAxsAALSRcf///////////wD////////17OT/
+///38tuEQyJJAgB9RQORVgRlDwCESyz17OT///+o2b8Ag0YAeC90bg7UZQDUZQDUZQC5aQCr
+awGrawGrawGoZwGoZwGfYgGcXAKRVgSESwWESwVwNQBJAgBdJAPr5tr///////8A////////
+j14kq4ZZ////////nnJVSQIAWhcBcDUAWhcBhEsF8+rZ////4v/9KrqNAHgvAGYSW3YfmHQY
+6GIA1GUAq2sBpWsBq2sBqGcBqGcBn2IBnFwCjFIDhEsFfUUDXSQDMQAAvqOO////////AP//
+/////3s8GkkCAKuGWf////////T09JRpM3AtAFgHADEAAEkCAMqTd////////8n//xKrcgBm
+EgB4L0l+MMRnAehiAMRnAZ5uAqtrAahnAaNlApxcApdYAoxSA4RLBXg7ADEAAJ5yVfz69P//
+/wD////6+uh7PBpaFwFpJwOUaTPYyab////////////e0LaeclVpJwNlDwCESwXlqoT17OTw
+/f+P07IAeC8AeC8SiEWdcRDoYgDEZwGebgKoZwGoZwGfYgGcXAKRVgSESwV9RQMxAABuPibr
+5tr///8A////3tC2eDsAfUUDeDsAaScDeDsApoE/zrmZ8+rZ9/Lb+vro/P3/0L64tJFxyKyD
+98/B////////qNm/BIc4AINGEohFmHQY6GIAuWkApWsBqGcBo2UCnFwCl1gCjFIDhEsFUw0A
+XSQD2M3C////AP///9DAm3A1AH1FA5VqDIxZAXg7AHAtAHA1AH1FA595LMu3i/DpzPr66PDk
+0djJptjJpvPq2f///////4/TsgB4LwCDRgGMUZ1xEOhiAKtrAaVrAahnAZ9iAZxcApFWBIRL
+BVoXAV0kA9THvP///wD////OuZl4OwB9RQOOYg6VagyZbQqTZgGMUgN9RQNwLQBaFwFaFwFw
+NQCMWQGriETPvZXr5tr///////////8xnmIAeC8BjFESiEXEZwHEZwGrawGoZwGjZQKfYgGX
+WAKESwVaFwFdJAPUx7z///8A////0MCbeDsAhEsFmGYNlWoMk2YBjFkBfUUDfUUDjFIDm3Ij
+q4hEt5dJuJhXyKyD5NfF/fj0////////////j9OyBIc4AHgvBY9ZSX4w1GUAuWkAqGcBo2UC
+n2IBnFwCjFIDWhcBaScD1Me8////AP///9jJpoRLBYxZAZNmAX1FA3A1AIBSAauIRMWvdOXc
+tv////////////////r66Mu3i97Qtv///////////8vs3TGeYgB4LwGMURKIRcRnAcRnAblp
+AKNlAp9iAZxcApFWBFoXAWUyDtjNwv///wD////q4LuESwVpJwNwNQCZbQrPvZX38tv/////
+///////////k2K24mFePXiSMZADFr3Tw7+/////////////v+/ZNrnAEhzgBjFEAg0aZbQrU
+ZQC5aQClawGjZQKcXAKRVgRaFwFlMg7d1cr///8A////////eDsAeDsAxa90+vro////////
+9ezk5Nitxa90lGkzeDsAgFIBpoE/y7eL9ezk/////v//////////1/LlObh7FZVMFJVbAYxR
+W3YfxGcBuWkAqGcBo2UCn2IBjFkBSQIAh1pF9ezk////AP///////6uIRMu3i/////////Dk
+0biYV5tyI4xkAHA1AF0kA45iDtHEkP////////////////z//////////4/TsiixcDCrZzGe
+YgGMUTd/M8RnAcRnAahnAaNlAp9iAYRLBUkCAK+Whv///////wD////////6+uj////////F
+r3SAUgF4OwCAUgGAUgGIXAC/qkr9/vf////////////////9/f3///////////85uHsosXBF
+vYQ2rHIFj1krhDy5aQDEZwGoZwGjZQKcXAJwLQBaFwHYzcL///////8A/////P//////////
+t5dJaScDgFIBrI8KpIUAk2YB0MR5/////////////////P//////////////////cs6gIatp
+Rb2EXcaTObh7BptjK4Q8xGcBxGcBo2UCn2IBl1IAZQ8Ak2dP/Pz8////////AP/////9/v//
+//Pq2ZRpM31FA6yPCqyPCohcAMm3Xf///v////n///////////////////////3+92jHnAel
+V0W9hF7JlF3Gk0W9hBKrcjd/M7teALteAKNlAp9iAXg7AFMNAOTXxf///////////wD/////
+//////////+feSx4OwCsjwqkhQCMZADl3Lb////////////////////////k9u+P07I5uHsh
+q2lFvYRZw41TxpBZw40/x5YSq3JJfjC7XgC7XgCrdAB9RQNTDQCTZ0/////////8//////8A
+/////v/+/v//////2MmmjGQAjFkBrI8KkGwA3daf////////8/j3y+zdqNm/cs6gRb2EKLFw
+KLFwRb2EXcaTU8aQWcONXcaTP8eWKrqNdG4Ou14AuWkAl1gCUw0AaScD/f73////////////
+////AP////7//vz//////////9XIkIxkAJV0AJBsALmnNf3+9////7Dp1gelVyixcCixcCGr
+aTm4e1nDjV7JlFPGkFPGkFnDjV7JlDXVpCq6jbteALteAJdSAFMNAGknA87KtP//////////
+/////////wD//////f78///+///////////QxHmQbACMZACQbADq4Lv///+w6dYEhzgHpVc5
+uHtdxpNeyZRdxpNTxpBWyJJTxpBZw41P27Ez6bdNrnDLUQCXUgBlDwBaFwHKtKX/////////
+//7+//7///////8A//////79//7//P///v//////////0MR5lXQAgFIBuac1////////sOnW
+KLFwHrZxRb2EXcaTUMmPVsiSVsiSWcONWc2ZOfnSS9+flWoMpjwAUw0AWhcB0L64////////
+/////P/9//38///+////AP////z////9/v7//v/9/v/9/v////////v2z7mnNYBSAayPCv//
+/////+T272jHnBKrchKrckW9hFDJj1bIklnNmTn50kvfn4hVDpUCAEkCAJRpM/Xs5P//////
+//////39/f/9/vz//////////wD////////////////+///+///+///////////////VyJCV
+dACkhQD38tv////////L7N1yzqA5uHsetnEetnEK1ZItmkNpJwOVAgCTZ0/OyrT/////////
+///8//////////////////////////8A/////////////////////////v///P/9////////
+////6uC7ybdd3dKH////////////7/v21/Lly+zdsOnWsOnW0MCb5aqE7cWz8/j3////////
+////////////////////////////////////AP////////////////////////7///n////9
+/v7//v////////////DpzP/+/v7////////////////////////////9/v//////////////
+/////////////////////////////////////////wD/////////////////////////////
+////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////8A////////////////////////
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////AA==</BINDATA>
+<BINDATA Size="84377" Encoding="Base64" Id="3">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</BINDATA>
+{이미지파일}
+<BINDATA Size="252903" Encoding="Base64" Id="4">iVBORw0KGgoAAAANSUhEUgAAAMgAAADIAQAAAACFI5MzAAABb0lEQVR42u2XwQoDMQhEA/6W4K8L/lYgnXF3IW3pTXtKuocm71B1xzEd69cahxxySBfxMSTWHCpTjZsmEnhiyrTlapH7HuISjp+265u0EuxdpZ1MQSlVIjpJwolMna9wdZFUyLO+tVNGcrkq5WjfvVBGoA6hFgc1MnWPrZRgaxkD20ptj62UZB0RA5K1iYS7CBYtAkaBEOQuagOJlQdoYSoR4m8iOLRJecD5kOsWQS1BKQc8gh5Lrbg1ERoFpAEdpiltEdQSSAQnjAOYUmkikAd3DvMTqnE1kbj1R7OYHB5NZOXLYhsHrfbNqyoJ/GGgdSVPEUB0EWFRmaGzorKaSOoPoucdBVHsFa0li4MWMWSLvc+SSsIpy8bFB4q/vbyBPJQWSxfsIv60LbUYu+JrSVz646Lm9wlYS5xzQpnpYEWlkUw+tPIcun0E44J+bv7hVaXk8nLe7jkEbTURKiT1zruqysdNtY6c/5qHHPI38gJyunP2tw7ELQAAAABJRU5ErkJggg==</BINDATA>
+</BINDATASTORAGE>
+</TAIL>
+</HWPML>
