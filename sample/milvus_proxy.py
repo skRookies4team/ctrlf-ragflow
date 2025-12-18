@@ -86,6 +86,12 @@ class MilvusProxy:
                 dtype=DataType.FLOAT_VECTOR,
                 dim=self.dim,
             ),
+            FieldSchema(
+                name="chunk_hash",
+                dtype=DataType.VARCHAR,
+                max_length=64,
+                is_primary=False,
+            ),
         ]
 
         schema = CollectionSchema(
@@ -154,3 +160,22 @@ class MilvusProxy:
         print(
             f"[MilvusProxy] Inserted {len(chunks)} chunks into {self.collection_name}"
         )
+        
+    def exists_chunk_hash(self, dataset_id: str, chunk_hash: str) -> bool:
+        """
+        동일 dataset_id + chunk_hash 청크가 이미 있는지 확인
+        """
+        expr = f'dataset_id == "{dataset_id}" && chunk_hash == "{chunk_hash}"'
+        res = self.collection.query(
+            expr=expr,
+            output_fields=["chunk_hash"],
+            limit=1,
+        )
+        return len(res) > 0
+
+    def delete_file(self, dataset_id: str, doc_id: str):
+        """
+        파일 단위 삭제 (dataset_id + doc_id 기준)
+        """
+        expr = f'dataset_id == "{dataset_id}" && doc_id == "{doc_id}"'
+        self.collection.delete(expr)

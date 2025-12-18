@@ -1,6 +1,7 @@
 # ocr/engine_smart.py
 import logging
 import re
+import time
 from typing import Tuple, Dict, Any, Optional
 
 import numpy as np
@@ -14,20 +15,20 @@ try:
 except Exception:
     EASY_AVAILABLE = False
 
+# torch는 easyocr 내부에서 쓰지만, 여기서 쓰레드 제한용으로 optional
+try:
+    import torch
+    TORCH_AVAILABLE = True
+except Exception:
+    TORCH_AVAILABLE = False
+
 logger = logging.getLogger("smart_ocr")
 
 
 # ============================================================
-# 텍스트 품질 점수
+# OCR 텍스트 품질 점수
 # ============================================================
 def text_quality_score(t: str) -> float:
-    """
-    OCR 결과 텍스트 품질을 0.0 ~ 1.0 사이로 스코어링.
-    - 길이
-    - 한글/영문/숫자 비율
-    - 노이즈 문자 비율
-    - 같은 글자 반복 패턴
-    """
     if not t or not t.strip():
         return 0.0
 
@@ -48,14 +49,13 @@ def text_quality_score(t: str) -> float:
     return float(max(0.0, min(score, 1.0)))
 
 
-# ============================================================
-# Smart OCR Engine (Tesseract + EasyOCR Fallback)
-# ============================================================
 class SmartOCREngine:
     """
-    CPU 환경 기준 최적:
-    - 기본: Tesseract + 이미지 전처리
-    - 보조: 품질이 낮은 페이지에서만 EasyOCR Fallback
+    안정화 최종:
+    - 기본: Tesseract
+    - EasyOCR: "구제 가능" + "이미지 크기 안전" 조건에서만 실행
+    - EasyOCR 입력은 강제 다운스케일 적용
+    - EasyOCR readtext 전후로 시간 로그 / OOM 즉시 폴백
     """
 
     def __init__(
@@ -63,6 +63,12 @@ class SmartOCREngine:
         use_easyocr: bool = True,
         easyocr_gpu: bool = False,
         easyocr_langs=None,
+        # ↓↓↓ 여기부터 '멈춤 방지' 튜닝 파라미터
+        hard_skip_tq_below: float = 0.05,     # tesseract q가 이보다 낮으면 easyocr 아예 스킵
+        easy_min_tq_to_try: float = 0.10,     # 너무 낮은 경우는 구제 불가 → easyocr 비추(스킵)
+        easy_max_pixels: int = 2_500_000,     # easyocr에 넣는 최대 픽셀(예: 2.5MP)
+        easy_max_side: int = 1600,            # 다운스케일 최대 한 변
+        torch_num_threads: int = 1,           # CPU 폭주 방지(1~2 추천)
     ) -> None:
         self.use_easyocr = use_easyocr and EASY_AVAILABLE
         self.easyocr_gpu = easyocr_gpu
@@ -72,96 +78,92 @@ class SmartOCREngine:
             easyocr_langs = ["ko", "en"]
         self.easyocr_langs = easyocr_langs
 
-        if not EASY_AVAILABLE and use_easyocr:
-            logger.warning("[SmartOCR] easyocr 미설치 → Tesseract only 모드로 동작")
+        self.hard_skip_tq_below = hard_skip_tq_below
+        self.easy_min_tq_to_try = easy_min_tq_to_try
+        self.easy_max_pixels = easy_max_pixels
+        self.easy_max_side = easy_max_side
+        self.torch_num_threads = torch_num_threads
 
-    # --------------------------------------------------------
-    # 이미지 전처리 (슬라이드 PDF 기준)
+        if not EASY_AVAILABLE and use_easyocr:
+            logger.warning("[SmartOCR] easyocr 미설치 → Tesseract only")
+
+        # torch thread 제한(있으면 적용)
+        if TORCH_AVAILABLE and self.use_easyocr:
+            try:
+                torch.set_num_threads(max(1, int(torch_num_threads)))
+            except Exception:
+                pass
+
     # --------------------------------------------------------
     @staticmethod
     def _prepare_image_for_ocr(img: Image.Image) -> Image.Image:
-        """
-        - Grayscale
-        - 해상도 보정 (너무 작으면 확대)
-        - CLAHE 대비 향상
-        - 노이즈 제거
-        - 큰 텍스트 블록만 크롭 (여백 제거)
-        """
         cv_img = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
         gray = cv2.cvtColor(cv_img, cv2.COLOR_BGR2GRAY)
 
-        # 해상도 보정
         h, w = gray.shape
-        target_min_width = 1500
-        if w < target_min_width:
-            scale = target_min_width / float(w)
+        if w < 1500:
+            scale = 1500 / float(w)
             gray = cv2.resize(
                 gray,
                 (int(w * scale), int(h * scale)),
                 interpolation=cv2.INTER_LANCZOS4,
             )
 
-        # 약간의 블러로 노이즈 완화
         gray = cv2.GaussianBlur(gray, (3, 3), 0)
-
-        # CLAHE 대비 향상
         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
         gray = clahe.apply(gray)
 
-        # 적당한 이진화 (너무 aggressive 하지 않게)
-        _, th = cv2.threshold(
-            gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
-        )
-
-        # 텍스트 블록 추출 (여백 제거)
-        # 너무 공격적이면 안 되므로 "최대 컨투어"만 사용
-        try:
-            contours, _ = cv2.findContours(
-                255 - th, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
-            )
-            if contours:
-                # 가장 큰 컨투어
-                c = max(contours, key=cv2.contourArea)
-                x, y, w, h = cv2.boundingRect(c)
-                if w * h > 0.25 * th.shape[0] * th.shape[1]:
-                    th = th[y : y + h, x : x + w]
-        except Exception:
-            # 컨투어 실패해도 그냥 전체 사용
-            pass
-
+        _, th = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
         return Image.fromarray(th)
 
     # --------------------------------------------------------
+    @staticmethod
+    def _downscale_for_easyocr(img: Image.Image, max_pixels: int, max_side: int) -> Image.Image:
+        """
+        EasyOCR은 큰 이미지에서 CPU/메모리 폭주로 '멈춘 것처럼' 보이는 경우가 잦음.
+        그래서 입력 이미지를 안전하게 다운스케일.
+        """
+        if img.mode != "RGB":
+            img = img.convert("RGB")
+
+        w, h = img.size
+        pixels = w * h
+
+        # 1) 한 변 제한
+        if max(w, h) > max_side:
+            scale = max_side / float(max(w, h))
+            nw, nh = int(w * scale), int(h * scale)
+            img = img.resize((nw, nh), Image.BILINEAR)
+            w, h = img.size
+            pixels = w * h
+
+        # 2) 픽셀 수 제한(추가로 한 번 더)
+        if pixels > max_pixels:
+            scale = (max_pixels / float(pixels)) ** 0.5
+            nw, nh = max(1, int(w * scale)), max(1, int(h * scale))
+            img = img.resize((nw, nh), Image.BILINEAR)
+
+        return img
+
+    # --------------------------------------------------------
     def _init_easyocr(self):
-        if not self.use_easyocr:
-            return
-        if self.easy_reader is not None:
+        if not self.use_easyocr or self.easy_reader is not None:
             return
         try:
             logger.info(
-                "[SmartOCR] EasyOCR Reader 초기화 중 (langs=%s, gpu=%s)",
+                "[SmartOCR] EasyOCR Reader 초기화 (langs=%s, gpu=%s)",
                 self.easyocr_langs,
                 self.easyocr_gpu,
             )
-            self.easy_reader = easyocr.Reader(
-                self.easyocr_langs, gpu=self.easyocr_gpu
-            )
+            self.easy_reader = easyocr.Reader(self.easyocr_langs, gpu=self.easyocr_gpu)
             logger.info("[SmartOCR] EasyOCR Reader 초기화 완료")
         except Exception as e:
-            logger.warning(
-                "[SmartOCR] EasyOCR 초기화 실패 → Tesseract only (%s)", e
-            )
-            self.easy_reader = None
+            logger.warning("[SmartOCR] EasyOCR 초기화 실패 → %s", e)
             self.use_easyocr = False
+            self.easy_reader = None
 
     # --------------------------------------------------------
     def _ocr_tesseract(self, img: Image.Image) -> Tuple[str, float]:
-        """
-        Tesseract 강화 버전:
-        - PSM 4, 6
-        - preserve_interword_spaces=1
-        - 이미지 전처리 포함
-        """
         pre_img = self._prepare_image_for_ocr(img)
 
         best_txt = ""
@@ -175,25 +177,18 @@ class SmartOCREngine:
                 "-c user_defined_dpi=300"
             )
             try:
-                txt = pytesseract.image_to_string(
-                    pre_img, lang="kor+eng", config=config
-                )
+                txt = pytesseract.image_to_string(pre_img, lang="kor+eng", config=config)
                 q = text_quality_score(txt)
                 if q > best_q:
                     best_q = q
                     best_txt = txt
             except Exception as e:
-                logger.warning(
-                    "[SmartOCR] Tesseract 실패 (psm=%d) → %s", psm, e
-                )
+                logger.warning("[SmartOCR] Tesseract 실패 → %s", e)
 
         return best_txt.strip(), float(best_q)
 
     # --------------------------------------------------------
-    def _ocr_easyocr(self, img: Image.Image) -> Tuple[str, float]:
-        """
-        EasyOCR는 fallback/보조 채널로 사용.
-        """
+    def _ocr_easyocr(self, img: Image.Image, page_idx: int) -> Tuple[str, float]:
         if not self.use_easyocr:
             return "", 0.0
 
@@ -201,16 +196,39 @@ class SmartOCREngine:
         if self.easy_reader is None:
             return "", 0.0
 
+        # ✅ 핵심: easyocr 입력 다운스케일
+        safe_img = self._downscale_for_easyocr(
+            img, max_pixels=self.easy_max_pixels, max_side=self.easy_max_side
+        )
+        np_img = np.array(safe_img)
+
         try:
-            np_img = np.array(img)
-            result = self.easy_reader.readtext(
-                np_img, detail=0, paragraph=True
+            t0 = time.time()
+            logger.info(
+                "[SmartOCR][PAGE %d] EasyOCR readtext start (w=%d,h=%d,pixels=%d)",
+                page_idx,
+                safe_img.size[0],
+                safe_img.size[1],
+                safe_img.size[0] * safe_img.size[1],
             )
+            result = self.easy_reader.readtext(np_img, detail=0, paragraph=True)
             text = "\n".join([r for r in result if isinstance(r, str)])
             q = text_quality_score(text)
+            logger.info(
+                "[SmartOCR][PAGE %d] EasyOCR readtext done (sec=%.2f, q=%.3f, len=%d)",
+                page_idx,
+                time.time() - t0,
+                q,
+                len(text or ""),
+            )
             return text.strip(), float(q)
+
+        except (MemoryError, RuntimeError) as e:
+            # PyTorch OOM / not enough memory / alloc 실패 등
+            logger.warning("[SmartOCR][PAGE %d] EasyOCR OOM/RuntimeError → %s", page_idx, e)
+            return "", 0.0
         except Exception as e:
-            logger.warning("[SmartOCR] EasyOCR 실패 → %s", e)
+            logger.warning("[SmartOCR][PAGE %d] EasyOCR 실패 → %s", page_idx, e)
             return "", 0.0
 
     # --------------------------------------------------------
@@ -220,52 +238,75 @@ class SmartOCREngine:
         page_idx: int = -1,
         easy_fallback_threshold: float = 0.45,
     ) -> Tuple[str, Dict[str, Any]]:
-        """
-        Strong Mode:
-        - 1차: 무조건 Tesseract 실행
-        - 2차: Tesseract 품질이 threshold 미만이면 EasyOCR Fallback
-        - 3차: 중간 품질(0.45~0.65)에서도 EasyOCR 비교 실행
-        - 최종: 더 품질 좋은 쪽 채택
-        """
+
         # 1) Tesseract
         t_text, t_q = self._ocr_tesseract(img_for_ocr)
+
+        # 🔒 HARD CUTOFF 1: 구제 불가급이면 easyocr 자체를 스킵
+        if t_q < self.hard_skip_tq_below:
+            logger.info(
+                "[SmartOCR][PAGE %d] t_q=%.3f < %.3f → EasyOCR 스킵(구제 불가)",
+                page_idx, t_q, self.hard_skip_tq_below
+            )
+            return t_text.strip(), {
+                "page": page_idx,
+                "engine": "tesseract",
+                "t_q": float(t_q),
+                "e_q": 0.0,
+                "skipped_easyocr": True,
+                "raw_len": len(t_text or ""),
+            }
+
+        # 🔒 HARD CUTOFF 2: 너무 낮으면(의미 없는 이미지/QR/도형) easyocr로도 구제 어려움
+        if t_q < self.easy_min_tq_to_try:
+            logger.info(
+                "[SmartOCR][PAGE %d] t_q=%.3f < %.3f → EasyOCR 비추(스킵)",
+                page_idx, t_q, self.easy_min_tq_to_try
+            )
+            return t_text.strip(), {
+                "page": page_idx,
+                "engine": "tesseract",
+                "t_q": float(t_q),
+                "e_q": 0.0,
+                "skipped_easyocr": True,
+                "raw_len": len(t_text or ""),
+            }
 
         e_text = ""
         e_q = 0.0
         used_engine = "tesseract"
+        tried_easyocr = False
 
-        # 2) 품질이 낮으면 EasyOCR fallback
-        if t_q < easy_fallback_threshold and self.use_easyocr:
+        # 2) EasyOCR 시도 조건
+        if self.use_easyocr and t_q < easy_fallback_threshold:
+            tried_easyocr = True
             logger.info(
-                "[SmartOCR][PAGE %d] Tesseract 품질 %.3f < %.3f → EasyOCR Fallback 시도",
-                page_idx,
-                t_q,
-                easy_fallback_threshold,
+                "[SmartOCR][PAGE %d] Tesseract 품질 %.3f → EasyOCR 시도",
+                page_idx, t_q
             )
-            e_text, e_q = self._ocr_easyocr(img_for_ocr)
+            e_text, e_q = self._ocr_easyocr(img_for_ocr, page_idx)
+
         elif self.use_easyocr and 0.45 <= t_q <= 0.65:
-            # 중간 품질이면 비교용으로 EasyOCR도 실행
+            tried_easyocr = True
             logger.info(
-                "[SmartOCR][PAGE %d] Tesseract 중간 품질 %.3f → EasyOCR 비교용 실행",
-                page_idx,
-                t_q,
+                "[SmartOCR][PAGE %d] 중간 품질 %.3f → EasyOCR 비교",
+                page_idx, t_q
             )
-            e_text, e_q = self._ocr_easyocr(img_for_ocr)
+            e_text, e_q = self._ocr_easyocr(img_for_ocr, page_idx)
 
         # 3) 최종 선택
         final_text = t_text
-        if e_q > t_q + 0.05 and e_q >= 0.4:
+        if e_q > t_q + 0.05 and e_q >= 0.40:
             final_text = e_text
             used_engine = "easyocr"
-        elif e_q > 0.0:
+        elif tried_easyocr:
             used_engine = "tesseract+easyocr"
 
-        meta = {
+        return final_text.strip(), {
             "page": page_idx,
             "engine": used_engine,
             "t_q": float(t_q),
             "e_q": float(e_q),
+            "tried_easyocr": tried_easyocr,
             "raw_len": len(final_text or ""),
         }
-
-        return final_text.strip(), meta

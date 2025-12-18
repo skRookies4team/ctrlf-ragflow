@@ -11,6 +11,7 @@ import re
 import json
 import csv
 import pdfplumber
+import hashlib
 from pathlib import Path
 from typing import List, Sequence
 from dotenv import load_dotenv
@@ -95,6 +96,9 @@ preprocess_pipeline = PreprocessPipeline()
 # ===========================================================
 # 출력 유틸
 # ===========================================================
+def chunk_hash(text: str) -> str:
+    return hashlib.sha256(text.strip().encode("utf-8")).hexdigest()
+
 def print_section(title: str):
     print("\n" + "=" * 60)
     print(f"  {title}")
@@ -667,6 +671,13 @@ def add_chunks_safe(
         # ----------------------------
         # 1) RAGFlow 저장
         # ----------------------------
+        chash = chunk_hash(text)
+
+        # Milvus 기준 중복 차단
+        if milvus and dataset_id:
+            if milvus.exists_chunk_hash(dataset_id, chash):
+                continue
+
         doc.add_chunk(content=text)
         added += 1
 
@@ -680,6 +691,7 @@ def add_chunks_safe(
                     "dataset_id": dataset_id,
                     "doc_id": doc_id,
                     "chunk_id": idx,
+                    "chunk_hash": chash,
                     "type": chunk_type,
                     "text": text,
                     "embedding": embedding,
@@ -705,6 +717,7 @@ def add_chunks_safe(
             dataset_id=dataset_id,
             chunks=milvus_payload,
         )
+        
 
 # ===========================================================
 # 메인
