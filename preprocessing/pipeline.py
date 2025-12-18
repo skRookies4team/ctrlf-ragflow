@@ -94,15 +94,17 @@ def final_ocr_postprocess(text: str) -> str:
 # ============================================================
 def split_paragraphs(text: str) -> List[str]:
     """
-    1차 분리: 문장 단위
+    리플릿/홍보물 대응:
+    - 줄 단위 분리
+    - 길이 필터 완화
     """
-    text = re.sub(r"([.!?])\s+", r"\1\n", text)
-    return [ln.strip() for ln in text.splitlines() if len(ln.strip()) >= 40]
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+    return lines
 
 
 def merge_short_chunks(
     texts: List[str],
-    min_len: int = 200,
+    min_len: int = 120,
     max_len: int = 700,
 ) -> List[str]:
     """
@@ -217,6 +219,57 @@ class PreprocessPipeline:
                     "text": para,
                     "page_index": page_idx,
                 })
+        for page_idx in range(doc.page_count):
+            page = doc.load_page(page_idx)
+
+            # ================= TEXT =================
+            text_layer = self._page_has_text_layer(page)
+            if text_layer:
+                raw_text = text_layer
+                logger.info(f"[PAGE {page_idx}] text-layer 사용")
+            else:
+                img = self._page_to_pil(page)
+                raw_text, _ = self.ocr.strong_ocr(img, page_idx)
+
+            clean = final_ocr_postprocess(raw_text)
+
+            # 1️⃣ split
+            splitted = split_paragraphs(clean)
+
+            # 2️⃣ merge (🔥 과분리 해결 핵심)
+            merged = merge_short_chunks(splitted)
+
+            for para in merged:
+                q = text_quality_score(para)
+
+                if self.use_llm and q < 0.26:
+                    para, _ = self.llm.correct_page(para, page_idx, q)
+
+                if is_text_unreliable(q, para):
+                    continue
+                if prev_text and is_duplicate(prev_text, para):
+                    continue
+
+                prev_text = para
+                chunks.append({
+                    "type": "text",
+                    "text": para,
+                    "page_index": page_idx,
+                })
+                
+            # 🔒 fallback: 이 페이지에서 text chunk가 하나도 없으면
+            if not any(c["page_index"] == page_idx for c in chunks):
+                fallback_text = clean.strip()
+                if len(fallback_text) >= 60:
+                    chunks.append({
+                        "type": "page_fallback",
+                        "text": fallback_text,
+                        "page_index": page_idx,
+                    })
+                    logger.warning(
+                        f"[PAGE {page_idx}] text chunk 0개 → page fallback 생성"
+                    )
+
 
             # ================= IMAGE =================
             visuals = extract_visual_blocks(
