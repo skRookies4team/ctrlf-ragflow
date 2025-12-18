@@ -63,7 +63,7 @@ class SmartOCREngine:
         use_easyocr: bool = True,
         easyocr_gpu: bool = False,
         easyocr_langs=None,
-        # ↓↓↓ 여기부터 '멈춤 방지' 튜닝 파라미터
+        #여기부터 '멈춤 방지' 튜닝 파라미터
         hard_skip_tq_below: float = 0.05,     # tesseract q가 이보다 낮으면 easyocr 아예 스킵
         easy_min_tq_to_try: float = 0.10,     # 너무 낮은 경우는 구제 불가 → easyocr 비추(스킵)
         easy_max_pixels: int = 2_500_000,     # easyocr에 넣는 최대 픽셀(예: 2.5MP)

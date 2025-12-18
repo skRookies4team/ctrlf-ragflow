@@ -633,24 +633,31 @@ def compare_with_solution(dataset_dir: Path, fpath: Path, chunks: list[str]):
 def add_chunks_safe(
     doc,
     chunks,
-    milvus: "MilvusProxy | None" = None,
+    milvus=None,
     dataset_id: str | None = None,
     doc_id: str | None = None,
 ):
     """
-    - text / image_caption 모두 처리
-    - image는 caption 텍스트를 embedding
-    - image_path, page_index는 metadata로 저장
-    - chunks는 List[str] 또는 List[dict] 모두 지원
+    RAGFlow: 무조건 chunk 추가
+    Milvus: chunk_hash 기준 중복 차단
+    0개 청크 문서: 재시도 가능하도록 안전 처리
     """
+
     print(f"→ 생성된 청크 수: {len(chunks)}")
+
+    # ----------------------------
+    # 0개 청크 보호 로직
+    # ----------------------------
+    if not chunks:
+        print("⚠ 청크 0개 → 이번 실행에서는 아무 것도 저장하지 않음 (재시도 가능)")
+        return
 
     milvus_payload = []
     added = 0
 
     for idx, chunk in enumerate(chunks, start=1):
         # ----------------------------
-        # chunk 파싱 (dict or str)
+        # chunk 파싱
         # ----------------------------
         if isinstance(chunk, dict):
             text = (chunk.get("text") or "").strip()
@@ -668,18 +675,60 @@ def add_chunks_safe(
         if not text:
             continue
 
-        # ----------------------------
-        # 1) RAGFlow 저장
-        # ----------------------------
         chash = chunk_hash(text)
 
-        # Milvus 기준 중복 차단
-        if milvus and dataset_id:
-            if milvus.exists_chunk_hash(dataset_id, chash):
-                continue
-
+        # ----------------------------
+        # RAGFlow 저장 (항상)
+        # ----------------------------
         doc.add_chunk(content=text)
         added += 1
+
+        # ----------------------------
+        #Milvus 중복 체크 (있으면 skip)
+        # ----------------------------
+        if not (milvus and dataset_id and doc_id):
+            continue
+
+        if milvus.exists_chunk_hash(dataset_id, chash):
+            # ⚠ Milvus만 스킵 (RAGFlow는 이미 저장됨)
+            continue
+
+        # ----------------------------
+        #Milvus payload 적재
+        # ----------------------------
+        try:
+            embedding = embed_text(text)
+            milvus_payload.append({
+                "dataset_id": dataset_id,
+                "doc_id": doc_id,
+                "chunk_id": idx,
+                "chunk_hash": chash,
+                "text": text,
+                "embedding": embedding,
+                "metadata": metadata,
+            })
+        except Exception as e:
+            print(f"⚠ embedding 실패 (chunk {idx}): {e}")
+
+        if idx <= 2:
+            print(f"\n[미리보기 {idx}] ({chunk_type})")
+            print(text[:200] + ("..." if len(text) > 200 else ""))
+
+    print(f"→ RAGFlow 청크 추가 완료: {added}개")
+
+    # ----------------------------
+    #Milvus 일괄 insert
+    # ----------------------------
+    if milvus_payload:
+        milvus.insert_chunks(
+            dataset_id=dataset_id,
+            chunks=milvus_payload,
+        )
+        print(f"→ Milvus 적재 완료: {len(milvus_payload)}개")
+    else:
+        print("→ Milvus 적재 없음 (중복 또는 embedding 실패)")
+
+
 
         # ----------------------------
         # 2) Milvus 저장
