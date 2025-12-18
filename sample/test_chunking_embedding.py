@@ -16,7 +16,9 @@ from pathlib import Path
 from typing import List, Sequence
 from dotenv import load_dotenv
 from difflib import SequenceMatcher
-import google.generativeai as genai  # Gemini SDK
+
+# ✅ OpenAI SDK
+from openai import OpenAI
 
 # =======================
 # 0. 경로/환경 설정
@@ -27,28 +29,52 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE_DIR))
 
 load_dotenv(BASE_DIR / ".env")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # milvus 환경설정
 MILVUS_HOST = os.getenv("MILVUS_HOST")
 MILVUS_PORT = os.getenv("MILVUS_PORT")
 MILVUS_COLLECTION = os.getenv("MILVUS_COLLECTION")
 
+# =======================
+# ✅ OpenAI 환경변수
+# =======================
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_EMBED_MODEL = os.getenv("OPENAI_EMBED_MODEL", "text-embedding-3-large")
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-# RAGFLOW_EMBEDDING_MODEL 이 "text-embedding-004@Gemini" 라고 되어 있으니까,
-# 실제 Gemini 모델 이름은 아래처럼 쓸게.
-GEMINI_EMBED_MODEL = os.getenv(
-    "GEMINI_EMBED_MODEL",
-    "models/text-embedding-004",
-)
-# 벡터 차원 (Milvus dim과 반드시 일치해야 함)
-GEMINI_EMBED_DIM = int(os.getenv("GEMINI_EMBED_DIM", "768"))
+# text-embedding-3-large -> 3072, text-embedding-3-small -> 1536
+OPENAI_EMBED_DIM = int(os.getenv("OPENAI_EMBED_DIM", "3072"))
 
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
-else:
-    print("⚠ GEMINI_API_KEY 가 .env에 없습니다. embed_text() 호출 시 에러가 납니다.")
+if not OPENAI_API_KEY:
+    raise RuntimeError("❌ OPENAI_API_KEY 가 .env에 없습니다. (.env 로드/경로 확인 필요)")
+
+# OpenAI client 생성
+openai_client = OpenAI(api_key=OPENAI_API_KEY)
+
+# =======================
+# ✅ 임베딩 함수 (OpenAI)
+# =======================
+def embed_text(text: str) -> List[float]:
+    """
+    OpenAI Embedding 생성.
+    - 반환 벡터 차원은 모델에 의해 고정됨 (large=3072, small=1536)
+    """
+    text = (text or "").strip()
+    if not text:
+        return [0.0] * OPENAI_EMBED_DIM
+
+    resp = openai_client.embeddings.create(
+        model=OPENAI_EMBED_MODEL,
+        input=text
+    )
+    vec = resp.data[0].embedding
+
+    # 방어: dim mismatch 감지
+    if len(vec) != OPENAI_EMBED_DIM:
+        raise ValueError(
+            f"❌ Embedding dim mismatch: got {len(vec)}, expected {OPENAI_EMBED_DIM}. "
+            f"Check OPENAI_EMBED_MODEL/OPENAI_EMBED_DIM and Milvus collection dim."
+        )
+    return vec
 
 
 # =======================
@@ -57,7 +83,6 @@ else:
 try:
     from ragflow_sdk import RAGFlow
 except ImportError:
-    # sdk/python 폴더를 경로에 추가 후 재시도
     sys.path.insert(0, str(BASE_DIR / "sdk" / "python"))
     from ragflow_sdk import RAGFlow
 
@@ -72,14 +97,14 @@ from preprocessing.classifier.document_classifier import DocumentClassifier
 from preprocessing.pipeline import PreprocessPipeline
 
 # =======================
-# 3. 환경 변수
+# 3. 환경 변수 (RAGFlow)
 # =======================
 HOST_ADDRESS = os.getenv("RAGFLOW_HOST", "http://localhost")
 API_KEY = os.getenv("RAGFLOW_API_KEY")
-EMBEDDING_MODEL = os.getenv(
-    "RAGFLOW_EMBEDDING_MODEL",
-    "text-embedding-004@Gemini"
-)
+
+# ✅ RAGFlow 내부 설정용(표기용) 모델명은 네 환경에 맞게 유지해도 되고,
+# 실제 임베딩은 위 embed_text()가 OpenAI를 호출함.
+EMBEDDING_MODEL = os.getenv("RAGFLOW_EMBEDDING_MODEL", OPENAI_EMBED_MODEL)
 
 if not API_KEY:
     print("❌ RAGFLOW_API_KEY 환경 변수를 설정하세요.")
@@ -565,32 +590,36 @@ def chunk_text_pdf(path: Path) -> list[str]:
 MAX_CHUNK_LEN = 8000  # 너무 긴 청크 방지용 (필요하면 4000~6000 정도로 줄여도 됨)
 
 # =========================
-# 텍스트 임베딩 함수 (Milvus 용, Gemini text-embedding-004)
+# 텍스트 임베딩 함수 (Milvus 용, OpenAI text-embedding-3-large)
 # =========================
+from openai import OpenAI
+
+openai_client = OpenAI(api_key=OPENAI_API_KEY)
+
 def embed_text(text: str) -> list[float]:
     """
-    Gemini text-embedding-004을 호출해서 임베딩을 생성한다.
-    - dim: 기본 768 (GEMINI_EMBED_DIM과 MilvusProxy dim이 반드시 같아야 함)
+    OpenAI text-embedding-3-large를 호출해서 임베딩을 생성한다.
+    - dim: 3072 (OPENAI_EMBED_DIM 및 Milvus 컬렉션 dim과 반드시 일치해야 함)
     """
-    if not GEMINI_API_KEY:
-        raise RuntimeError("GEMINI_API_KEY 가 설정되어 있지 않습니다.")
+    if not OPENAI_API_KEY:
+        raise RuntimeError("OPENAI_API_KEY 가 설정되어 있지 않습니다.")
 
-    # 긴 문서는 잘라서 평균내고 싶으면 여기서 전처리하면 됨.
-    # 일단은 전체 텍스트 한 번에Embedding.
-    response = genai.embed_content(
-        model=GEMINI_EMBED_MODEL,
-        content=text,
-        task_type="RETRIEVAL_DOCUMENT",
+    text = (text or "").strip()
+    if not text:
+        return [0.0] * OPENAI_EMBED_DIM
+
+    response = openai_client.embeddings.create(
+        model=OPENAI_EMBED_MODEL,   # text-embedding-3-large
+        input=text
     )
 
-    # text-embedding-004 응답은 {"embedding": [...]} 형태
-    embedding = response.get("embedding") or response["embeddings"][0]
+    embedding = response.data[0].embedding
 
-    if len(embedding) != GEMINI_EMBED_DIM:
-        # 예상 차원과 다르면 경고만 찍고 그대로 반환
-        print(
-            f"⚠ Gemini 임베딩 차원({len(embedding)})이 "
-            f"GEMINI_EMBED_DIM({GEMINI_EMBED_DIM})과 다릅니다."
+    if len(embedding) != OPENAI_EMBED_DIM:
+        raise ValueError(
+            f"❌ Embedding dim mismatch: got {len(embedding)}, "
+            f"expected {OPENAI_EMBED_DIM}. "
+            f"Check OPENAI_EMBED_MODEL / OPENAI_EMBED_DIM / Milvus collection."
         )
 
     return embedding
@@ -797,7 +826,7 @@ def main():
             host=MILVUS_HOST,
             port=MILVUS_PORT,
             collection_name=MILVUS_COLLECTION,
-            dim=GEMINI_EMBED_DIM,   # Gemini 임베딩 차원과 반드시 동일
+            dim=OPENAI_EMBED_DIM,   # Gemini 임베딩 차원과 반드시 동일
         )
         print("✅ Milvus 연결/컬렉션 준비 완료")
 
