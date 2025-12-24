@@ -1,11 +1,22 @@
 
 from pymilvus import connections, utility
+from dotenv import load_dotenv
+import os
+from milvus_proxy import MilvusProxy
+
+# =========================
+# 1. 환경 변수 로드
+# =========================
+load_dotenv()
+
+MILVUS_HOST = os.getenv("MILVUS_HOST")
+MILVUS_PORT = os.getenv("MILVUS_PORT")
 
 # ✅ 1. Milvus에 먼저 연결 (docker 기준)
 connections.connect(
     alias="default",
-    host="58.127.241.84",
-    port="19540"
+    host=MILVUS_HOST,
+    port=MILVUS_PORT
 )
 
 # ✅ 2. 컬렉션 존재 여부 확인

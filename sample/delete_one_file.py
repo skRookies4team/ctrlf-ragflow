@@ -10,7 +10,7 @@ load_dotenv()
 MILVUS_HOST = os.getenv("MILVUS_HOST")
 MILVUS_PORT = os.getenv("MILVUS_PORT")
 MILVUS_COLLECTION = os.getenv("MILVUS_COLLECTION")
-EMBED_DIM = int(os.getenv("GEMINI_EMBED_DIM", "768"))
+EMBED_DIM = int(os.getenv("OPENAI_EMBED_DIM", "3072"))
 
 # =========================
 # 2. Milvus 연결
@@ -27,8 +27,8 @@ print("✅ Milvus 연결 완료")
 # =========================
 # 3. 여기만 수정 
 # =========================
-DATASET_ID = "정보보안교육"
-DOC_ID = "개인정보_보호법_시행령_일부개정_2025.09.23_대통령령_제35780호_시행_2025.10.2._ 개인정보보호위원회.docx"
+DATASET_ID = "8e7fd878dc9a11f0a241dac8bbbfe4c3"
+DOC_ID = "사규.docx"
 
 # =========================
 # 4. 삭제 실행

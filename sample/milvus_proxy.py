@@ -197,13 +197,19 @@ class MilvusProxy:
         )
 
     # =========================================================
-    # 중복 체크 (chunk_hash)
+    # 중복 체크 (chunk_hash)  ✅ 수정본
     # =========================================================
-    def exists_chunk_hash(self, dataset_id: str, chunk_hash: str) -> bool:
+    def exists_chunk_hash(self, dataset_id: str, doc_id: str, chunk_hash: str) -> bool:
         """
-        동일 dataset_id + chunk_hash 청크가 이미 있는지 확인
+        동일 dataset_id(도메인) + doc_id(파일) + chunk_hash(내용) 가 이미 있는지 확인
+        - 도메인 누적은 유지하면서
+        - 같은 파일에서만 중복 삽입 방지
         """
-        expr = f'dataset_id == "{dataset_id}" && chunk_hash == "{chunk_hash}"'
+        expr = (
+            f'dataset_id == "{dataset_id}" && '
+            f'doc_id == "{doc_id}" && '
+            f'chunk_hash == "{chunk_hash}"'
+        )
         res = self.collection.query(
             expr=expr,
             output_fields=["chunk_hash"],
