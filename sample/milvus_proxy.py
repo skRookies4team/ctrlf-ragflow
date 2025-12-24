@@ -63,6 +63,22 @@ class MilvusProxy:
             f"(dim={self.dim})"
         )
 
+        # =========================================================
+        # 🔍 DEBUG: 실제 Milvus 컬렉션 스키마 진단
+        # =========================================================
+        print("\n[DEBUG] Milvus collection schema check")
+        for i, f in enumerate(self.collection.schema.fields):
+            max_len = getattr(f, "max_length", None)
+            dim = getattr(f, "dim", None)
+            print(
+                f"  [{i}] name={f.name}, "
+                f"type={f.dtype}, "
+                f"max_length={max_len}, "
+                f"dim={dim}"
+            )
+        print()
+
+
     # =========================================================
     # 컬렉션 생성
     # =========================================================
@@ -140,61 +156,29 @@ class MilvusProxy:
     # =========================================================
     # 청크 삽입
     # =========================================================
-    def insert_chunks(
-        self,
-        dataset_id: str,
-        chunks: List[Dict[str, Any]],
-    ):
-        """
-        chunks 예시:
-        [
-          {
-            "doc_id": "...",
-            "chunk_id": 0,
-            "text": "...",
-            "embedding": [...],
-            "chunk_hash": "...",  # optional
-          },
-        ]
-        """
+    def insert_chunks(self, dataset_id: str, chunks: List[Dict[str, Any]]):
         if not chunks:
             return
 
-        dataset_ids = [dataset_id] * len(chunks)
-        doc_ids = [c["doc_id"] for c in chunks]
-        chunk_ids = [c["chunk_id"] for c in chunks]
-        texts = [c["text"] for c in chunks]
-        embeddings = [c["embedding"] for c in chunks]
-
-        # ✅ chunk_hash 없으면 text 기반으로 생성
-        chunk_hashes: List[str] = []
+        rows = []
         for c in chunks:
-            if c.get("chunk_hash"):
-                chunk_hashes.append(c["chunk_hash"])
-            else:
-                h = hashlib.sha256(
-                    c["text"].strip().encode("utf-8")
-                ).hexdigest()
-                chunk_hashes.append(h)
+            ch = c.get("chunk_hash")
+            if not ch:
+                ch = hashlib.sha256(c["text"].strip().encode("utf-8")).hexdigest()
 
-        # ⚠️ auto_id(pk)는 넣지 않음
-        # 스키마 순서:
-        # pk(auto) | dataset_id | doc_id | chunk_id | text | embedding | chunk_hash
-        self.collection.insert(
-            [
-                dataset_ids,   # dataset_id
-                doc_ids,       # doc_id
-                chunk_ids,     # chunk_id
-                texts,         # text
-                embeddings,    # embedding
-                chunk_hashes,  # chunk_hash
-            ]
-        )
+            rows.append({
+                "dataset_id": dataset_id,
+                "doc_id": c["doc_id"],
+                "chunk_id": int(c["chunk_id"]),
+                "text": c["text"],
+                "embedding": c["embedding"],
+                "chunk_hash": ch,
+            })
 
+        # ✅ dict-list로 insert → 순서 문제 제거
+        self.collection.insert(rows)
         self.collection.flush()
-        print(
-            f"[MilvusProxy] Inserted {len(chunks)} chunks into '{self.collection_name}'"
-        )
+
 
     # =========================================================
     # 중복 체크 (chunk_hash)  ✅ 수정본

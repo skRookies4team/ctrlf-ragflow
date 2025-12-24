@@ -1,0 +1,121 @@
+{
+  "collection": "ragflow_chunks_sroberta",
+  "vllm_base_url": "http://서버IP주소/v1",
+  "vllm_model_id": "/home/team4/.cache/huggingface/hub/models--jhgan--ko-sroberta-multitask/snapshots/ab957ae6a91e99c4cad36d52063a2a9cf1bf4419",
+  "topks": [
+    1,
+    3,
+    5
+  ],
+  "nprobe": 16,
+  "search_k": 50,
+  "count": 6,
+  "chunk_metrics": {
+    "recall": {
+      "1": 0.5,
+      "3": 0.6666666666666666,
+      "5": 0.6666666666666666
+    },
+    "mrr": 0.5833333333333334
+  },
+  "doc_metrics": {
+    "recall": {
+      "1": 0.6666666666666666,
+      "3": 0.8333333333333334,
+      "5": 1.0
+    },
+    "mrr": 0.7638888888888888
+  },
+  "details": [
+    {
+      "q": "직장 내 장애인 인식개선교육을 무료로 지원받을 수 있는 제도에는 무엇이 있는가?",
+      "domain": "장애인인식개선교육",
+      "gt_docs": [
+        "2023년장애인인식개선교육자료배포.pdf"
+      ],
+      "gt_chunk_hash": "a6c894f085566f14c91858a562610705c33486683a4ffdcd169f6d2a813f4999",
+      "gt_keywords": [],
+      "chunk_rank": 1,
+      "chunk_reason": "gt_chunk_hash",
+      "doc_rank": 1,
+      "doc_reason": "gt_doc_id_multi",
+      "rule_question": false,
+      "search_k": 50
+    },
+    {
+      "q": "직장 내 장애인 인식개선교육은 연 몇 회, 몇 시간 이상 실시해야 하는가?",
+      "domain": "장애인인식개선교육",
+      "gt_docs": [
+        "2023년장애인인식개선교육자료배포.pdf"
+      ],
+      "gt_chunk_hash": "ea9c124c285724589044065b0dd9fdb36c1ac4a267a4edf2bcbd4543faeed1e9",
+      "gt_keywords": [],
+      "chunk_rank": 2,
+      "chunk_reason": "gt_chunk_hash",
+      "doc_rank": 1,
+      "doc_reason": "gt_doc_id_multi",
+      "rule_question": true,
+      "search_k": 50
+    },
+    {
+      "q": "직장 내 장애인 인식개선교육의 법적 근거는 무엇인가?",
+      "domain": "장애인인식개선교육",
+      "gt_docs": [
+        "2023년장애인인식개선교육자료배포.pdf"
+      ],
+      "gt_chunk_hash": "ea9c124c285724589044065b0dd9fdb36c1ac4a267a4edf2bcbd4543faeed1e9",
+      "gt_keywords": [],
+      "chunk_rank": 0,
+      "chunk_reason": "miss",
+      "doc_rank": 4,
+      "doc_reason": "gt_doc_id_multi",
+      "rule_question": true,
+      "search_k": 50
+    },
+    {
+      "q": "직장 내 장애인 인식개선교육의 주요 목적은 무엇인가?",
+      "domain": "장애인인식개선교육",
+      "gt_docs": [
+        "2023년장애인인식개선교육자료배포.pdf"
+      ],
+      "gt_chunk_hash": "be8d4c9b9a1441d9a8c6bd1026fe6c6e82eb77e26d68109c2e41bede81a06e3a",
+      "gt_keywords": [],
+      "chunk_rank": 0,
+      "chunk_reason": "miss",
+      "doc_rank": 3,
+      "doc_reason": "gt_doc_id_multi",
+      "rule_question": false,
+      "search_k": 50
+    },
+    {
+      "q": "장애를 바라보는 관점은 과거와 현재 어떻게 달라졌는가?",
+      "domain": "장애인인식개선교육",
+      "gt_docs": [
+        "2023년장애인인식개선교육자료배포.pdf"
+      ],
+      "gt_chunk_hash": "bc07f83d9b3be1f90b0d1b975a36907b91dd76ac3a02dd30ef35e47bf374a1af",
+      "gt_keywords": [],
+      "chunk_rank": 1,
+      "chunk_reason": "gt_chunk_hash",
+      "doc_rank": 1,
+      "doc_reason": "gt_doc_id_multi",
+      "rule_question": false,
+      "search_k": 50
+    },
+    {
+      "q": "채용 과정에서 청각장애인에게 듣기 평가를 요구하는 것은 어떤 차별에 해당하는가?",
+      "domain": "장애인인식개선교육",
+      "gt_docs": [
+        "2023년장애인인식개선교육자료배포.pdf"
+      ],
+      "gt_chunk_hash": "bbad3afbdd781b3d10349bc5ab3ffd7cb01fef8326d153013c43c774302cac34",
+      "gt_keywords": [],
+      "chunk_rank": 1,
+      "chunk_reason": "gt_chunk_hash",
+      "doc_rank": 1,
+      "doc_reason": "gt_doc_id_multi",
+      "rule_question": true,
+      "search_k": 50
+    }
+  ]
+}

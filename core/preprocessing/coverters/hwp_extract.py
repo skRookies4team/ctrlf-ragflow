@@ -28,6 +28,24 @@ logger = logging.getLogger(__name__)
 # LibreOffice (soffice) 경로
 # ============================================================
 
+def _win_no_window_kwargs():
+    """Windows에서 subprocess 실행 시 콘솔창 안 뜨게 하는 옵션"""
+    if os.name != "nt":
+        return {}
+
+    CREATE_NO_WINDOW = 0x08000000
+
+    si = subprocess.STARTUPINFO()
+    si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+    si.wShowWindow = 0  # SW_HIDE
+
+    return {
+        "startupinfo": si,
+        "creationflags": CREATE_NO_WINDOW,
+        "stdin": subprocess.DEVNULL,
+    }
+
+
 def _get_soffice_cmd() -> str:
     if os.name == "nt":
         candidates = [
@@ -43,10 +61,17 @@ def _get_soffice_cmd() -> str:
 
 def _check_libreoffice_available() -> bool:
     try:
-        subprocess.run([_get_soffice_cmd(), "--version"], capture_output=True, timeout=10)
+        subprocess.run(
+            [_get_soffice_cmd(), "--version"],
+            timeout=10,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            **_win_no_window_kwargs(),   # ✅ 추가
+        )
         return True
     except Exception:
         return False
+
     
 def _stable_table_id(
     doc_name: str,
@@ -280,13 +305,16 @@ def convert_hwp_to_blocks(hwp_path: str) -> Dict[str, Any]:
             [
                 cmd,
                 "--headless",
-                "--infilter=Hwp2002_File",
+                # "--infilter=Hwp2002_File",
                 "--convert-to", "docx",
                 str(hwp_path),
                 "--outdir", str(tmpdir),
             ],
             capture_output=True,
             timeout=120,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            **_win_no_window_kwargs(),   # ✅ 추가
         )
 
         docx_path = tmpdir / f"{hwp_path.stem}.docx"
@@ -302,4 +330,3 @@ def convert_hwp_to_blocks(hwp_path: str) -> Dict[str, Any]:
             "docx_path": str(docx_path),
             "blocks": blocks,   # ✅ 그대로 전달
         }
-
