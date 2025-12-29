@@ -202,15 +202,34 @@ class MilvusProxy:
         return len(res) > 0
 
     # =========================================================
-    # 파일 단위 삭제
+    # 파일 단위 삭제 (dataset_id + doc_id)
     # =========================================================
-    def delete_file(self, dataset_id: str, doc_id: str):
+    def delete_file(self, dataset_id: str, doc_id: str) -> int:
         """
         파일 단위 삭제 (dataset_id + doc_id 기준)
+        반환: 삭제된 개수(가능하면)
         """
         expr = f'dataset_id == "{dataset_id}" && doc_id == "{doc_id}"'
-        self.collection.delete(expr)
+        res = self.collection.delete(expr)
         self.collection.flush()
+
+        # pymilvus 버전에 따라 필드명이 다를 수 있어 방어
+        deleted = 0
+        if res is not None:
+            deleted = (
+                getattr(res, "delete_count", None)
+                or getattr(res, "deleted_count", None)
+                or 0
+            )
+
         print(
-            f"[MilvusProxy] Deleted chunks for dataset_id={dataset_id}, doc_id={doc_id}"
+            f"[MilvusProxy] Deleted chunks for dataset_id={dataset_id}, doc_id={doc_id} "
+            f"(deleted={deleted})"
         )
+        return int(deleted)
+
+    # =========================================================
+    # ✅ alias: services.py에서 delete_doc으로 부르고 싶을 때
+    # =========================================================
+    def delete_doc(self, dataset_id: str, doc_id: str) -> int:
+        return self.delete_file(dataset_id, doc_id)
