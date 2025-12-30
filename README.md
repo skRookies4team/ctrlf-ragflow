@@ -28,9 +28,9 @@ RAGFLOW_API_KEY=your_ragflow_api_key
 OPENAI_API_KEY=your_openai_api_key
 
 
-
 #### (선택) 임베딩 A/B 테스트용
 실행 시 환경 변수로 덮어씀
+
 EMBEDDING_MODEL_SELECTED=openai  # or sroberta
 
 
@@ -43,8 +43,6 @@ sroberta → Milvus ragflow_chunks_sroberta
 ```
 
 컬렉션이 자동으로 선택됩니다.
-
-
 
 
 ## 2️⃣ Docker Compose로 서비스 실행
@@ -66,9 +64,9 @@ docker ps
 
 ####  확인 항목:
 
-- RAGFlow 컨테이너: Up
-- Milvus / MySQL 컨테이너: Up
-- 문제가 있을 경우 로그 확인:
+- RAGFlow 컨테이너 : Up
+- Milvus / MySQL 컨테이너 : Up
+- 문제가 있을 경우 로그 확인 :
     - ```
         docker compose logs ragflow
         ```
