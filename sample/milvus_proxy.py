@@ -14,6 +14,17 @@ from pymilvus import (
 
 
 class MilvusProxy:
+    """
+    ✅ 패치 요약 (최소 수정)
+    - expr에 들어가는 문자열 escape 처리 (_escape)
+    - VARCHAR(text) max_length(8192) 초과 방지: insert 전에 SAFE_TEXT_MAX로 컷
+      (한글 UTF-8 바이트 이슈 때문에 len() 기준으로 더 여유 있게 자름)
+    - delete_file 로그 강화
+    """
+
+    # ✅ Milvus 스키마에서 text max_length=8192 이므로 여유 있게 잘라서 안전 확보
+    SAFE_TEXT_MAX = int(os.getenv("MILVUS_TEXT_MAX", "7500"))
+
     def __init__(
         self,
         host: str | None = None,
@@ -78,6 +89,18 @@ class MilvusProxy:
             )
         print()
 
+    # =========================================================
+    # ✅ expr 안전 처리
+    # =========================================================
+    @staticmethod
+    def _escape(s: str) -> str:
+        """
+        Milvus expr 문자열용 최소 escape
+        - 역슬래시/따옴표 깨짐 방지
+        """
+        if s is None:
+            return ""
+        return str(s).replace("\\", "\\\\").replace('"', '\\"')
 
     # =========================================================
     # 컬렉션 생성
@@ -162,15 +185,21 @@ class MilvusProxy:
 
         rows = []
         for c in chunks:
+            raw_text = (c.get("text") or "").strip()
+
+            # ✅ text 길이 방어 (UTF-8 이슈 포함해서 여유 있게 컷)
+            if len(raw_text) > self.SAFE_TEXT_MAX:
+                raw_text = raw_text[: self.SAFE_TEXT_MAX]
+
             ch = c.get("chunk_hash")
             if not ch:
-                ch = hashlib.sha256(c["text"].strip().encode("utf-8")).hexdigest()
+                ch = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
 
             rows.append({
-                "dataset_id": dataset_id,
-                "doc_id": c["doc_id"],
+                "dataset_id": str(dataset_id),
+                "doc_id": str(c["doc_id"]),
                 "chunk_id": int(c["chunk_id"]),
-                "text": c["text"],
+                "text": raw_text,
                 "embedding": c["embedding"],
                 "chunk_hash": ch,
             })
@@ -179,9 +208,8 @@ class MilvusProxy:
         self.collection.insert(rows)
         self.collection.flush()
 
-
     # =========================================================
-    # 중복 체크 (chunk_hash)  ✅ 수정본
+    # 중복 체크 (chunk_hash)
     # =========================================================
     def exists_chunk_hash(self, dataset_id: str, doc_id: str, chunk_hash: str) -> bool:
         """
@@ -189,10 +217,14 @@ class MilvusProxy:
         - 도메인 누적은 유지하면서
         - 같은 파일에서만 중복 삽입 방지
         """
+        ds = self._escape(dataset_id)
+        di = self._escape(doc_id)
+        ch = self._escape(chunk_hash)
+
         expr = (
-            f'dataset_id == "{dataset_id}" && '
-            f'doc_id == "{doc_id}" && '
-            f'chunk_hash == "{chunk_hash}"'
+            f'dataset_id == "{ds}" && '
+            f'doc_id == "{di}" && '
+            f'chunk_hash == "{ch}"'
         )
         res = self.collection.query(
             expr=expr,
@@ -207,13 +239,26 @@ class MilvusProxy:
     def delete_file(self, dataset_id: str, doc_id: str) -> int:
         """
         파일 단위 삭제 (dataset_id + doc_id 기준)
-        반환: 삭제된 개수(가능하면)
+
+        ✅ 주의:
+        - pymilvus 버전에 따라 delete 결과에 deleted_count가 0으로 나오거나 없을 수 있음
+        - "삭제가 실제로 됐는지"는 후속 query로 검증하는 게 가장 확실
         """
-        expr = f'dataset_id == "{dataset_id}" && doc_id == "{doc_id}"'
+        ds = self._escape(dataset_id)
+        di = self._escape(doc_id)
+
+        expr = f'dataset_id == "{ds}" && doc_id == "{di}"'
+
+        # (선택) 삭제 전 샘플 확인용
+        try:
+            before_sample = self.collection.query(expr=expr, output_fields=["pk"], limit=1)
+            print(f"[MilvusProxy] delete_file before_sample_count={len(before_sample)} expr={expr}")
+        except Exception as e:
+            print(f"[MilvusProxy] delete_file precheck failed: {e}")
+
         res = self.collection.delete(expr)
         self.collection.flush()
 
-        # pymilvus 버전에 따라 필드명이 다를 수 있어 방어
         deleted = 0
         if res is not None:
             deleted = (
@@ -222,9 +267,16 @@ class MilvusProxy:
                 or 0
             )
 
+        # (선택) 삭제 후 샘플 확인용
+        try:
+            after_sample = self.collection.query(expr=expr, output_fields=["pk"], limit=1)
+            print(f"[MilvusProxy] delete_file after_sample_count={len(after_sample)} expr={expr}")
+        except Exception as e:
+            print(f"[MilvusProxy] delete_file postcheck failed: {e}")
+
         print(
             f"[MilvusProxy] Deleted chunks for dataset_id={dataset_id}, doc_id={doc_id} "
-            f"(deleted={deleted})"
+            f"(reported_deleted={deleted})"
         )
         return int(deleted)
 

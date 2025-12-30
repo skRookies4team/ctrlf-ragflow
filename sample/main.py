@@ -351,6 +351,7 @@ def split_text_by_rules(
 
     return [c for c in final if len(c.strip()) > 20]
 
+
 def chunk_docx_blocks_with_rules(
     blocks: list[dict],
     max_chars_structured: int = 2000
@@ -758,12 +759,16 @@ def process_single_file_mode(
     experiment_tag: str,
     input_path: Path,
     domain: str,
+    doc_id: str | None,
+    version: int | None,
+    replace: bool,
 ):
     """
     --input 으로 들어온 파일 1개만 처리
     - dataset은 "그 도메인 1개"만 생성
     - solution 비교는 단일모드에서는 기본 스킵(필요하면 나중에 경로 인자 추가 가능)
     """
+
     print("\n" + "#" * 60)
     print("### 단일 파일 모드")
     print(f"### 도메인: {domain}")
@@ -785,6 +790,20 @@ def process_single_file_mode(
     fpath = input_path.resolve()
     ext = fpath.suffix.lower().lstrip(".")
     print(f"\n======= [{domain}] {fpath.name} 처리 =======")
+
+    # ✅ doc_id 우선순위: CLI doc_id > 파일명
+    effective_doc_id = (doc_id or fpath.name)
+
+    # ✅ replace=true 이면 Milvus에서 기존 doc_id 삭제 후 재적재
+    if replace and milvus:
+        try:
+            milvus.delete_file(dataset_id=domain, doc_id=effective_doc_id)
+            print(f"✅ replace=true → Milvus 기존 doc 삭제 완료 (dataset_id={domain}, doc_id={effective_doc_id})")
+        except Exception as e:
+            print(f"⚠ replace 삭제 실패 (Milvus): {e}")
+
+    if version is not None:
+        print(f"ℹ version={version} (추적용)")
 
     # HWP/HWPX → DOCX로 변환
     if ext in ("hwp", "hwpx"):
@@ -819,7 +838,7 @@ def process_single_file_mode(
                 chunks,
                 milvus=milvus,
                 dataset_id=domain,
-                doc_id=fpath.name,
+                doc_id=effective_doc_id,
                 embedding_model=embedding_model_selected,
                 experiment_tag=experiment_tag,
             )
@@ -833,7 +852,7 @@ def process_single_file_mode(
             chunks,
             milvus=milvus,
             dataset_id=domain,
-            doc_id=fpath.name,
+            doc_id=effective_doc_id,
             embedding_model=embedding_model_selected,
             experiment_tag=experiment_tag,
         )
@@ -853,7 +872,7 @@ def process_single_file_mode(
                 docx_chunks,
                 milvus=milvus,
                 dataset_id=domain,
-                doc_id=fpath.name,
+                doc_id=effective_doc_id,
                 embedding_model=embedding_model_selected,
                 experiment_tag=experiment_tag,
             )
@@ -865,7 +884,7 @@ def process_single_file_mode(
             chunks,
             milvus=milvus,
             dataset_id=domain,
-            doc_id=fpath.name,
+            doc_id=effective_doc_id,
             embedding_model=embedding_model_selected,
             experiment_tag=experiment_tag,
         )
@@ -882,7 +901,13 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", help="업로드 단일 파일 처리 경로")
     parser.add_argument("--domain", default="default", help="단일 파일 모드 도메인명")
+    parser.add_argument("--doc_id", default=None, help="문서 식별자(docId)")
+    parser.add_argument("--version", type=int, default=None, help="문서 버전")
+    parser.add_argument("--replace", default="false", help="true면 기존 docId 교체")
+
     args = parser.parse_args()
+
+    replace_flag = str(args.replace).lower() in ("1", "true", "yes", "y", "on")
 
     print_section("RAGFlow 커스텀 청킹 + add_chunk (HWP/PDF/PPT/DOCX/TXT/CSV 포함)")
 
@@ -926,16 +951,23 @@ def main():
     # Milvus 연결
     # ------------------------------------
     print_step(1, "Milvus 연결")
+
+    print(f"[DEBUG] EMBEDDING_MODEL_SELECTED={EMBEDDING_MODEL_SELECTED}")
+    
+
     try:
         embedding_model = EMBEDDING_MODEL_SELECTED
         collection_name = COLLECTION_NAME_MAP[embedding_model]
-
+        
+        print(f"[DEBUG] Milvus collection={collection_name}")
+        
         milvus = MilvusProxy(
             host=MILVUS_HOST,
             port=MILVUS_PORT,
             collection_name=collection_name,
             dim=MODEL_DIM_MAP[embedding_model],
         )
+        
         print("✅ Milvus 연결/컬렉션 준비 완료")
     except Exception as e:
         print(f"❌ Milvus 연결 실패 (일단 RAGFlow만 진행): {e}")
@@ -957,6 +989,9 @@ def main():
             experiment_tag=EXPERIMENT_TAG,
             input_path=input_path,
             domain=args.domain,
+            doc_id=args.doc_id,
+            version=args.version,
+            replace=replace_flag,
         )
         return
 
@@ -1146,7 +1181,6 @@ def main():
         for i, r in enumerate(results, 1):
             print(f"\n[검색 {i}]")
             print(r.content[:200] + "...")
-
 
 if __name__ == "__main__":
     main()
