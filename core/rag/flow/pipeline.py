@@ -18,10 +18,12 @@ import json
 import logging
 import random
 from timeit import default_timer as timer
+
 import trio
 from agent.canvas import Graph
 from api.db.services.document_service import DocumentService
-from api.db.services.task_service import has_canceled, TaskService, CANVAS_DEBUG_DOC_ID
+from api.db.services.task_service import (CANVAS_DEBUG_DOC_ID, TaskService,
+                                          has_canceled)
 from rag.utils.redis_conn import REDIS_CONN
 
 

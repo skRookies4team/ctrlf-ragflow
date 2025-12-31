@@ -14,18 +14,18 @@
 #  limitations under the License.
 #
 
-import logging
 import base64
 import datetime
 import json
+import logging
 import re
+
 import pandas as pd
 import requests
 from api.db.services.knowledgebase_service import KnowledgebaseService
-from rag.nlp import rag_tokenizer
-from deepdoc.parser.resume import refactor
-from deepdoc.parser.resume import step_one, step_two
 from common.string_utils import remove_redundant_spaces
+from deepdoc.parser.resume import refactor, step_one, step_two
+from rag.nlp import rag_tokenizer
 
 forbidden_select_fields4resume = [
     "name_pinyin_kwd", "edu_first_fea_kwd", "degree_kwd", "sch_rank_kwd", "edu_fea_kwd"

@@ -20,23 +20,23 @@ import re
 import time
 from typing import Any, Optional
 
-from elasticsearch_dsl import Q, Search
-from pydantic import BaseModel
-from pymysql.converters import escape_string
-from pyobvector import ObVecClient, FtsIndexParam, FtsParser, ARRAY, VECTOR
-from pyobvector.client.hybrid_search import HybridSearch
-from pyobvector.util import ObVersion
-from sqlalchemy import text, Column, String, Integer, JSON, Double, Row, Table
-from sqlalchemy.dialects.mysql import LONGTEXT, TEXT
-from sqlalchemy.sql.type_api import TypeEngine
-
 from common import settings
 from common.constants import PAGERANK_FLD, TAG_FLD
 from common.decorator import singleton
 from common.float_utils import get_float
+from elasticsearch_dsl import Q, Search
+from pydantic import BaseModel
+from pymysql.converters import escape_string
+from pyobvector import ARRAY, VECTOR, FtsIndexParam, FtsParser, ObVecClient
+from pyobvector.client.hybrid_search import HybridSearch
+from pyobvector.util import ObVersion
 from rag.nlp import rag_tokenizer
-from rag.utils.doc_store_conn import DocStoreConnection, MatchExpr, OrderByExpr, FusionExpr, MatchTextExpr, \
-    MatchDenseExpr
+from rag.utils.doc_store_conn import (DocStoreConnection, FusionExpr,
+                                      MatchDenseExpr, MatchExpr, MatchTextExpr,
+                                      OrderByExpr)
+from sqlalchemy import JSON, Column, Double, Integer, Row, String, Table, text
+from sqlalchemy.dialects.mysql import LONGTEXT, TEXT
+from sqlalchemy.sql.type_api import TypeEngine
 
 ATTEMPT_TIME = 2
 OB_QUERY_TIMEOUT = int(os.environ.get("OB_QUERY_TIMEOUT", "100_000_000"))

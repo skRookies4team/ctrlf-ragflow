@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-from agent.component.fillup import UserFillUpParam, UserFillUp
+from agent.component.fillup import UserFillUp, UserFillUpParam
 
 
 class BeginParam(UserFillUpParam):

@@ -19,19 +19,23 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
 from functools import partial
+from timeit import default_timer as timer
 from typing import Any
 
 import json_repair
-from timeit import default_timer as timer
-from agent.tools.base import LLMToolPluginCallSession, ToolParamBase, ToolBase, ToolMeta
+from agent.component.llm import LLM, LLMParam
+from agent.tools.base import (LLMToolPluginCallSession, ToolBase, ToolMeta,
+                              ToolParamBase)
 from api.db.services.llm_service import LLMBundle
-from api.db.services.tenant_llm_service import TenantLLMService
 from api.db.services.mcp_server_service import MCPServerService
+from api.db.services.tenant_llm_service import TenantLLMService
 from common.connection_utils import timeout
-from rag.prompts.generator import next_step, COMPLETE_TASK, analyze_task, \
-    citation_prompt, reflect, rank_memories, kb_prompt, citation_plus, full_question, message_fit_in
-from common.mcp_tool_call_conn import MCPToolCallSession, mcp_tool_metadata_to_openai_tool
-from agent.component.llm import LLMParam, LLM
+from common.mcp_tool_call_conn import (MCPToolCallSession,
+                                       mcp_tool_metadata_to_openai_tool)
+from rag.prompts.generator import (COMPLETE_TASK, analyze_task, citation_plus,
+                                   citation_prompt, full_question, kb_prompt,
+                                   message_fit_in, next_step, rank_memories,
+                                   reflect)
 
 
 class AgentParam(LLMParam, ToolParamBase):

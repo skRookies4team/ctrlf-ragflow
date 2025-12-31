@@ -1,16 +1,15 @@
 import logging
 import re
-from pathlib import Path
-from typing import List, Dict, Any, Optional, Set
 from difflib import SequenceMatcher
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set
 
 import fitz
 from PIL import Image
-
-from preprocessing.ocr.engine_smart import SmartOCREngine, text_quality_score
 from preprocessing.llm.llm_correction import LLMCorrector
-from preprocessing.pdf.page_image_extractor_relaxed import extract_visual_blocks
-
+from preprocessing.ocr.engine_smart import SmartOCREngine, text_quality_score
+from preprocessing.pdf.page_image_extractor_relaxed import \
+    extract_visual_blocks
 
 # ============================================================
 # logger

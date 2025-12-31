@@ -17,10 +17,10 @@ import logging
 import os
 import time
 from abc import ABC
+
 import pandas as pd
 import pywencai
-
-from agent.tools.base import ToolParamBase, ToolMeta, ToolBase
+from agent.tools.base import ToolBase, ToolMeta, ToolParamBase
 from common.connection_utils import timeout
 
 

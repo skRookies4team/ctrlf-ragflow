@@ -1,6 +1,7 @@
-from dotenv import load_dotenv
 import os
-from pymilvus import connections, Collection
+
+from dotenv import load_dotenv
+from pymilvus import Collection, connections
 
 # =========================
 # 1. 환경 변수 로드

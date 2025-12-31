@@ -1,6 +1,6 @@
 import cv2
-import numpy as np
 import easyocr
+import numpy as np
 import pytesseract
 
 # EasyOCR 한국어 엔진 준비

@@ -13,7 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
+import base64
 import json
+import logging
 import os
 import threading
 from abc import ABC
@@ -23,15 +25,12 @@ import dashscope
 import google.generativeai as genai
 import numpy as np
 import requests
+from common import settings
+from common.log_utils import log_exception
+from common.token_utils import num_tokens_from_string, truncate
 from ollama import Client
 from openai import OpenAI
 from zhipuai import ZhipuAI
-
-from common.log_utils import log_exception
-from common.token_utils import num_tokens_from_string, truncate
-from common import settings
-import logging
-import base64
 
 
 class Base(ABC):
@@ -428,8 +427,8 @@ class MistralEmbed(Base):
         self.model_name = model_name
 
     def encode(self, texts: list):
-        import time
         import random
+        import time
 
         texts = [truncate(t, 8196) for t in texts]
         batch_size = 16
@@ -452,8 +451,8 @@ class MistralEmbed(Base):
         return np.array(ress), token_count
 
     def encode_queries(self, text):
-        import time
         import random
+        import time
         retry_max = 5
         while retry_max > 0:
             try:

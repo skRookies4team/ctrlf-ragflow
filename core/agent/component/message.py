@@ -14,20 +14,19 @@
 #  limitations under the License.
 #
 import json
+import logging
 import os
 import random
 import re
-import logging
 import tempfile
 from functools import partial
 from typing import Any
 
 from agent.component.base import ComponentBase, ComponentParamBase
-from jinja2 import Template as Jinja2Template
-
+from common import settings
 from common.connection_utils import timeout
 from common.misc_utils import get_uuid
-from common import settings
+from jinja2 import Template as Jinja2Template
 
 
 class MessageParam(ComponentParamBase):

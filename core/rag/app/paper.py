@@ -14,16 +14,18 @@
 #  limitations under the License.
 #
 
-import logging
 import copy
+import logging
 import re
 
-from deepdoc.parser.figure_parser import vision_figure_parser_pdf_wrapper
-from common.constants import ParserType
-from rag.nlp import rag_tokenizer, tokenize, tokenize_table, add_positions, bullets_category, title_frequency, tokenize_chunks
-from deepdoc.parser import PdfParser
 import numpy as np
-from rag.app.naive import by_plaintext, PARSERS
+from common.constants import ParserType
+from deepdoc.parser import PdfParser
+from deepdoc.parser.figure_parser import vision_figure_parser_pdf_wrapper
+from rag.app.naive import PARSERS, by_plaintext
+from rag.nlp import (add_positions, bullets_category, rag_tokenizer,
+                     title_frequency, tokenize, tokenize_chunks,
+                     tokenize_table)
 
 
 class Pdf(PdfParser):

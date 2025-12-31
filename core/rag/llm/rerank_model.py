@@ -20,10 +20,11 @@ from urllib.parse import urljoin
 import httpx
 import numpy as np
 import requests
+from common.log_utils import log_exception
+from common.token_utils import (num_tokens_from_string,
+                                total_token_count_from_response, truncate)
 from yarl import URL
 
-from common.log_utils import log_exception
-from common.token_utils import num_tokens_from_string, truncate, total_token_count_from_response
 
 class Base(ABC):
     def __init__(self, key, model_name, **kwargs):

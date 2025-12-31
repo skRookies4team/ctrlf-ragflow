@@ -32,25 +32,21 @@ from datetime import datetime, timezone
 from typing import Any
 
 import trio
-
 from api.db.services.connector_service import ConnectorService, SyncLogsService
 from api.db.services.knowledgebase_service import KnowledgebaseService
 from common import settings
 from common.config_utils import show_configs
 from common.constants import FileSource, TaskStatus
-from common.data_source import (
-    BlobStorageConnector,
-    DiscordConnector,
-    GoogleDriveConnector,
-    JiraConnector,
-    NotionConnector,
-)
+from common.data_source import (BlobStorageConnector, DiscordConnector,
+                                GoogleDriveConnector, JiraConnector,
+                                NotionConnector)
 from common.data_source.config import INDEX_BATCH_SIZE
 from common.data_source.confluence_connector import ConfluenceConnector
 from common.data_source.interfaces import CheckpointOutputWrapper
 from common.data_source.utils import load_all_docs_from_checkpoint_connector
 from common.log_utils import init_root_logger
-from common.signal_utils import start_tracemalloc_and_snapshot, stop_tracemalloc
+from common.signal_utils import (start_tracemalloc_and_snapshot,
+                                 stop_tracemalloc)
 from common.versions import get_ragflow_version
 
 MAX_CONCURRENT_TASKS = int(os.environ.get("MAX_CONCURRENT_TASKS", "5"))

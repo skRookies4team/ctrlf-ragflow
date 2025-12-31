@@ -18,6 +18,7 @@ import os
 import time
 from functools import partial
 from typing import Any
+
 import trio
 from agent.component.base import ComponentBase, ComponentParamBase
 from common.connection_utils import timeout

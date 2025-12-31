@@ -18,8 +18,9 @@
 The example is about CRUD operations (Create, Read, Update, Delete) on a dataset.
 '''
 
-from ragflow_sdk import RAGFlow
 import sys
+
+from ragflow_sdk import RAGFlow
 
 HOST_ADDRESS = "http://127.0.0.1"
 API_KEY = "ragflow-IzZmY1MGVhYTBhMjExZWZiYTdjMDI0Mm"

@@ -21,15 +21,16 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from copy import deepcopy
 from functools import partial
-from typing import Any, Union, Tuple
+from typing import Any, Tuple, Union
 
 from agent.component import component_class
 from agent.component.base import ComponentBase
 from api.db.services.task_service import has_canceled
-from common.misc_utils import get_uuid, hash_str2int
 from common.exceptions import TaskCanceledException
+from common.misc_utils import get_uuid, hash_str2int
 from rag.prompts.generator import chunks_format
 from rag.utils.redis_conn import REDIS_CONN
+
 
 class Graph:
     """

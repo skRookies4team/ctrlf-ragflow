@@ -18,16 +18,16 @@ import logging
 import re
 from io import BytesIO
 
-from deepdoc.parser.utils import get_text
-from rag.app import naive
-from rag.app.naive import by_plaintext, PARSERS
-from rag.nlp import bullets_category, is_english,remove_contents_table, \
-    hierarchical_merge, make_colon_as_title, naive_merge, random_choices, tokenize_table, \
-    tokenize_chunks
-from rag.nlp import rag_tokenizer
-from deepdoc.parser import PdfParser, HtmlParser
+from deepdoc.parser import HtmlParser, PdfParser
 from deepdoc.parser.figure_parser import vision_figure_parser_docx_wrapper
+from deepdoc.parser.utils import get_text
 from PIL import Image
+from rag.app import naive
+from rag.app.naive import PARSERS, by_plaintext
+from rag.nlp import (bullets_category, hierarchical_merge, is_english,
+                     make_colon_as_title, naive_merge, rag_tokenizer,
+                     random_choices, remove_contents_table, tokenize_chunks,
+                     tokenize_table)
 
 
 class Pdf(PdfParser):

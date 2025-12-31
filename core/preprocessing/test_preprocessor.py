@@ -3,18 +3,11 @@ RAGFlow 커스텀 청킹(Chunking) + add_chunk
 HWP / PDF / PPT / DOCX / TXT / CSV 자동 처리 + 문서 타입 판별 + 자동 패턴 감지 완전판
 """
 
-import os
-import sys
-import time
-import requests
-import re
 import json
-import csv
-import pdfplumber
+import sys
 from pathlib import Path
-from typing import List, Sequence
+
 from dotenv import load_dotenv
-from difflib import SequenceMatcher
 
 # =======================
 # 0. 경로/환경 설정
@@ -34,16 +27,13 @@ try:
 except ImportError:
     # sdk/python 폴더를 경로에 추가 후 재시도
     sys.path.insert(0, str(BASE_DIR / "sdk" / "python"))
-    from ragflow_sdk import RAGFlow
 
-from ragflow_sdk.modules.dataset import DataSet
 
 # =======================
 # 2. 커스텀 전처리 모듈 import
 # =======================
-from preprocessing.coverters.hwp_to_docx import HwpAdapter
-from preprocessing.classifier.document_classifier import DocumentClassifier
 from preprocessing.pipeline import PreprocessPipeline
+
 
 def test_all():
     pdf = "sample.pdf"

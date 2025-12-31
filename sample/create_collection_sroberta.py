@@ -1,8 +1,10 @@
 import os
-from pymilvus import connections, FieldSchema, CollectionSchema, DataType, Collection, utility
+from pathlib import Path
 
 from dotenv import load_dotenv
-from pathlib import Path
+from pymilvus import (Collection, CollectionSchema, DataType, FieldSchema,
+                      connections, utility)
+
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 MILVUS_HOST = os.getenv("MILVUS_HOST")

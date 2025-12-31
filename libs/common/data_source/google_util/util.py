@@ -4,9 +4,8 @@ from collections.abc import Callable, Iterator
 from enum import Enum
 from typing import Any
 
-from googleapiclient.errors import HttpError  # type: ignore  # type: ignore
-
 from common.data_source.google_drive.model import GoogleDriveFileType
+from googleapiclient.errors import HttpError  # type: ignore  # type: ignore
 
 
 # See https://developers.google.com/drive/api/reference/rest/v3/files/list for more

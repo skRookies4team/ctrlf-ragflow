@@ -13,10 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from common import create_dataset, list_dataset, rm_dataset, upload_file
-from common import list_document, get_docs_info, parse_docs
 from time import sleep
 from timeit import default_timer as timer
+
+from common import (create_dataset, get_docs_info, list_dataset, list_document,
+                    parse_docs, rm_dataset, upload_file)
 
 
 def test_parse_txt_document(get_auth):

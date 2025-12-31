@@ -17,12 +17,8 @@ import uuid
 from concurrent.futures import ThreadPoolExecutor
 
 import pytest
-from common import (
-    INVALID_API_TOKEN,
-    batch_create_datasets,
-    delete_datasets,
-    list_datasets,
-)
+from common import (INVALID_API_TOKEN, batch_create_datasets, delete_datasets,
+                    list_datasets)
 from libs.auth import RAGFlowHttpApiAuth
 
 

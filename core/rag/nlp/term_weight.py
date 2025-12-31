@@ -14,14 +14,15 @@
 #  limitations under the License.
 #
 
+import json
 import logging
 import math
-import json
-import re
 import os
+import re
+
 import numpy as np
-from rag.nlp import rag_tokenizer
 from common.file_utils import get_project_base_directory
+from rag.nlp import rag_tokenizer
 
 
 class Dealer:

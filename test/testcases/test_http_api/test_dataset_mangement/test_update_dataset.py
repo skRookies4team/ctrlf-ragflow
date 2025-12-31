@@ -19,13 +19,14 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import pytest
 from common import list_datasets, update_dataset
-from configs import DATASET_NAME_LIMIT, INVALID_API_TOKEN
+from configs import (DATASET_NAME_LIMIT, DEFAULT_PARSER_CONFIG,
+                     INVALID_API_TOKEN)
 from hypothesis import HealthCheck, example, given, settings
 from libs.auth import RAGFlowHttpApiAuth
 from utils import encode_avatar
 from utils.file_utils import create_image_file
 from utils.hypothesis_utils import valid_names
-from configs import DEFAULT_PARSER_CONFIG
+
 # TODO: Missing scenario for updating embedding_model with chunk_count != 0
 
 

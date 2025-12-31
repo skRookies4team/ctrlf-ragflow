@@ -2,8 +2,8 @@ import os
 import re
 from typing import List, Tuple
 
-import fitz               # PyMuPDF  (책갈피 + 페이지 번호용)
-from pypdf import PdfReader, PdfWriter   # pip install pypdf
+import fitz  # PyMuPDF  (책갈피 + 페이지 번호용)
+from pypdf import PdfReader, PdfWriter  # pip install pypdf
 
 
 def sanitize_title(title: str) -> str:

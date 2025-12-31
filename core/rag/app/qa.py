@@ -14,23 +14,23 @@
 #  limitations under the License.
 #
 
+import csv
 import logging
 import re
-import csv
 from copy import deepcopy
 from io import BytesIO
 from timeit import default_timer as timer
-from openpyxl import load_workbook
-
-from deepdoc.parser.utils import get_text
-from rag.nlp import is_english, random_choices, qbullets_category, add_positions, has_qbullet, docx_question_level
-from rag.nlp import rag_tokenizer, tokenize_table, concat_img
-from deepdoc.parser import PdfParser, ExcelParser, DocxParser
-from docx import Document
-from PIL import Image
-from markdown import markdown
 
 from common.float_utils import get_float
+from deepdoc.parser import DocxParser, ExcelParser, PdfParser
+from deepdoc.parser.utils import get_text
+from docx import Document
+from markdown import markdown
+from openpyxl import load_workbook
+from PIL import Image
+from rag.nlp import (add_positions, concat_img, docx_question_level,
+                     has_qbullet, is_english, qbullets_category, rag_tokenizer,
+                     random_choices, tokenize_table)
 
 
 class Excel(ExcelParser):

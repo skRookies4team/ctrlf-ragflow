@@ -2,12 +2,12 @@
 Content processor for converting Firecrawl output to RAGFlow document format.
 """
 
-import re
 import hashlib
-from typing import List, Dict, Any
-from dataclasses import dataclass
 import logging
+import re
+from dataclasses import dataclass
 from datetime import datetime
+from typing import Any, Dict, List
 
 from firecrawl_connector import ScrapedContent
 

@@ -14,10 +14,12 @@
 #  limitations under the License.
 #
 
-from common import create_dataset, list_dataset, rm_dataset, update_dataset, DATASET_NAME_LIMIT
-import re
 import random
+import re
 import string
+
+from common import (DATASET_NAME_LIMIT, create_dataset, list_dataset,
+                    rm_dataset, update_dataset)
 
 
 def test_dataset(get_auth):

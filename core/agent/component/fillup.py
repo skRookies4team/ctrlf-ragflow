@@ -17,7 +17,7 @@ import json
 import re
 from functools import partial
 
-from agent.component.base import ComponentParamBase, ComponentBase
+from agent.component.base import ComponentBase, ComponentParamBase
 
 
 class UserFillUpParam(ComponentParamBase):

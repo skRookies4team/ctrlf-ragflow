@@ -13,7 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-from agent.component.base import ComponentParamBase, ComponentBase
+from agent.component.base import ComponentBase, ComponentParamBase
 
 
 class WebhookParam(ComponentParamBase):

@@ -6,17 +6,22 @@ Reference:
 """
 
 import re
-from typing import Any
 from dataclasses import dataclass
+from typing import Any
+
+import networkx as nx
 import tiktoken
 import trio
-
-from graphrag.general.extractor import Extractor, ENTITY_EXTRACTION_MAX_GLEANINGS
-from graphrag.general.graph_prompt import GRAPH_EXTRACTION_PROMPT, CONTINUE_PROMPT, LOOP_PROMPT
-from graphrag.utils import ErrorHandlerFn, perform_variable_replacements, chat_limiter, split_string_by_multi_markers
-from rag.llm.chat_model import Base as CompletionLLM
-import networkx as nx
 from common.token_utils import num_tokens_from_string
+from graphrag.general.extractor import (ENTITY_EXTRACTION_MAX_GLEANINGS,
+                                        Extractor)
+from graphrag.general.graph_prompt import (CONTINUE_PROMPT,
+                                           GRAPH_EXTRACTION_PROMPT,
+                                           LOOP_PROMPT)
+from graphrag.utils import (ErrorHandlerFn, chat_limiter,
+                            perform_variable_replacements,
+                            split_string_by_multi_markers)
+from rag.llm.chat_model import Base as CompletionLLM
 
 DEFAULT_TUPLE_DELIMITER = "<|>"
 DEFAULT_RECORD_DELIMITER = "##"

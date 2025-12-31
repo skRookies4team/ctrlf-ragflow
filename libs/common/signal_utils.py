@@ -14,12 +14,14 @@
 #  limitations under the License.
 #
 
+import logging
 import os
 import sys
-from datetime import datetime
-import logging
 import tracemalloc
+from datetime import datetime
+
 from common.log_utils import get_project_base_directory
+
 
 # SIGUSR1 handler: start tracemalloc and take snapshot
 def start_tracemalloc_and_snapshot(signum, frame):
@@ -37,7 +39,7 @@ def start_tracemalloc_and_snapshot(signum, frame):
     snapshot.dump(snapshot_file)
     current, peak = tracemalloc.get_traced_memory()
     if sys.platform == "win32":
-        import  psutil
+        import psutil
         process = psutil.Process()
         max_rss = process.memory_info().rss / 1024
     else:

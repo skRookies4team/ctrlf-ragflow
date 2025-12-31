@@ -19,7 +19,8 @@ from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 import requests
-from common import DOCUMENT_NAME_LIMIT, FILE_API_URL, HOST_ADDRESS, INVALID_API_TOKEN, list_datasets, upload_documnets
+from common import (DOCUMENT_NAME_LIMIT, FILE_API_URL, HOST_ADDRESS,
+                    INVALID_API_TOKEN, list_datasets, upload_documnets)
 from libs.auth import RAGFlowHttpApiAuth
 from libs.utils.file_utils import create_txt_file
 from requests_toolbelt import MultipartEncoder

@@ -14,20 +14,21 @@
 #  limitations under the License.
 #
 
-import logging
 import collections
+import logging
 import re
-from typing import Any
 from dataclasses import dataclass
-import trio
+from functools import reduce
+from typing import Any
 
+import markdown_to_json
+import trio
+from common.token_utils import num_tokens_from_string
 from graphrag.general.extractor import Extractor
 from graphrag.general.mind_map_prompt import MIND_MAP_EXTRACTION_PROMPT
-from graphrag.utils import ErrorHandlerFn, perform_variable_replacements, chat_limiter
+from graphrag.utils import (ErrorHandlerFn, chat_limiter,
+                            perform_variable_replacements)
 from rag.llm.chat_model import Base as CompletionLLM
-import markdown_to_json
-from functools import reduce
-from common.token_utils import num_tokens_from_string
 
 
 @dataclass

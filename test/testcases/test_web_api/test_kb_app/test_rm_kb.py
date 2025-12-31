@@ -15,10 +15,7 @@
 #
 
 import pytest
-from common import (
-    list_kbs,
-    rm_kb,
-)
+from common import list_kbs, rm_kb
 from configs import INVALID_API_TOKEN
 from libs.auth import RAGFlowWebApiAuth
 

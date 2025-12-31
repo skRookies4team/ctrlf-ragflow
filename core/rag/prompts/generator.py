@@ -19,15 +19,15 @@ import logging
 import re
 from copy import deepcopy
 from typing import Tuple
+
 import jinja2
 import json_repair
 import trio
+from common.constants import TAG_FLD
 from common.misc_utils import hash_str2int
+from common.token_utils import encoder, num_tokens_from_string
 from rag.nlp import rag_tokenizer
 from rag.prompts.template import load_prompt
-from common.constants import TAG_FLD
-from common.token_utils import encoder, num_tokens_from_string
-
 
 STOP_TOKEN="<|STOP|>"
 COMPLETE_TASK="complete_task"
@@ -201,9 +201,9 @@ def question_proposal(chat_mdl, content, topn=3):
 
 
 def full_question(tenant_id=None, llm_id=None, messages=[], language=None, chat_mdl=None):
-    from common.constants import LLMType
     from api.db.services.llm_service import LLMBundle
     from api.db.services.tenant_llm_service import TenantLLMService
+    from common.constants import LLMType
 
     if not chat_mdl:
         if TenantLLMService.llm_id2llm_type(llm_id) == "image2text":
@@ -235,9 +235,9 @@ def full_question(tenant_id=None, llm_id=None, messages=[], language=None, chat_
 
 
 def cross_languages(tenant_id, llm_id, query, languages=[]):
-    from common.constants import LLMType
     from api.db.services.llm_service import LLMBundle
     from api.db.services.tenant_llm_service import TenantLLMService
+    from common.constants import LLMType
 
     if llm_id and TenantLLMService.llm_id2llm_type(llm_id) == "image2text":
         chat_mdl = LLMBundle(tenant_id, LLMType.IMAGE2TEXT, llm_id)

@@ -1,5 +1,6 @@
 from .cer import cer
 
+
 def compute_cer_multi(pred_list, gt_list):
     if not pred_list or not gt_list:
         return None

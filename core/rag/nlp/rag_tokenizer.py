@@ -14,18 +14,19 @@
 #  limitations under the License.
 #
 
-import logging
 import copy
-import datrie
+import logging
 import math
 import os
 import re
 import string
 import sys
+
+import datrie
+from common.file_utils import get_project_base_directory
 from hanziconv import HanziConv
 from nltk import word_tokenize
 from nltk.stem import PorterStemmer, WordNetLemmatizer
-from common.file_utils import get_project_base_directory
 
 
 class RagTokenizer:

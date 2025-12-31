@@ -14,10 +14,11 @@
 #  limitations under the License.
 #
 
-import os
-import json
-import re
 import copy
+import json
+import os
+import re
+
 import pandas as pd
 
 current_file_path = os.path.dirname(os.path.abspath(__file__))

@@ -1,5 +1,6 @@
 # sample/embedding_provider.py
 from typing import List
+
 from openai import OpenAI
 from sentence_transformers import SentenceTransformer
 

@@ -33,10 +33,9 @@ from typing import Any, Callable, Optional
 import numpy as np
 import pdfplumber
 import requests
+from deepdoc.parser.pdf_parser import RAGFlowPdfParser
 from PIL import Image
 from strenum import StrEnum
-
-from deepdoc.parser.pdf_parser import RAGFlowPdfParser
 
 LOCK_KEY_pdfplumber = "global_shared_lock_pdfplumber"
 if LOCK_KEY_pdfplumber not in sys.modules:

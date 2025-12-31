@@ -1,6 +1,7 @@
 # preprocessing/pdf/pdf_type_detector.py
 import fitz
 
+
 class PDFTypeDetector:
     @staticmethod
     def detect(pdf_path: str, text_threshold: int = 25):

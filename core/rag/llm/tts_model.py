@@ -34,9 +34,8 @@ import httpx
 import ormsgpack
 import requests
 import websocket
-from pydantic import BaseModel, conint
-
 from common.token_utils import num_tokens_from_string
+from pydantic import BaseModel, conint
 
 
 class ServeReferenceAudio(BaseModel):
@@ -130,8 +129,10 @@ class QwenTTS(Base):
     def tts(self, text):
         from collections import deque
 
-        from dashscope.api_entities.dashscope_response import SpeechSynthesisResponse
-        from dashscope.audio.tts import ResultCallback, SpeechSynthesisResult, SpeechSynthesizer
+        from dashscope.api_entities.dashscope_response import \
+            SpeechSynthesisResponse
+        from dashscope.audio.tts import (ResultCallback, SpeechSynthesisResult,
+                                         SpeechSynthesizer)
 
         class Callback(ResultCallback):
             def __init__(self) -> None:

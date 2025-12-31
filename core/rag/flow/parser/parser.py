@@ -19,25 +19,25 @@ import random
 import re
 from functools import partial
 
-import trio
 import numpy as np
-from PIL import Image
-
-from common.constants import LLMType
+import trio
 from api.db.services.file2document_service import File2DocumentService
 from api.db.services.file_service import FileService
 from api.db.services.llm_service import LLMBundle
+from common import settings
+from common.constants import LLMType
 from common.misc_utils import get_uuid
-from rag.utils.base64_image import image2id
 from deepdoc.parser import ExcelParser
 from deepdoc.parser.mineru_parser import MinerUParser
-from deepdoc.parser.pdf_parser import PlainParser, RAGFlowPdfParser, VisionParser
+from deepdoc.parser.pdf_parser import (PlainParser, RAGFlowPdfParser,
+                                       VisionParser)
 from deepdoc.parser.tcadp_parser import TCADPParser
+from PIL import Image
 from rag.app.naive import Docx
 from rag.flow.base import ProcessBase, ProcessParamBase
 from rag.flow.parser.schema import ParserFromUpstream
 from rag.llm.cv_model import Base as VLM
-from common import settings
+from rag.utils.base64_image import image2id
 
 
 class ParserParam(ProcessParamBase):
@@ -459,7 +459,8 @@ class Parser(ProcessBase):
                 self.set_output("json", result)
         else:
             # Default DeepDOC parser (supports .pptx format)
-            from deepdoc.parser.ppt_parser import RAGFlowPptParser as ppt_parser
+            from deepdoc.parser.ppt_parser import \
+                RAGFlowPptParser as ppt_parser
 
             ppt_parser = ppt_parser()
             txts = ppt_parser(blob, 0, 100000, None)

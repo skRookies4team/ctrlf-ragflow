@@ -30,19 +30,19 @@ import numpy as np
 import pdfplumber
 import trio
 import xgboost as xgb
+from common import settings
+from common.file_utils import get_project_base_directory
+from common.misc_utils import pip_install_torch
+from deepdoc.vision import (OCR, AscendLayoutRecognizer, LayoutRecognizer,
+                            Recognizer, TableStructureRecognizer)
 from huggingface_hub import snapshot_download
 from PIL import Image
 from pypdf import PdfReader as pdf2_read
-from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_score
-
-from common.file_utils import get_project_base_directory
-from common.misc_utils import pip_install_torch
-from deepdoc.vision import OCR, AscendLayoutRecognizer, LayoutRecognizer, Recognizer, TableStructureRecognizer
 from rag.app.picture import vision_llm_chunk as picture_vision_llm_chunk
 from rag.nlp import rag_tokenizer
 from rag.prompts.generator import vision_llm_describe_prompt
-from common import settings
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
 
 LOCK_KEY_pdfplumber = "global_shared_lock_pdfplumber"
 if LOCK_KEY_pdfplumber not in sys.modules:

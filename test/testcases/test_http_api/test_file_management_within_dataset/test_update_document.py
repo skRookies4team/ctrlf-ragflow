@@ -17,9 +17,10 @@
 
 import pytest
 from common import list_documents, update_document
-from configs import DOCUMENT_NAME_LIMIT, INVALID_API_TOKEN
+from configs import (DEFAULT_PARSER_CONFIG, DOCUMENT_NAME_LIMIT,
+                     INVALID_API_TOKEN)
 from libs.auth import RAGFlowHttpApiAuth
-from configs import DEFAULT_PARSER_CONFIG
+
 
 @pytest.mark.p1
 class TestAuthorization:

@@ -13,24 +13,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
+import copy
 import gc
 import logging
-import copy
-import time
+import math
 import os
+import time
 
-from huggingface_hub import snapshot_download
-
+import cv2
+import numpy as np
+import onnxruntime as ort
+from common import settings
 from common.file_utils import get_project_base_directory
 from common.misc_utils import pip_install_torch
-from common import settings
-from .operators import *  # noqa: F403
-from . import operators
-import math
-import numpy as np
-import cv2
-import onnxruntime as ort
+from huggingface_hub import snapshot_download
 
+from . import operators
+from .operators import *  # noqa: F403
 from .postprocess import build_post_process
 
 loaded_models = {}

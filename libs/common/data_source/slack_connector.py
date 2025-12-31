@@ -9,41 +9,37 @@ from http.client import IncompleteRead, RemoteDisconnected
 from typing import Any, cast
 from urllib.error import URLError
 
+from common.data_source.config import (_SLACK_LIMIT,
+                                       ENABLE_EXPENSIVE_EXPERT_CALLS,
+                                       FAST_TIMEOUT, INDEX_BATCH_SIZE,
+                                       MAX_CHANNELS_TO_LOG, MAX_RETRIES,
+                                       SLACK_NUM_THREADS)
+from common.data_source.exceptions import (ConnectorMissingCredentialError,
+                                           ConnectorValidationError,
+                                           CredentialExpiredError,
+                                           InsufficientPermissionsError,
+                                           UnexpectedValidationError)
+from common.data_source.interfaces import (CheckpointedConnectorWithPermSync,
+                                           CredentialsConnector,
+                                           SlimConnectorWithPermSync)
+from common.data_source.models import (BasicExpertInfo, ChannelType,
+                                       CheckpointOutput, ConnectorCheckpoint,
+                                       ConnectorFailure, Document,
+                                       DocumentFailure,
+                                       GenerateSlimDocumentOutput, MessageType,
+                                       ProcessedSlackMessage,
+                                       SecondsSinceUnixEpoch,
+                                       SlackMessageFilterReason, SlimDocument,
+                                       TextSection, ThreadType)
+from common.data_source.utils import (SlackTextCleaner,
+                                      expert_info_from_slack_id,
+                                      get_message_link,
+                                      make_paginated_slack_api_call)
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from slack_sdk.http_retry import ConnectionErrorRetryHandler
-from slack_sdk.http_retry.builtin_interval_calculators import FixedValueRetryIntervalCalculator
-
-from common.data_source.config import (
-    INDEX_BATCH_SIZE, SLACK_NUM_THREADS, ENABLE_EXPENSIVE_EXPERT_CALLS,
-    _SLACK_LIMIT, FAST_TIMEOUT, MAX_RETRIES, MAX_CHANNELS_TO_LOG
-)
-from common.data_source.exceptions import (
-    ConnectorMissingCredentialError,
-    ConnectorValidationError,
-    CredentialExpiredError,
-    InsufficientPermissionsError,
-    UnexpectedValidationError
-)
-from common.data_source.interfaces import (
-    CheckpointedConnectorWithPermSync,
-    CredentialsConnector,
-    SlimConnectorWithPermSync
-)
-from common.data_source.models import (
-    BasicExpertInfo,
-    ConnectorCheckpoint,
-    ConnectorFailure,
-    Document,
-    DocumentFailure,
-    SlimDocument,
-    TextSection,
-    SecondsSinceUnixEpoch,
-    GenerateSlimDocumentOutput, MessageType, SlackMessageFilterReason, ChannelType, ThreadType, ProcessedSlackMessage,
-    CheckpointOutput
-)
-from common.data_source.utils import make_paginated_slack_api_call, SlackTextCleaner, expert_info_from_slack_id, \
-    get_message_link
+from slack_sdk.http_retry.builtin_interval_calculators import \
+    FixedValueRetryIntervalCalculator
 
 # Disallowed message subtypes list
 _DISALLOWED_MSG_SUBTYPES = {

@@ -1,6 +1,7 @@
 # preprocessing/pdf/pdf_text_extractor.py
 import fitz
 
+
 class PDFTextExtractor:
     @staticmethod
     def extract(pdf_path: str) -> list[str]:

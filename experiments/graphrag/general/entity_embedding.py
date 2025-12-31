@@ -5,12 +5,13 @@ Reference:
  - [graphrag](https://github.com/microsoft/graphrag)
 """
 
-from typing import Any
-import numpy as np
-import networkx as nx
 from dataclasses import dataclass
-from graphrag.general.leiden import stable_largest_connected_component
+from typing import Any
+
 import graspologic as gc
+import networkx as nx
+import numpy as np
+from graphrag.general.leiden import stable_largest_connected_component
 
 
 @dataclass

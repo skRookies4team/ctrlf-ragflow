@@ -14,14 +14,15 @@
 #  limitations under the License.
 #
 
-import logging
-import re
 import json
+import logging
 import os
+import re
+
 import pandas as pd
 from rag.nlp import rag_tokenizer
-from . import regions
 
+from . import regions
 
 current_file_path = os.path.dirname(os.path.abspath(__file__))
 GOODS = pd.read_csv(

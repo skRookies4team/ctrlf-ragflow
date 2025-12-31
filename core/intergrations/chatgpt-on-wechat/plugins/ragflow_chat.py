@@ -15,11 +15,14 @@
 #
 
 import logging
+
 import requests
 from bridge.context import ContextType  # Import Context, ContextType
 from bridge.reply import Reply, ReplyType  # Import Reply, ReplyType
 from plugins import Plugin, register  # Import Plugin and register
-from plugins.event import Event, EventContext, EventAction  # Import event-related classes
+from plugins.event import (Event, EventAction,  # Import event-related classes
+                           EventContext)
+
 
 @register(name="RAGFlowChat", desc="Use RAGFlow API to chat", version="1.0", author="Your Name")
 class RAGFlowChat(Plugin):

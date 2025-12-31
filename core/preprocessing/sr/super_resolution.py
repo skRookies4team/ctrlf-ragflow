@@ -2,6 +2,7 @@
 
 from PIL import Image
 
+
 class SuperResolution:
 
     def __init__(self, scale=1):

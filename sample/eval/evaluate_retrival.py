@@ -1,9 +1,12 @@
-import os, json, re
-import requests
-from typing import Dict, Any, List, Tuple
+import json
+import os
+import re
 from pathlib import Path
+from typing import Any, Dict, List, Tuple
+
+import requests
 from dotenv import load_dotenv
-from pymilvus import connections, Collection
+from pymilvus import Collection, connections
 
 BASE_DIR = Path(__file__).resolve().parents[2]  # ragflow/
 load_dotenv(BASE_DIR / ".env")

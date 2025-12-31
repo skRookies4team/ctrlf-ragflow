@@ -13,21 +13,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-from functools import partial
 import json
 import os
 import re
 from abc import ABC
-from agent.tools.base import ToolParamBase, ToolBase, ToolMeta
-from common.constants import LLMType
-from api.db.services.document_service import DocumentService
+from functools import partial
+
+from agent.tools.base import ToolBase, ToolMeta, ToolParamBase
 from api.db.services.dialog_service import meta_filter
+from api.db.services.document_service import DocumentService
 from api.db.services.knowledgebase_service import KnowledgebaseService
 from api.db.services.llm_service import LLMBundle
 from common import settings
 from common.connection_utils import timeout
+from common.constants import LLMType
 from rag.app.tag import label_question
-from rag.prompts.generator import cross_languages, kb_prompt, gen_meta_filter
+from rag.prompts.generator import cross_languages, gen_meta_filter, kb_prompt
 
 
 class RetrievalParam(ToolParamBase):

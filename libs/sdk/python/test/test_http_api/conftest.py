@@ -16,31 +16,17 @@
 import os
 
 import pytest
-from common import (
-    add_chunk,
-    batch_create_datasets,
-    bulk_upload_documents,
-    create_chat_assistant,
-    delete_chat_assistants,
-    delete_datasets,
-    delete_session_with_chat_assistants,
-    list_documnets,
-    parse_documnets,
-)
+from common import (add_chunk, batch_create_datasets, bulk_upload_documents,
+                    create_chat_assistant, delete_chat_assistants,
+                    delete_datasets, delete_session_with_chat_assistants,
+                    list_documnets, parse_documnets)
 from libs.auth import RAGFlowHttpApiAuth
 from libs.utils import wait_for
-from libs.utils.file_utils import (
-    create_docx_file,
-    create_eml_file,
-    create_excel_file,
-    create_html_file,
-    create_image_file,
-    create_json_file,
-    create_md_file,
-    create_pdf_file,
-    create_ppt_file,
-    create_txt_file,
-)
+from libs.utils.file_utils import (create_docx_file, create_eml_file,
+                                   create_excel_file, create_html_file,
+                                   create_image_file, create_json_file,
+                                   create_md_file, create_pdf_file,
+                                   create_ppt_file, create_txt_file)
 
 MARKER_EXPRESSIONS = {
     "p1": "p1",

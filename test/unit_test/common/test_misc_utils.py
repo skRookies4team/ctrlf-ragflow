@@ -13,9 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-import uuid
 import hashlib
-from common.misc_utils import get_uuid, download_img, hash_str2int, convert_bytes
+import uuid
+
+from common.misc_utils import (convert_bytes, download_img, get_uuid,
+                               hash_str2int)
 
 
 class TestGetUuid:

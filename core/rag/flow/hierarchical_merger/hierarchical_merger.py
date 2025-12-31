@@ -19,14 +19,13 @@ from copy import deepcopy
 from functools import partial
 
 import trio
-
+from common import settings
 from common.misc_utils import get_uuid
-from rag.utils.base64_image import id2image, image2id
 from deepdoc.parser.pdf_parser import RAGFlowPdfParser
 from rag.flow.base import ProcessBase, ProcessParamBase
 from rag.flow.hierarchical_merger.schema import HierarchicalMergerFromUpstream
 from rag.nlp import concat_img
-from common import settings
+from rag.utils.base64_image import id2image, image2id
 
 
 class HierarchicalMergerParam(ProcessParamBase):

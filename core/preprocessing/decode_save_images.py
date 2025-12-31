@@ -1,8 +1,10 @@
-import json
 import base64
-from pathlib import Path
-from PIL import Image
 import io
+import json
+from pathlib import Path
+
+from PIL import Image
+
 
 def save_images_from_pipeline(json_path: str, save_dir="extracted_images"):
     data = json.loads(Path(json_path).read_text(encoding="utf-8"))

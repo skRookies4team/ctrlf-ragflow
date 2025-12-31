@@ -28,14 +28,15 @@ import json_repair
 import litellm
 import openai
 import requests
+from common.token_utils import (num_tokens_from_string,
+                                total_token_count_from_response)
 from openai import OpenAI
 from openai.lib.azure import AzureOpenAI
+from rag.llm import (FACTORY_DEFAULT_BASE_URL, LITELLM_PROVIDER_PREFIX,
+                     SupportedLiteLLMProvider)
+from rag.nlp import is_chinese, is_english
 from strenum import StrEnum
 from zhipuai import ZhipuAI
-
-from rag.llm import FACTORY_DEFAULT_BASE_URL, LITELLM_PROVIDER_PREFIX, SupportedLiteLLMProvider
-from rag.nlp import is_chinese, is_english
-from common.token_utils import num_tokens_from_string, total_token_count_from_response
 
 
 # Error message constants
@@ -1014,9 +1015,8 @@ class HunyuanChat(Base):
         return ans, response.Usage.TotalTokens
 
     def chat_streamly(self, system, history, gen_conf={}, **kwargs):
-        from tencentcloud.common.exception.tencent_cloud_sdk_exception import (
-            TencentCloudSDKException,
-        )
+        from tencentcloud.common.exception.tencent_cloud_sdk_exception import \
+            TencentCloudSDKException
         from tencentcloud.hunyuan.v20230901 import models
 
         _gen_conf = {}
@@ -1208,7 +1208,8 @@ class GoogleChat(Base):
 
         # Build GenerateContentConfig
         try:
-            from google.genai.types import GenerateContentConfig, ThinkingConfig, Content, Part
+            from google.genai.types import (Content, GenerateContentConfig,
+                                            Part, ThinkingConfig)
         except ImportError as e:
             logging.error(f"[GoogleChat] Failed to import google-genai: {e}. Please install: pip install google-genai>=1.41.0")
             raise
@@ -1294,7 +1295,8 @@ class GoogleChat(Base):
 
             # Build GenerateContentConfig
             try:
-                from google.genai.types import GenerateContentConfig, ThinkingConfig, Content, Part
+                from google.genai.types import (Content, GenerateContentConfig,
+                                                Part, ThinkingConfig)
             except ImportError as e:
                 logging.error(f"[GoogleChat] Failed to import google-genai: {e}. Please install: pip install google-genai>=1.41.0")
                 raise

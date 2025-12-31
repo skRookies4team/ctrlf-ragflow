@@ -1,8 +1,8 @@
 
-from pymilvus import connections, utility
-from dotenv import load_dotenv
 import os
-from milvus_proxy import MilvusProxy
+
+from dotenv import load_dotenv
+from pymilvus import connections, utility
 
 # =========================
 # 1. 환경 변수 로드

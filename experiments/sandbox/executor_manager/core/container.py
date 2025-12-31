@@ -18,11 +18,10 @@ import contextlib
 import os
 from queue import Empty, Queue
 
+from core.logger import logger
 from models.enums import SupportLanguage
 from util import env_setting_enabled, is_valid_memory_limit
 from utils.common import async_run_command
-
-from core.logger import logger
 
 _CONTAINER_QUEUES: dict[SupportLanguage, Queue] = {}
 _CONTAINER_LOCK: asyncio.Lock = asyncio.Lock()

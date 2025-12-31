@@ -1,9 +1,8 @@
 from typing import Any
 
-from pydantic import BaseModel
-
 from common.data_source.google_util.resource import GoogleDocsService
 from common.data_source.models import TextSection
+from pydantic import BaseModel
 
 HEADING_DELIMITER = "\n"
 

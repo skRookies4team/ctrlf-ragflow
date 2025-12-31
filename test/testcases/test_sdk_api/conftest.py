@@ -18,28 +18,17 @@ from pathlib import Path
 from time import sleep
 
 import pytest
-from common import (
-    batch_add_chunks,
-    batch_create_chat_assistants,
-    batch_create_datasets,
-    bulk_upload_documents,
-)
+from common import (batch_add_chunks, batch_create_chat_assistants,
+                    batch_create_datasets, bulk_upload_documents)
 from configs import HOST_ADDRESS, VERSION
 from pytest import FixtureRequest
 from ragflow_sdk import Chat, Chunk, DataSet, Document, RAGFlow
 from utils import wait_for
-from utils.file_utils import (
-    create_docx_file,
-    create_eml_file,
-    create_excel_file,
-    create_html_file,
-    create_image_file,
-    create_json_file,
-    create_md_file,
-    create_pdf_file,
-    create_ppt_file,
-    create_txt_file,
-)
+from utils.file_utils import (create_docx_file, create_eml_file,
+                              create_excel_file, create_html_file,
+                              create_image_file, create_json_file,
+                              create_md_file, create_pdf_file, create_ppt_file,
+                              create_txt_file)
 
 
 @wait_for(30, 1, "Document parsing timeout")

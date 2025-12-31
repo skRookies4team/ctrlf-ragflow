@@ -17,7 +17,8 @@ import uuid
 from concurrent.futures import ThreadPoolExecutor
 
 import pytest
-from common import DATASET_NAME_LIMIT, INVALID_API_TOKEN, list_datasets, update_dataset
+from common import (DATASET_NAME_LIMIT, INVALID_API_TOKEN, list_datasets,
+                    update_dataset)
 from hypothesis import HealthCheck, example, given, settings
 from libs.auth import RAGFlowHttpApiAuth
 from libs.utils import encode_avatar

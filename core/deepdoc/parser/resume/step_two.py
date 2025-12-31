@@ -14,19 +14,20 @@
 #  limitations under the License.
 #
 
+import copy
+import datetime
 import logging
 import re
-import copy
-import time
-import datetime
-import demjson3
-import traceback
 import signal
+import time
+import traceback
+from contextlib import contextmanager
+
+import demjson3
 import numpy as np
-from deepdoc.parser.resume.entities import degrees, schools, corporations
+from deepdoc.parser.resume.entities import corporations, degrees, schools
 from rag.nlp import rag_tokenizer, surname
 from xpinyin import Pinyin
-from contextlib import contextmanager
 
 
 class TimeoutException(Exception):

@@ -18,12 +18,13 @@ import re
 import time
 from copy import deepcopy
 from functools import partial
-from typing import TypedDict, List, Any
-from agent.component.base import ComponentParamBase, ComponentBase
+from timeit import default_timer as timer
+from typing import Any, List, TypedDict
+
+from agent.component.base import ComponentBase, ComponentParamBase
+from common.mcp_tool_call_conn import MCPToolCallSession, ToolCallSession
 from common.misc_utils import hash_str2int
 from rag.prompts.generator import kb_prompt
-from common.mcp_tool_call_conn import MCPToolCallSession, ToolCallSession
-from timeit import default_timer as timer
 
 
 class ToolParameter(TypedDict):
@@ -113,7 +114,8 @@ class ToolParamBase(ComponentParamBase):
 
 class ToolBase(ComponentBase):
     def __init__(self, canvas, id, param: ComponentParamBase):
-        from agent.canvas import Canvas  # Local import to avoid cyclic dependency
+        from agent.canvas import \
+            Canvas  # Local import to avoid cyclic dependency
         assert isinstance(canvas, Canvas), "canvas must be an instance of Canvas"
         self._canvas = canvas
         self._id = id

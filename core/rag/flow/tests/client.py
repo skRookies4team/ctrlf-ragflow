@@ -20,7 +20,6 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 
 import trio
-
 from common import settings
 from rag.flow.pipeline import Pipeline
 

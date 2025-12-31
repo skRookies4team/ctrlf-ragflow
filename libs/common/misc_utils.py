@@ -16,13 +16,15 @@
 
 import base64
 import hashlib
-import uuid
-import requests
-import threading
+import logging
+import os
 import subprocess
 import sys
-import os
-import logging
+import threading
+import uuid
+
+import requests
+
 
 def get_uuid():
     return uuid.uuid1().hex

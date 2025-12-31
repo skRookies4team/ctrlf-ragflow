@@ -14,7 +14,8 @@
 #  limitations under the License.
 import random
 from copy import deepcopy
-from agent.component.llm import LLMParam, LLM
+
+from agent.component.llm import LLM, LLMParam
 from rag.flow.base import ProcessBase, ProcessParamBase
 
 

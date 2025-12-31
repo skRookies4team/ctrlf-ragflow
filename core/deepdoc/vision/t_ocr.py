@@ -16,6 +16,7 @@
 
 import os
 import sys
+
 sys.path.insert(
     0,
     os.path.abspath(
@@ -24,11 +25,12 @@ sys.path.insert(
                 os.path.abspath(__file__)),
             '../../')))
 
-from deepdoc.vision.seeit import draw_box
-from deepdoc.vision import OCR, init_in_out
 import argparse
+
 import numpy as np
 import trio
+from deepdoc.vision import OCR, init_in_out
+from deepdoc.vision.seeit import draw_box
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = '0,2' #2 gpus, uncontinuous
 os.environ['CUDA_VISIBLE_DEVICES'] = '0' #1 gpu

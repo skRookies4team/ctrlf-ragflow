@@ -1,16 +1,10 @@
 # sample/milvus_proxy.py
-import os
 import hashlib
-from typing import List, Dict, Any
+import os
+from typing import Any, Dict, List
 
-from pymilvus import (
-    connections,
-    FieldSchema,
-    CollectionSchema,
-    DataType,
-    Collection,
-    utility,
-)
+from pymilvus import (Collection, CollectionSchema, DataType, FieldSchema,
+                      connections, utility)
 
 
 class MilvusProxy:

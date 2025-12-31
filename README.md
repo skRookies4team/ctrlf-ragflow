@@ -106,7 +106,7 @@ $env:EMBEDDING_MODEL_SELECTED="sroberta"
 python .\main.py `
   --input "C:\Ragflow_test\ragflow\sample\dataset_장애인인식개선\직장내괴롭힘예방조치교육자료_근로자용.pdf" `
   --domain "장애인인식개선교육" `
-  --doc_id "HR-ANTI-BULLY-001" `
+  --do9c_id "HR-ANTI-BULLY-001" `
   --version 1 `
   --replace false
 ```

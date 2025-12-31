@@ -14,19 +14,19 @@
 #  limitations under the License.
 #
 
+import builtins
+import json
+import logging
+import os
 import re
 import time
 from abc import ABC
-import builtins
-import json
-import os
-import logging
 from typing import Any, List, Union
+
 import pandas as pd
 import trio
 from agent import settings
 from common.connection_utils import timeout
-
 
 _FEEDED_DEPRECATED_PARAMS = "_feeded_deprecated_params"
 _DEPRECATED_PARAMS = "_deprecated_params"
@@ -410,7 +410,8 @@ class ComponentBase(ABC):
         )
 
     def __init__(self, canvas, id, param: ComponentParamBase):
-        from agent.canvas import Graph  # Local import to avoid cyclic dependency
+        from agent.canvas import \
+            Graph  # Local import to avoid cyclic dependency
         assert isinstance(canvas, Graph), "canvas must be an instance of Canvas"
         self._canvas = canvas
         self._id = id

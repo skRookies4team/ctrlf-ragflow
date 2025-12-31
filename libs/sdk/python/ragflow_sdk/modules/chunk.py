@@ -16,6 +16,7 @@
 
 from .base import Base
 
+
 class ChunkUpdateError(Exception):
     def __init__(self, code=None, message=None, details=None):
         self.code = code

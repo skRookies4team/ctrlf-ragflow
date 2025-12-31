@@ -17,9 +17,10 @@ import logging
 import os
 import time
 from abc import ABC
-from serpapi import GoogleSearch
-from agent.tools.base import ToolParamBase, ToolMeta, ToolBase
+
+from agent.tools.base import ToolBase, ToolMeta, ToolParamBase
 from common.connection_utils import timeout
+from serpapi import GoogleSearch
 
 
 class GoogleParam(ToolParamBase):

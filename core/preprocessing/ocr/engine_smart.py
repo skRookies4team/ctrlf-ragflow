@@ -2,12 +2,12 @@
 import logging
 import re
 import time
-from typing import Tuple, Dict, Any, Optional
+from typing import Any, Dict, Optional, Tuple
 
+import cv2
 import numpy as np
 import pytesseract
 from PIL import Image
-import cv2
 
 try:
     import easyocr

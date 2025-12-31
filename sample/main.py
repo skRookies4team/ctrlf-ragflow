@@ -8,29 +8,27 @@ HWP / PDF / PPT / DOCX / TXT / CSV 자동 처리 + 문서 타입 판별 + 자동
   - 없으면: 기존 DOMAIN_DIRS 배치 처리
 """
 
-import sys
-import os
-import time
-import requests
-import re
-import json
-import csv
-import pdfplumber
-import hashlib
 import argparse
-from pathlib import Path
-from typing import List, Sequence
-from dotenv import load_dotenv
+import csv
+import hashlib
+import json
+import os
+import re
+import sys
+import time
 from difflib import SequenceMatcher
-from docx import Document
-
-# ✅ OpenAI SDK
-from openai import OpenAI
-
 # =======================
 # 0. 경로/환경 설정
 # =======================
 from pathlib import Path
+from typing import List, Sequence
+
+import pdfplumber
+import requests
+from docx import Document
+from dotenv import load_dotenv
+# ✅ OpenAI SDK
+from openai import OpenAI
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -96,18 +94,19 @@ except ImportError:
     sys.path.insert(0, str(BASE_DIR / "sdk" / "python"))
     from ragflow_sdk import RAGFlow
 
-from ragflow_sdk.modules.dataset import DataSet
+from embedding_provider import EmbeddingProvider
 from milvus_proxy import MilvusProxy
+from ragflow_sdk.modules.dataset import DataSet
 
+from core.preprocessing.classifier.document_classifier import \
+    DocumentClassifier
+from core.preprocessing.coverters.hwp_extract import extract_docx_blocks
 # =======================
 # 2. 커스텀 전처리 모듈 import
 # =======================
 from core.preprocessing.coverters.hwp_to_docx import HwpAdapter
-from core.preprocessing.classifier.document_classifier import DocumentClassifier
 from core.preprocessing.pipeline import PreprocessPipeline
 from core.storage.table_store import TableStore
-from core.preprocessing.coverters.hwp_extract import extract_docx_blocks
-from embedding_provider import EmbeddingProvider
 
 TABLE_STORAGE_DIR = SCRIPT_DIR / "storage"
 table_store = TableStore(TABLE_STORAGE_DIR)

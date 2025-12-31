@@ -13,15 +13,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
+import csv
 import json
 import re
-import csv
 from copy import deepcopy
 
+from common import settings
 from deepdoc.parser.utils import get_text
 from rag.app.qa import Excel
 from rag.nlp import rag_tokenizer
-from common import settings
 
 
 def beAdoc(d, q, a, eng, row_num=-1):

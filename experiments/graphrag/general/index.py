@@ -19,29 +19,22 @@ import os
 
 import networkx as nx
 import trio
-
 from api.db.services.document_service import DocumentService
 from api.db.services.task_service import has_canceled
+from common import settings
+from common.connection_utils import timeout
 from common.exceptions import TaskCanceledException
 from common.misc_utils import get_uuid
-from common.connection_utils import timeout
 from graphrag.entity_resolution import EntityResolution
-from graphrag.general.community_reports_extractor import CommunityReportsExtractor
+from graphrag.general.community_reports_extractor import \
+    CommunityReportsExtractor
 from graphrag.general.extractor import Extractor
 from graphrag.general.graph_extractor import GraphExtractor as GeneralKGExt
 from graphrag.light.graph_extractor import GraphExtractor as LightKGExt
-from graphrag.utils import (
-    GraphChange,
-    chunk_id,
-    does_graph_contains,
-    get_graph,
-    graph_merge,
-    set_graph,
-    tidy_graph,
-)
+from graphrag.utils import (GraphChange, chunk_id, does_graph_contains,
+                            get_graph, graph_merge, set_graph, tidy_graph)
 from rag.nlp import rag_tokenizer, search
 from rag.utils.redis_conn import RedisDistributedLock
-from common import settings
 
 
 async def run_graphrag(

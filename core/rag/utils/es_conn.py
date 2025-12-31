@@ -14,25 +14,26 @@
 #  limitations under the License.
 #
 
-import logging
-import re
-import json
-import time
-import os
-
 import copy
-from elasticsearch import Elasticsearch, NotFoundError
-from elasticsearch_dsl import UpdateByQuery, Q, Search, Index
-from elastic_transport import ConnectionTimeout
-from common.decorator import singleton
-from common.file_utils import get_project_base_directory
-from common.misc_utils import convert_bytes
-from rag.utils.doc_store_conn import DocStoreConnection, MatchExpr, OrderByExpr, MatchTextExpr, MatchDenseExpr, \
-    FusionExpr
-from rag.nlp import is_english, rag_tokenizer
-from common.float_utils import get_float
+import json
+import logging
+import os
+import re
+import time
+
 from common import settings
 from common.constants import PAGERANK_FLD, TAG_FLD
+from common.decorator import singleton
+from common.file_utils import get_project_base_directory
+from common.float_utils import get_float
+from common.misc_utils import convert_bytes
+from elastic_transport import ConnectionTimeout
+from elasticsearch import Elasticsearch, NotFoundError
+from elasticsearch_dsl import Index, Q, Search, UpdateByQuery
+from rag.nlp import is_english, rag_tokenizer
+from rag.utils.doc_store_conn import (DocStoreConnection, FusionExpr,
+                                      MatchDenseExpr, MatchExpr, MatchTextExpr,
+                                      OrderByExpr)
 
 ATTEMPT_TIME = 2
 

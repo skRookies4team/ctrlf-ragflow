@@ -10,14 +10,16 @@ import re
 import threading
 import time
 from collections.abc import Callable, Generator, Iterator, Mapping, Sequence
-from concurrent.futures import FIRST_COMPLETED, Future, ThreadPoolExecutor, as_completed, wait
+from concurrent.futures import (FIRST_COMPLETED, Future, ThreadPoolExecutor,
+                                as_completed, wait)
 from datetime import datetime, timedelta, timezone
 from functools import lru_cache, wraps
 from io import BytesIO
 from itertools import islice
 from numbers import Integral
 from pathlib import Path
-from typing import IO, Any, Generic, Iterable, Optional, Protocol, TypeVar, cast
+from typing import (IO, Any, Generic, Iterable, Optional, Protocol, TypeVar,
+                    cast)
 from urllib.parse import parse_qs, quote, urljoin, urlparse
 
 import boto3
@@ -26,27 +28,27 @@ import requests
 from botocore.client import Config
 from botocore.credentials import RefreshableCredentials
 from botocore.session import get_session
+from common.data_source.config import (_ITERATION_LIMIT, _NOTION_CALL_TIMEOUT,
+                                       _SLACK_LIMIT,
+                                       CONFLUENCE_OAUTH_TOKEN_URL,
+                                       DOWNLOAD_CHUNK_SIZE,
+                                       EXCLUDED_IMAGE_TYPES,
+                                       RATE_LIMIT_MESSAGE_LOWERCASE,
+                                       SIZE_THRESHOLD_BUFFER, BlobType)
+from common.data_source.exceptions import RateLimitTriedTooManyTimesError
+from common.data_source.interfaces import (CT, CheckpointedConnector,
+                                           CheckpointOutputWrapper,
+                                           ConfluenceUser, LoadFunction,
+                                           OnyxExtensionType,
+                                           SecondsSinceUnixEpoch,
+                                           TokenResponse)
+from common.data_source.models import BasicExpertInfo, Document
 from googleapiclient.errors import HttpError
 from mypy_boto3_s3 import S3Client
 from retry import retry
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from slack_sdk.web import SlackResponse
-
-from common.data_source.config import (
-    _ITERATION_LIMIT,
-    _NOTION_CALL_TIMEOUT,
-    _SLACK_LIMIT,
-    CONFLUENCE_OAUTH_TOKEN_URL,
-    DOWNLOAD_CHUNK_SIZE,
-    EXCLUDED_IMAGE_TYPES,
-    RATE_LIMIT_MESSAGE_LOWERCASE,
-    SIZE_THRESHOLD_BUFFER,
-    BlobType,
-)
-from common.data_source.exceptions import RateLimitTriedTooManyTimesError
-from common.data_source.interfaces import CT, CheckpointedConnector, CheckpointOutputWrapper, ConfluenceUser, LoadFunction, OnyxExtensionType, SecondsSinceUnixEpoch, TokenResponse
-from common.data_source.models import BasicExpertInfo, Document
 
 _TZ_SUFFIX_PATTERN = re.compile(r"([+-])([\d:]+)$")
 

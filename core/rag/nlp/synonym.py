@@ -14,13 +14,14 @@
 #  limitations under the License.
 #
 
-import logging
 import json
+import logging
 import os
-import time
 import re
-from nltk.corpus import wordnet
+import time
+
 from common.file_utils import get_project_base_directory
+from nltk.corpus import wordnet
 
 
 class Dealer:

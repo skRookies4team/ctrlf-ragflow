@@ -16,14 +16,13 @@ import random
 from functools import partial
 
 import trio
-
+from common import settings
 from common.misc_utils import get_uuid
-from rag.utils.base64_image import id2image, image2id
 from deepdoc.parser.pdf_parser import RAGFlowPdfParser
 from rag.flow.base import ProcessBase, ProcessParamBase
 from rag.flow.splitter.schema import SplitterFromUpstream
 from rag.nlp import naive_merge, naive_merge_with_images
-from common import settings
+from rag.utils.base64_image import id2image, image2id
 
 
 class SplitterParam(ProcessParamBase):

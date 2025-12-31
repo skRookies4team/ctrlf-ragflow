@@ -15,6 +15,7 @@
 #
 import argparse
 import os
+
 from agent.canvas import Canvas
 from common import settings
 

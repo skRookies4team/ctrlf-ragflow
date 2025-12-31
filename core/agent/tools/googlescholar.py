@@ -17,9 +17,10 @@ import logging
 import os
 import time
 from abc import ABC
-from scholarly import scholarly
-from agent.tools.base import ToolMeta, ToolParamBase, ToolBase
+
+from agent.tools.base import ToolBase, ToolMeta, ToolParamBase
 from common.connection_utils import timeout
+from scholarly import scholarly
 
 
 class GoogleScholarParam(ToolParamBase):

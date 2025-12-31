@@ -15,15 +15,16 @@
 #
 
 import logging
-from io import BytesIO
 import re
+from io import BytesIO
 
+from deepdoc.parser import ExcelParser, HtmlParser, PdfParser
+from deepdoc.parser.figure_parser import vision_figure_parser_docx_wrapper
 from deepdoc.parser.utils import get_text
 from rag.app import naive
+from rag.app.naive import PARSERS, by_plaintext
 from rag.nlp import rag_tokenizer, tokenize
-from deepdoc.parser import PdfParser, ExcelParser, HtmlParser
-from deepdoc.parser.figure_parser import vision_figure_parser_docx_wrapper
-from rag.app.naive import by_plaintext, PARSERS
+
 
 class Pdf(PdfParser):
     def __call__(self, filename, binary=None, from_page=0,

@@ -16,9 +16,9 @@
 import base64
 from typing import Optional
 
+from models.enums import (ResourceLimitType, ResultStatus, RuntimeErrorType,
+                          SupportLanguage, UnauthorizedAccessType)
 from pydantic import BaseModel, Field, field_validator
-
-from models.enums import ResourceLimitType, ResultStatus, RuntimeErrorType, SupportLanguage, UnauthorizedAccessType
 
 
 class CodeExecutionResult(BaseModel):

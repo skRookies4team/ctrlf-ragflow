@@ -16,12 +16,13 @@
 
 import logging
 import time
+from io import BytesIO
+
+from common import settings
+from common.decorator import singleton
 from minio import Minio
 from minio.commonconfig import CopySource
 from minio.error import S3Error
-from io import BytesIO
-from common.decorator import singleton
-from common import settings
 
 
 @singleton

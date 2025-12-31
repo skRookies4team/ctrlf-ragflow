@@ -14,15 +14,16 @@
 #  limitations under the License.
 #
 
+import io
 import logging
+import re
 from email import policy
 from email.parser import BytesParser
-from rag.app.naive import chunk as naive_chunk
-import re
-from rag.nlp import rag_tokenizer, naive_merge, tokenize_chunks
-from deepdoc.parser import HtmlParser, TxtParser
 from timeit import default_timer as timer
-import io
+
+from deepdoc.parser import HtmlParser, TxtParser
+from rag.app.naive import chunk as naive_chunk
+from rag.nlp import naive_merge, rag_tokenizer, tokenize_chunks
 
 
 def chunk(

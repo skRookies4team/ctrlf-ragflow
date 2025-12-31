@@ -16,31 +16,18 @@
 from time import sleep
 
 import pytest
-from common import (
-    batch_add_chunks,
-    batch_create_chat_assistants,
-    batch_create_datasets,
-    bulk_upload_documents,
-    delete_chat_assistants,
-    delete_datasets,
-    delete_session_with_chat_assistants,
-    list_documents,
-    parse_documents,
-)
+from common import (batch_add_chunks, batch_create_chat_assistants,
+                    batch_create_datasets, bulk_upload_documents,
+                    delete_chat_assistants, delete_datasets,
+                    delete_session_with_chat_assistants, list_documents,
+                    parse_documents)
 from libs.auth import RAGFlowHttpApiAuth
 from utils import wait_for
-from utils.file_utils import (
-    create_docx_file,
-    create_eml_file,
-    create_excel_file,
-    create_html_file,
-    create_image_file,
-    create_json_file,
-    create_md_file,
-    create_pdf_file,
-    create_ppt_file,
-    create_txt_file,
-)
+from utils.file_utils import (create_docx_file, create_eml_file,
+                              create_excel_file, create_html_file,
+                              create_image_file, create_json_file,
+                              create_md_file, create_pdf_file, create_ppt_file,
+                              create_txt_file)
 
 
 @wait_for(30, 1, "Document parsing timeout")

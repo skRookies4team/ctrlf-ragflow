@@ -1,6 +1,5 @@
 # preprocessing/ocr/preprocess.py
 import logging
-from typing import Tuple
 
 import cv2
 import numpy as np

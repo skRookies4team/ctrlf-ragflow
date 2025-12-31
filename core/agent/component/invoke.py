@@ -21,7 +21,6 @@ import time
 from abc import ABC
 
 import requests
-
 from agent.component.base import ComponentBase, ComponentParamBase
 from common.connection_utils import timeout
 from deepdoc.parser import HtmlParser

@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+
 def preprocess_image(img):
     """
     슬라이드형 PDF에서 OCR 성능 극대화를 위한 이미지 전처리.

@@ -1,7 +1,9 @@
-import os, json
+import json
+import os
 from pathlib import Path
+
 from dotenv import load_dotenv
-from pymilvus import connections, Collection
+from pymilvus import Collection, connections
 
 BASE_DIR = Path(__file__).resolve().parents[2]  # ragflow/
 load_dotenv(BASE_DIR / ".env")

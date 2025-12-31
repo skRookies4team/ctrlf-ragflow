@@ -16,10 +16,11 @@
 
 import copy
 import re
-import numpy as np
+
 import cv2
-from shapely.geometry import Polygon
+import numpy as np
 import pyclipper
+from shapely.geometry import Polygon
 
 
 def build_post_process(config, global_config=None):

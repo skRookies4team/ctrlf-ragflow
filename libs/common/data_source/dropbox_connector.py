@@ -2,12 +2,14 @@
 
 from typing import Any
 
+from common.data_source.config import INDEX_BATCH_SIZE
+from common.data_source.exceptions import (ConnectorMissingCredentialError,
+                                           ConnectorValidationError,
+                                           InsufficientPermissionsError)
+from common.data_source.interfaces import (LoadConnector, PollConnector,
+                                           SecondsSinceUnixEpoch)
 from dropbox import Dropbox
 from dropbox.exceptions import ApiError, AuthError
-
-from common.data_source.config import INDEX_BATCH_SIZE
-from common.data_source.exceptions import ConnectorValidationError, InsufficientPermissionsError, ConnectorMissingCredentialError
-from common.data_source.interfaces import LoadConnector, PollConnector, SecondsSinceUnixEpoch
 
 
 class DropboxConnector(LoadConnector, PollConnector):

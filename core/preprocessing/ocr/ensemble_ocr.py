@@ -1,9 +1,8 @@
 import logging
-from typing import Dict, Any
-import numpy as np
+from typing import Any, Dict
 
-from .tesseract_ocr import run_tesseract
 from .paddle_ocr import run_paddle_ocr
+from .tesseract_ocr import run_tesseract
 
 logger = logging.getLogger("ensemble_ocr")
 

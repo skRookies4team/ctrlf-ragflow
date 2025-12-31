@@ -15,11 +15,12 @@
 #
 
 import logging
+import math
 import sys
-import six
+
 import cv2
 import numpy as np
-import math
+import six
 from PIL import Image
 
 

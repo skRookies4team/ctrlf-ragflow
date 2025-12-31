@@ -14,9 +14,10 @@
 #  limitations under the License.
 #
 
-from ragflow_sdk import RAGFlow
-from common import HOST_ADDRESS
 from time import sleep
+
+from common import HOST_ADDRESS
+from ragflow_sdk import RAGFlow
 
 
 def test_parse_document_with_txt(get_api_key_fixture):

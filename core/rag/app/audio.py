@@ -18,8 +18,8 @@ import os
 import re
 import tempfile
 
-from common.constants import LLMType
 from api.db.services.llm_service import LLMBundle
+from common.constants import LLMType
 from rag.nlp import rag_tokenizer, tokenize
 
 

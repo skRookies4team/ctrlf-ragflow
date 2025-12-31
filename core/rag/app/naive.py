@@ -15,28 +15,40 @@
 #
 
 import logging
-import re
 import os
+import re
 from functools import reduce
 from io import BytesIO
 from timeit import default_timer as timer
+
+from api.db.services.llm_service import LLMBundle
+from common.constants import LLMType
+from deepdoc.parser import (DocxParser, ExcelParser, HtmlParser, JsonParser,
+                            MarkdownElementExtractor, MarkdownParser,
+                            PdfParser, TxtParser)
+from deepdoc.parser.docling_parser import DoclingParser
+from deepdoc.parser.figure_parser import (VisionFigureParser,
+                                          vision_figure_parser_docx_wrapper,
+                                          vision_figure_parser_pdf_wrapper)
+from deepdoc.parser.mineru_parser import MinerUParser
+from deepdoc.parser.pdf_parser import PlainParser, VisionParser
+from deepdoc.parser.tcadp_parser import TCADPParser
 from docx import Document
-from docx.image.exceptions import InvalidImageStreamError, UnexpectedEndOfFileError, UnrecognizedImageError
-from docx.opc.pkgreader import _SerializedRelationships, _SerializedRelationship
+from docx.image.exceptions import (InvalidImageStreamError,
+                                   UnexpectedEndOfFileError,
+                                   UnrecognizedImageError)
 from docx.opc.oxml import parse_xml
+from docx.opc.pkgreader import (_SerializedRelationship,
+                                _SerializedRelationships)
 from markdown import markdown
 from PIL import Image
+from rag.nlp import (concat_img, find_codec, naive_merge, naive_merge_docx,
+                     naive_merge_with_images, rag_tokenizer, tokenize_chunks,
+                     tokenize_chunks_with_images, tokenize_table)
+from rag.utils.file_utils import (extract_embed_file, extract_html,
+                                  extract_links_from_docx,
+                                  extract_links_from_pdf)
 
-from common.constants import LLMType
-from api.db.services.llm_service import LLMBundle
-from rag.utils.file_utils import extract_embed_file, extract_links_from_pdf, extract_links_from_docx, extract_html
-from deepdoc.parser import DocxParser, ExcelParser, HtmlParser, JsonParser, MarkdownElementExtractor, MarkdownParser, PdfParser, TxtParser
-from deepdoc.parser.figure_parser import VisionFigureParser,vision_figure_parser_docx_wrapper,vision_figure_parser_pdf_wrapper
-from deepdoc.parser.pdf_parser import PlainParser, VisionParser
-from deepdoc.parser.mineru_parser import MinerUParser
-from deepdoc.parser.docling_parser import DoclingParser
-from deepdoc.parser.tcadp_parser import TCADPParser
-from rag.nlp import concat_img, find_codec, naive_merge, naive_merge_with_images, naive_merge_docx, rag_tokenizer, tokenize_chunks, tokenize_chunks_with_images, tokenize_table
 
 def by_deepdoc(filename, binary=None, from_page=0, to_page=100000, lang="Chinese", callback=None, pdf_cls = None ,**kwargs):
     callback = callback
@@ -189,6 +201,7 @@ class Docx(DocxParser):
     def __get_nearest_title(self, table_index, filename):
         """Get the hierarchical title structure before the table"""
         import re
+
         from docx.text.paragraph import Paragraph
 
         titles = []

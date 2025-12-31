@@ -12,50 +12,33 @@ from datetime import datetime, timedelta, timezone
 from typing import Any
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
+from common.data_source.config import (INDEX_BATCH_SIZE,
+                                       JIRA_CONNECTOR_LABELS_TO_SKIP,
+                                       JIRA_CONNECTOR_MAX_TICKET_SIZE,
+                                       JIRA_TIMEZONE_OFFSET, ONE_HOUR,
+                                       DocumentSource)
+from common.data_source.exceptions import (ConnectorMissingCredentialError,
+                                           ConnectorValidationError,
+                                           InsufficientPermissionsError,
+                                           UnexpectedValidationError)
+from common.data_source.interfaces import (CheckpointedConnectorWithPermSync,
+                                           CheckpointOutputWrapper,
+                                           SecondsSinceUnixEpoch,
+                                           SlimConnectorWithPermSync)
+from common.data_source.jira.utils import (JIRA_CLOUD_API_VERSION,
+                                           JIRA_SERVER_API_VERSION,
+                                           build_issue_url, extract_body_text,
+                                           extract_named_value, extract_user,
+                                           format_attachments, format_comments,
+                                           parse_jira_datetime,
+                                           should_skip_issue)
+from common.data_source.models import (ConnectorCheckpoint, ConnectorFailure,
+                                       Document, DocumentFailure, SlimDocument)
+from common.data_source.utils import (is_atlassian_cloud_url,
+                                      is_atlassian_date_error, scoped_url)
 from jira import JIRA
 from jira.resources import Issue
 from pydantic import Field
-
-from common.data_source.config import (
-    INDEX_BATCH_SIZE,
-    JIRA_CONNECTOR_LABELS_TO_SKIP,
-    JIRA_CONNECTOR_MAX_TICKET_SIZE,
-    JIRA_TIMEZONE_OFFSET,
-    ONE_HOUR,
-    DocumentSource,
-)
-from common.data_source.exceptions import (
-    ConnectorMissingCredentialError,
-    ConnectorValidationError,
-    InsufficientPermissionsError,
-    UnexpectedValidationError,
-)
-from common.data_source.interfaces import (
-    CheckpointedConnectorWithPermSync,
-    CheckpointOutputWrapper,
-    SecondsSinceUnixEpoch,
-    SlimConnectorWithPermSync,
-)
-from common.data_source.jira.utils import (
-    JIRA_CLOUD_API_VERSION,
-    JIRA_SERVER_API_VERSION,
-    build_issue_url,
-    extract_body_text,
-    extract_named_value,
-    extract_user,
-    format_attachments,
-    format_comments,
-    parse_jira_datetime,
-    should_skip_issue,
-)
-from common.data_source.models import (
-    ConnectorCheckpoint,
-    ConnectorFailure,
-    Document,
-    DocumentFailure,
-    SlimDocument,
-)
-from common.data_source.utils import is_atlassian_cloud_url, is_atlassian_date_error, scoped_url
 
 logger = logging.getLogger(__name__)
 

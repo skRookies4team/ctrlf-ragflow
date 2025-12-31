@@ -1,6 +1,7 @@
 # preprocessing/text/structure_parser.py
 import re
 
+
 class StructureParser:
 
     @staticmethod

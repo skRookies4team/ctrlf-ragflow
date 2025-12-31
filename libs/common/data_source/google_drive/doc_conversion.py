@@ -6,17 +6,22 @@ from pathlib import Path
 from typing import Any, cast
 from urllib.parse import urlparse, urlunparse
 
+from common.data_source.config import DocumentSource, FileOrigin
+from common.data_source.google_drive.constant import (DRIVE_FOLDER_TYPE,
+                                                      DRIVE_SHORTCUT_TYPE)
+from common.data_source.google_drive.model import (GDriveMimeType,
+                                                   GoogleDriveFileType)
+from common.data_source.google_drive.section_extraction import \
+    HEADING_DELIMITER
+from common.data_source.google_util.resource import (GoogleDriveService,
+                                                     get_drive_service)
+from common.data_source.models import (ConnectorFailure, Document,
+                                       DocumentFailure, ImageSection,
+                                       SlimDocument, TextSection)
+from common.data_source.utils import get_file_ext
 from googleapiclient.errors import HttpError  # type: ignore  # type: ignore
 from googleapiclient.http import MediaIoBaseDownload  # type: ignore
 from pydantic import BaseModel
-
-from common.data_source.config import DocumentSource, FileOrigin
-from common.data_source.google_drive.constant import DRIVE_FOLDER_TYPE, DRIVE_SHORTCUT_TYPE
-from common.data_source.google_drive.model import GDriveMimeType, GoogleDriveFileType
-from common.data_source.google_drive.section_extraction import HEADING_DELIMITER
-from common.data_source.google_util.resource import GoogleDriveService, get_drive_service
-from common.data_source.models import ConnectorFailure, Document, DocumentFailure, ImageSection, SlimDocument, TextSection
-from common.data_source.utils import get_file_ext
 
 # Image types that should be excluded from processing
 EXCLUDED_IMAGE_TYPES = [

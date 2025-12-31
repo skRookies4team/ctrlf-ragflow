@@ -50,6 +50,10 @@ services:
     # If you use Docker Desktop, the --add-host flag is optional. This flag ensures that the host's internal IP is exposed to the Prometheus container.
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    environment:
+      - RAGFLOW_API_KEY=ragflow-5TjltEnrdgJ6-Zpl3Nze8luNUvyOU2J6gmS6yx1QFDc
+      - AI_TO_RAGFLOW_TOKEN=ragflow-5TjltEnrdgJ6-Zpl3Nze8luNUvyOU2J6gmS6yx1QFDc
+
 
   ragflow-gpu:
     depends_on:

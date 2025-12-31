@@ -17,19 +17,18 @@
 import copy
 import logging
 import re
+from collections import Counter
 from io import BytesIO
-from xpinyin import Pinyin
+
 import numpy as np
 import pandas as pd
-from collections import Counter
-
+from api.db.services.knowledgebase_service import KnowledgebaseService
 # from openpyxl import load_workbook, Workbook
 from dateutil.parser import parse as datetime_parse
-
-from api.db.services.knowledgebase_service import KnowledgebaseService
+from deepdoc.parser import ExcelParser
 from deepdoc.parser.utils import get_text
 from rag.nlp import rag_tokenizer, tokenize
-from deepdoc.parser import ExcelParser
+from xpinyin import Pinyin
 
 
 class Excel(ExcelParser):

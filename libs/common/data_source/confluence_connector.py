@@ -5,48 +5,58 @@ import copy
 import json
 import logging
 import time
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, cast, Iterator, Callable, Generator
-
-import requests
-from typing_extensions import override
+from typing import Any, Callable, Generator, Iterator, cast
 from urllib.parse import quote
 
 import bs4
-from atlassian.errors import ApiError
+import requests
 from atlassian import Confluence
-from requests.exceptions import HTTPError
-
-from common.data_source.config import INDEX_BATCH_SIZE, DocumentSource, CONTINUE_ON_CONNECTOR_FAILURE, \
-    CONFLUENCE_CONNECTOR_LABELS_TO_SKIP, CONFLUENCE_TIMEZONE_OFFSET, CONFLUENCE_CONNECTOR_USER_PROFILES_OVERRIDE, \
-    CONFLUENCE_SYNC_TIME_BUFFER_SECONDS, \
-    OAUTH_CONFLUENCE_CLOUD_CLIENT_ID, OAUTH_CONFLUENCE_CLOUD_CLIENT_SECRET, _DEFAULT_PAGINATION_LIMIT, \
-    _PROBLEMATIC_EXPANSIONS, _REPLACEMENT_EXPANSIONS, _USER_NOT_FOUND, _COMMENT_EXPANSION_FIELDS, \
-    _ATTACHMENT_EXPANSION_FIELDS, _PAGE_EXPANSION_FIELDS, ONE_DAY, ONE_HOUR, _RESTRICTIONS_EXPANSION_FIELDS, \
-    _SLIM_DOC_BATCH_SIZE, CONFLUENCE_CONNECTOR_ATTACHMENT_SIZE_THRESHOLD
-from common.data_source.exceptions import (
-    ConnectorMissingCredentialError,
-    ConnectorValidationError,
-    InsufficientPermissionsError,
-    UnexpectedValidationError, CredentialExpiredError
-)
+from atlassian.errors import ApiError
+from common.data_source.config import (
+    _ATTACHMENT_EXPANSION_FIELDS, _COMMENT_EXPANSION_FIELDS,
+    _DEFAULT_PAGINATION_LIMIT, _PAGE_EXPANSION_FIELDS, _PROBLEMATIC_EXPANSIONS,
+    _REPLACEMENT_EXPANSIONS, _RESTRICTIONS_EXPANSION_FIELDS,
+    _SLIM_DOC_BATCH_SIZE, _USER_NOT_FOUND,
+    CONFLUENCE_CONNECTOR_ATTACHMENT_SIZE_THRESHOLD,
+    CONFLUENCE_CONNECTOR_LABELS_TO_SKIP,
+    CONFLUENCE_CONNECTOR_USER_PROFILES_OVERRIDE,
+    CONFLUENCE_SYNC_TIME_BUFFER_SECONDS, CONFLUENCE_TIMEZONE_OFFSET,
+    CONTINUE_ON_CONNECTOR_FAILURE, INDEX_BATCH_SIZE,
+    OAUTH_CONFLUENCE_CLOUD_CLIENT_ID, OAUTH_CONFLUENCE_CLOUD_CLIENT_SECRET,
+    ONE_DAY, ONE_HOUR, DocumentSource)
+from common.data_source.exceptions import (ConnectorMissingCredentialError,
+                                           ConnectorValidationError,
+                                           CredentialExpiredError,
+                                           InsufficientPermissionsError,
+                                           UnexpectedValidationError)
 from common.data_source.html_utils import format_document_soup
-from common.data_source.interfaces import (
-    ConnectorCheckpoint,
-    CredentialsConnector,
-    SecondsSinceUnixEpoch,
-    SlimConnectorWithPermSync, StaticCredentialsProvider, CheckpointedConnector, SlimConnector,
-    CredentialsProviderInterface, ConfluenceUser, IndexingHeartbeatInterface, AttachmentProcessingResult,
-    CheckpointOutput
-)
-from common.data_source.models import ConnectorFailure, Document, TextSection, ImageSection, BasicExpertInfo, \
-    DocumentFailure, GenerateSlimDocumentOutput, SlimDocument, ExternalAccess
-from common.data_source.utils import load_all_docs_from_checkpoint_connector, scoped_url, \
-    process_confluence_user_profiles_override, confluence_refresh_tokens, run_with_timeout, _handle_http_error, \
-    update_param_in_path, get_start_param_from_url, build_confluence_document_id, datetime_from_string, \
-    is_atlassian_date_error, validate_attachment_filetype
-from rag.utils.redis_conn import RedisDB, REDIS_CONN
+from common.data_source.interfaces import (AttachmentProcessingResult,
+                                           CheckpointedConnector,
+                                           CheckpointOutput, ConfluenceUser,
+                                           ConnectorCheckpoint,
+                                           CredentialsConnector,
+                                           CredentialsProviderInterface,
+                                           IndexingHeartbeatInterface,
+                                           SecondsSinceUnixEpoch,
+                                           SlimConnector,
+                                           SlimConnectorWithPermSync,
+                                           StaticCredentialsProvider)
+from common.data_source.models import (BasicExpertInfo, ConnectorFailure,
+                                       Document, DocumentFailure,
+                                       ExternalAccess,
+                                       GenerateSlimDocumentOutput,
+                                       ImageSection, SlimDocument, TextSection)
+from common.data_source.utils import (
+    _handle_http_error, build_confluence_document_id,
+    confluence_refresh_tokens, datetime_from_string, get_start_param_from_url,
+    is_atlassian_date_error, load_all_docs_from_checkpoint_connector,
+    process_confluence_user_profiles_override, run_with_timeout, scoped_url,
+    update_param_in_path, validate_attachment_filetype)
+from rag.utils.redis_conn import REDIS_CONN, RedisDB
+from requests.exceptions import HTTPError
+from typing_extensions import override
 
 _USER_ID_TO_DISPLAY_NAME_CACHE: dict[str, str | None] = {}
 _USER_EMAIL_CACHE: dict[str, str | None] = {}

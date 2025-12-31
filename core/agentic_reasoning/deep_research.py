@@ -16,8 +16,11 @@
 import logging
 import re
 from functools import partial
-from agentic_reasoning.prompts import BEGIN_SEARCH_QUERY, BEGIN_SEARCH_RESULT, END_SEARCH_RESULT, MAX_SEARCH_LIMIT, \
-    END_SEARCH_QUERY, REASON_PROMPT, RELEVANT_EXTRACTION_PROMPT
+
+from agentic_reasoning.prompts import (BEGIN_SEARCH_QUERY, BEGIN_SEARCH_RESULT,
+                                       END_SEARCH_QUERY, END_SEARCH_RESULT,
+                                       MAX_SEARCH_LIMIT, REASON_PROMPT,
+                                       RELEVANT_EXTRACTION_PROMPT)
 from api.db.services.llm_service import LLMBundle
 from rag.nlp import extract_between
 from rag.prompts import kb_prompt

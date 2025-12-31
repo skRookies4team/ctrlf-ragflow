@@ -18,18 +18,17 @@ import re
 
 import numpy as np
 import trio
-
-from common.constants import LLMType
 from api.db.services.knowledgebase_service import KnowledgebaseService
 from api.db.services.llm_service import LLMBundle
 from api.db.services.user_service import TenantService
+from common import settings
 from common.connection_utils import timeout
+from common.constants import LLMType
+from common.token_utils import truncate
 from rag.flow.base import ProcessBase, ProcessParamBase
 from rag.flow.tokenizer.schema import TokenizerFromUpstream
 from rag.nlp import rag_tokenizer
-from common import settings
 from rag.svr.task_executor import embed_limiter
-from common.token_utils import truncate
 
 
 class TokenizerParam(ProcessParamBase):

@@ -13,24 +13,24 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-import logging
 import itertools
+import logging
 import os
 import re
 from dataclasses import dataclass
 from typing import Any, Callable
 
+import editdistance
 import networkx as nx
 import trio
-
-from graphrag.general.extractor import Extractor
-from rag.nlp import is_english
-import editdistance
-from graphrag.entity_resolution_prompt import ENTITY_RESOLUTION_PROMPT
-from rag.llm.chat_model import Base as CompletionLLM
-from graphrag.utils import perform_variable_replacements, chat_limiter, GraphChange
 from api.db.services.task_service import has_canceled
 from common.exceptions import TaskCanceledException
+from graphrag.entity_resolution_prompt import ENTITY_RESOLUTION_PROMPT
+from graphrag.general.extractor import Extractor
+from graphrag.utils import (GraphChange, chat_limiter,
+                            perform_variable_replacements)
+from rag.llm.chat_model import Base as CompletionLLM
+from rag.nlp import is_english
 
 DEFAULT_RECORD_DELIMITER = "##"
 DEFAULT_ENTITY_INDEX_DELIMITER = "<|>"

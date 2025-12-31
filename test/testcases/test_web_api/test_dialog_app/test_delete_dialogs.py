@@ -16,7 +16,8 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import pytest
-from common import batch_create_dialogs, create_dialog, delete_dialog, list_dialogs
+from common import (batch_create_dialogs, create_dialog, delete_dialog,
+                    list_dialogs)
 from configs import INVALID_API_TOKEN
 from libs.auth import RAGFlowWebApiAuth
 

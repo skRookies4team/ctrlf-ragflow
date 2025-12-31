@@ -22,25 +22,18 @@ from typing import Callable
 
 import networkx as nx
 import trio
-
 from api.db.services.task_service import has_canceled
 from common.connection_utils import timeout
+from common.exceptions import TaskCanceledException
 from common.token_utils import truncate
 from graphrag.general.graph_prompt import SUMMARIZE_DESCRIPTIONS_PROMPT
-from graphrag.utils import (
-    GraphChange,
-    chat_limiter,
-    flat_uniq_list,
-    get_from_to,
-    get_llm_cache,
-    handle_single_entity_extraction,
-    handle_single_relationship_extraction,
-    set_llm_cache,
-    split_string_by_multi_markers,
-)
+from graphrag.utils import (GraphChange, chat_limiter, flat_uniq_list,
+                            get_from_to, get_llm_cache,
+                            handle_single_entity_extraction,
+                            handle_single_relationship_extraction,
+                            set_llm_cache, split_string_by_multi_markers)
 from rag.llm.chat_model import Base as CompletionLLM
 from rag.prompts.generator import message_fit_in
-from common.exceptions import TaskCanceledException
 
 GRAPH_FIELD_SEP = "<SEP>"
 DEFAULT_ENTITY_TYPES = ["organization", "person", "geo", "event", "category"]

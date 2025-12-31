@@ -5,8 +5,9 @@ Example usage of the Firecrawl integration with RAGFlow.
 import asyncio
 import logging
 
-from .ragflow_integration import RAGFlowFirecrawlIntegration, create_firecrawl_integration
 from .firecrawl_config import FirecrawlConfig
+from .ragflow_integration import (RAGFlowFirecrawlIntegration,
+                                  create_firecrawl_integration)
 
 
 async def example_single_url_scraping():

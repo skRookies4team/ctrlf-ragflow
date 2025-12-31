@@ -15,8 +15,9 @@
 #
 
 import os
-import pytest
 from unittest.mock import patch
+
+import pytest
 from common import file_utils
 from common.file_utils import get_project_base_directory
 

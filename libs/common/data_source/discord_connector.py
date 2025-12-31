@@ -6,15 +6,16 @@ import os
 from datetime import datetime, timezone
 from typing import Any, AsyncIterable, Iterable
 
+from common.data_source.config import INDEX_BATCH_SIZE, DocumentSource
+from common.data_source.exceptions import ConnectorMissingCredentialError
+from common.data_source.interfaces import (LoadConnector, PollConnector,
+                                           SecondsSinceUnixEpoch)
+from common.data_source.models import (Document, GenerateDocumentsOutput,
+                                       TextSection)
 from discord import Client, MessageType
 from discord.channel import TextChannel, Thread
 from discord.flags import Intents
 from discord.message import Message as DiscordMessage
-
-from common.data_source.config import INDEX_BATCH_SIZE, DocumentSource
-from common.data_source.exceptions import ConnectorMissingCredentialError
-from common.data_source.interfaces import LoadConnector, PollConnector, SecondsSinceUnixEpoch
-from common.data_source.models import Document, GenerateDocumentsOutput, TextSection
 
 _DISCORD_DOC_ID_PREFIX = "DISCORD_"
 _SNIPPET_LENGTH = 30

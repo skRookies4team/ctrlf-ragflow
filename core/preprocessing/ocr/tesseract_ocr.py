@@ -1,7 +1,9 @@
 # preprocessing/ocr/tesseract_ocr.py
+import re
+
 import pytesseract
 from PIL import Image
-import re
+
 
 def quality_score(t: str) -> float:
     if not t.strip():

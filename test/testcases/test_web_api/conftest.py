@@ -16,33 +16,18 @@
 from time import sleep
 
 import pytest
-from common import (
-    batch_add_chunks,
-    batch_create_datasets,
-    bulk_upload_documents,
-    delete_chunks,
-    delete_dialogs,
-    list_chunks,
-    list_documents,
-    list_kbs,
-    parse_documents,
-    rm_kb,
-)
+from common import (batch_add_chunks, batch_create_datasets,
+                    bulk_upload_documents, delete_chunks, delete_dialogs,
+                    list_chunks, list_documents, list_kbs, parse_documents,
+                    rm_kb)
 from libs.auth import RAGFlowWebApiAuth
 from pytest import FixtureRequest
 from utils import wait_for
-from utils.file_utils import (
-    create_docx_file,
-    create_eml_file,
-    create_excel_file,
-    create_html_file,
-    create_image_file,
-    create_json_file,
-    create_md_file,
-    create_pdf_file,
-    create_ppt_file,
-    create_txt_file,
-)
+from utils.file_utils import (create_docx_file, create_eml_file,
+                              create_excel_file, create_html_file,
+                              create_image_file, create_json_file,
+                              create_md_file, create_pdf_file, create_ppt_file,
+                              create_txt_file)
 
 
 @wait_for(30, 1, "Document parsing timeout")

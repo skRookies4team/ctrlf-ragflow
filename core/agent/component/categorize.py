@@ -18,10 +18,10 @@ import os
 import re
 from abc import ABC
 
-from common.constants import LLMType
+from agent.component.llm import LLM, LLMParam
 from api.db.services.llm_service import LLMBundle
-from agent.component.llm import LLMParam, LLM
 from common.connection_utils import timeout
+from common.constants import LLMType
 from rag.llm.chat_model import ERROR_PREFIX
 
 

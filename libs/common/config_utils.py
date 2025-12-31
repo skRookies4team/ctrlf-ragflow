@@ -14,14 +14,14 @@
 #  limitations under the License.
 #
 
-import os
 import copy
-import logging
 import importlib
-from filelock import FileLock
+import logging
+import os
 
-from common.file_utils import get_project_base_directory
 from common.constants import SERVICE_CONF
+from common.file_utils import get_project_base_directory
+from filelock import FileLock
 from ruamel.yaml import YAML
 
 

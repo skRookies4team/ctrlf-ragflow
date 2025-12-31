@@ -4,22 +4,19 @@ import os
 from datetime import datetime, timezone
 from typing import Any, Optional
 
-from common.data_source.utils import (
-    create_s3_client,
-    detect_bucket_region,
-    download_object,
-    extract_size_bytes,
-    get_file_ext,
-)
-from common.data_source.config import BlobType, DocumentSource, BLOB_STORAGE_SIZE_THRESHOLD, INDEX_BATCH_SIZE
-from common.data_source.exceptions import (
-    ConnectorMissingCredentialError,
-    ConnectorValidationError,
-    CredentialExpiredError,
-    InsufficientPermissionsError
-)
+from common.data_source.config import (BLOB_STORAGE_SIZE_THRESHOLD,
+                                       INDEX_BATCH_SIZE, BlobType,
+                                       DocumentSource)
+from common.data_source.exceptions import (ConnectorMissingCredentialError,
+                                           ConnectorValidationError,
+                                           CredentialExpiredError,
+                                           InsufficientPermissionsError)
 from common.data_source.interfaces import LoadConnector, PollConnector
-from common.data_source.models import Document, SecondsSinceUnixEpoch, GenerateDocumentsOutput
+from common.data_source.models import (Document, GenerateDocumentsOutput,
+                                       SecondsSinceUnixEpoch)
+from common.data_source.utils import (create_s3_client, detect_bucket_region,
+                                      download_object, extract_size_bytes,
+                                      get_file_ext)
 
 
 class BlobStorageConnector(LoadConnector, PollConnector):

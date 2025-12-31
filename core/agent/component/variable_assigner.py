@@ -13,11 +13,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-from abc import ABC
-import os
 import numbers
+import os
+from abc import ABC
+
 from agent.component.base import ComponentBase, ComponentParamBase
 from api.utils.api_utils import timeout
+
 
 class VariableAssignerParam(ComponentParamBase):
     """

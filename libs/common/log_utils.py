@@ -14,10 +14,11 @@
 #  limitations under the License.
 #
 
+import logging
 import os
 import os.path
-import logging
 from logging.handlers import RotatingFileHandler
+
 from common.file_utils import get_project_base_directory
 
 initialized_root_logger = False

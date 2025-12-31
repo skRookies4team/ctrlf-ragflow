@@ -16,10 +16,7 @@
 import os
 
 import pytest
-from common import (
-    INVALID_API_TOKEN,
-    retrieval_chunks,
-)
+from common import INVALID_API_TOKEN, retrieval_chunks
 from libs.auth import RAGFlowHttpApiAuth
 
 

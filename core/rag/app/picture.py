@@ -18,13 +18,12 @@ import io
 import re
 
 import numpy as np
-from PIL import Image
-
-from common.constants import LLMType
 from api.db.services.llm_service import LLMBundle
-from deepdoc.vision import OCR
-from rag.nlp import rag_tokenizer, tokenize
+from common.constants import LLMType
 from common.string_utils import clean_markdown_block
+from deepdoc.vision import OCR
+from PIL import Image
+from rag.nlp import rag_tokenizer, tokenize
 
 ocr = OCR()
 

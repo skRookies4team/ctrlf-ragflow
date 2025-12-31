@@ -6,19 +6,20 @@ HWP / PDF / PPT / DOCX / TXT / CSV 자동 처리 + 문서 타입 판별 + 자동
   -> regulation 전용 구조청킹은 DOCX에서 사용하지 않음 (UI에서 호가 쪼개지는 문제 방지)
 """
 
-import sys
-import os
-import time
-import requests
-import re
-import json
 import csv
-import pdfplumber
 import hashlib
+import json
+import os
+import re
+import sys
+import time
+from difflib import SequenceMatcher
 from pathlib import Path
 from typing import List, Sequence
+
+import pdfplumber
+import requests
 from dotenv import load_dotenv
-from difflib import SequenceMatcher
 
 # =======================
 # 0. 경로/환경 설정
@@ -260,17 +261,18 @@ except ImportError:
     sys.path.insert(0, str(BASE_DIR / "sdk" / "python"))
     from ragflow_sdk import RAGFlow
 
-from ragflow_sdk.modules.dataset import DataSet
 from milvus_proxy import MilvusProxy
+from ragflow_sdk.modules.dataset import DataSet
+from storage.table_store import TableStore
 
+from core.preprocessing.classifier.document_classifier import \
+    DocumentClassifier
+from core.preprocessing.coverters.hwp_extract import extract_docx_blocks
 # =======================
 # 2. 커스텀 전처리 모듈 import
 # =======================
 from core.preprocessing.coverters.hwp_to_docx import HwpAdapter
-from core.preprocessing.classifier.document_classifier import DocumentClassifier
 from core.preprocessing.pipeline import PreprocessPipeline
-from storage.table_store import TableStore
-from core.preprocessing.coverters.hwp_extract import extract_docx_blocks
 
 TABLE_STORAGE_DIR = SCRIPT_DIR / "storage"
 table_store = TableStore(TABLE_STORAGE_DIR)

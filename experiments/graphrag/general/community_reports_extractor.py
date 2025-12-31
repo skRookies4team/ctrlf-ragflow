@@ -5,26 +5,27 @@ Reference:
  - [graphrag](https://github.com/microsoft/graphrag)
 """
 
-import logging
 import json
+import logging
 import os
 import re
-from typing import Callable
 from dataclasses import dataclass
+from typing import Callable
+
 import networkx as nx
 import pandas as pd
-
+import trio
 from api.db.services.task_service import has_canceled
-from common.exceptions import TaskCanceledException
 from common.connection_utils import timeout
+from common.exceptions import TaskCanceledException
+from common.token_utils import num_tokens_from_string
 from graphrag.general import leiden
 from graphrag.general.community_report_prompt import COMMUNITY_REPORT_PROMPT
 from graphrag.general.extractor import Extractor
 from graphrag.general.leiden import add_community_info2graph
+from graphrag.utils import (chat_limiter, dict_has_keys_with_types,
+                            perform_variable_replacements)
 from rag.llm.chat_model import Base as CompletionLLM
-from graphrag.utils import perform_variable_replacements, dict_has_keys_with_types, chat_limiter
-from common.token_utils import num_tokens_from_string
-import trio
 
 
 @dataclass

@@ -15,7 +15,9 @@
 #
 
 import math
+
 from common.float_utils import get_float
+
 
 class TestGetFloat:
 

@@ -14,10 +14,13 @@
 #  limitations under the License.
 #
 
-import time
 import datetime
+import time
+
 import pytest
-from common.time_utils import current_timestamp, timestamp_to_date, date_string_to_timestamp, datetime_format, delta_seconds
+from common.time_utils import (current_timestamp, date_string_to_timestamp,
+                               datetime_format, delta_seconds,
+                               timestamp_to_date)
 
 
 class TestCurrentTimestamp:

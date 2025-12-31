@@ -14,7 +14,8 @@
 #  limitations under the License.
 #
 import pytest
-from common import CHAT_ASSISTANT_NAME_LIMIT, INVALID_API_TOKEN, list_chat_assistants, update_chat_assistant
+from common import (CHAT_ASSISTANT_NAME_LIMIT, INVALID_API_TOKEN,
+                    list_chat_assistants, update_chat_assistant)
 from libs.auth import RAGFlowHttpApiAuth
 from libs.utils import encode_avatar
 from libs.utils.file_utils import create_image_file

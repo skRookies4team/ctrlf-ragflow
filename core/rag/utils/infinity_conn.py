@@ -14,31 +14,27 @@
 #  limitations under the License.
 #
 
+import copy
+import json
 import logging
 import os
 import re
-import json
 import time
-import copy
+
 import infinity
+import pandas as pd
+from common import settings
+from common.constants import PAGERANK_FLD, TAG_FLD
+from common.decorator import singleton
+from common.file_utils import get_project_base_directory
 from infinity.common import ConflictType, InfinityException, SortType
-from infinity.index import IndexInfo, IndexType
 from infinity.connection_pool import ConnectionPool
 from infinity.errors import ErrorCode
-from common.decorator import singleton
-import pandas as pd
-from common.file_utils import get_project_base_directory
+from infinity.index import IndexInfo, IndexType
 from rag.nlp import is_english
-from common.constants import PAGERANK_FLD, TAG_FLD
-from common import settings
-from rag.utils.doc_store_conn import (
-    DocStoreConnection,
-    MatchExpr,
-    MatchTextExpr,
-    MatchDenseExpr,
-    FusionExpr,
-    OrderByExpr,
-)
+from rag.utils.doc_store_conn import (DocStoreConnection, FusionExpr,
+                                      MatchDenseExpr, MatchExpr, MatchTextExpr,
+                                      OrderByExpr)
 
 logger = logging.getLogger("ragflow.infinity_conn")
 

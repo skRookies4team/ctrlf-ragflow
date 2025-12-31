@@ -1,6 +1,7 @@
 import fitz  # PyMuPDF
 from PIL import Image
 
+
 class PDFImageExtractor:
     @staticmethod
     def extract(pdf_path: str, dpi=300):

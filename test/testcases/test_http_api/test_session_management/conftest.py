@@ -14,7 +14,8 @@
 #  limitations under the License.
 #
 import pytest
-from common import batch_add_sessions_with_chat_assistant, delete_session_with_chat_assistants
+from common import (batch_add_sessions_with_chat_assistant,
+                    delete_session_with_chat_assistants)
 
 
 @pytest.fixture(scope="class")

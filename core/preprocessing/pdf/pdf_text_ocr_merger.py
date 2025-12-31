@@ -2,6 +2,7 @@
 import re
 from typing import List
 
+
 def _score(text: str) -> float:
     if not text:
         return 0.0

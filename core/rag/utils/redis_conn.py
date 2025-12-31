@@ -14,15 +14,15 @@
 #  limitations under the License.
 #
 
-import logging
 import json
+import logging
 import uuid
 
-import valkey as redis
-from common.decorator import singleton
-from common import settings
-from valkey.lock import Lock
 import trio
+import valkey as redis
+from common import settings
+from common.decorator import singleton
+from valkey.lock import Lock
 
 REDIS = {}
 try:

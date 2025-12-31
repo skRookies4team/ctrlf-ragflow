@@ -14,16 +14,18 @@
 #  limitations under the License.
 #
 
-import io
 import hashlib
+import io
 import zipfile
-import requests
-from requests.exceptions import Timeout, RequestException
 from io import BytesIO
-from typing import List, Union, Tuple, Optional, Dict
-import PyPDF2
-from docx import Document
+from typing import Dict, List, Optional, Tuple, Union
+
 import olefile
+import PyPDF2
+import requests
+from docx import Document
+from requests.exceptions import RequestException, Timeout
+
 
 def _is_zip(h: bytes) -> bool:
     return h.startswith(b"PK\x03\x04") or h.startswith(b"PK\x05\x06") or h.startswith(b"PK\x07\x08")

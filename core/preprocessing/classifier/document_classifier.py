@@ -1,5 +1,6 @@
 import fitz  # PyMuPDF
 
+
 class DocumentClassifier:
     """
     문서 타입 + PDF 내부 이미지 여부까지 판단하는 강화된 분류기

@@ -1,6 +1,7 @@
 import logging
-import numpy as np
+
 import cv2
+import numpy as np
 from paddleocr import PaddleOCR
 
 logger = logging.getLogger("paddle_ocr")

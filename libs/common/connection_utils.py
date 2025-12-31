@@ -14,15 +14,16 @@
 #  limitations under the License.
 #
 
+import asyncio
 import os
 import queue
 import threading
-from typing import Any, Callable, Coroutine, Optional, Type, Union
-import asyncio
-import trio
 from functools import wraps
-from quart import make_response, jsonify
+from typing import Any, Callable, Coroutine, Optional, Type, Union
+
+import trio
 from common.constants import RetCode
+from quart import jsonify, make_response
 
 TimeoutException = Union[Type[BaseException], BaseException]
 OnTimeoutCallback = Union[Callable[..., Any], Coroutine[Any, Any, Any]]

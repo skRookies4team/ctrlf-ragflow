@@ -4,17 +4,12 @@ import uuid
 from abc import ABC, abstractmethod
 from enum import IntFlag, auto
 from types import TracebackType
-from typing import Any, Dict, Generator, TypeVar, Generic, Callable, TypeAlias
+from typing import Any, Callable, Dict, Generator, Generic, TypeAlias, TypeVar
 
 from anthropic import BaseModel
-
-from common.data_source.models import (
-    Document,
-    SlimDocument,
-    ConnectorCheckpoint,
-    ConnectorFailure,
-    SecondsSinceUnixEpoch, GenerateSlimDocumentOutput
-)
+from common.data_source.models import (ConnectorCheckpoint, ConnectorFailure,
+                                       Document, GenerateSlimDocumentOutput,
+                                       SecondsSinceUnixEpoch, SlimDocument)
 
 
 class LoadConnector(ABC):

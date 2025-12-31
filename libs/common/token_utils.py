@@ -16,8 +16,8 @@
 
 
 import os
-import tiktoken
 
+import tiktoken
 from common.file_utils import get_project_base_directory
 
 tiktoken_cache_dir = get_project_base_directory()

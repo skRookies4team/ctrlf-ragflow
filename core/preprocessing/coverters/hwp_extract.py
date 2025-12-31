@@ -5,22 +5,20 @@ HWP 텍스트 변환 어댑터
 - DOCX → text blocks / table blocks (구조화)
 """
 
+import hashlib
 import logging
 import os
+import re
 import subprocess
 import tempfile
-import hashlib
 from pathlib import Path
-from typing import Optional, List, Dict, Any
+from typing import Any, Dict, List
 
 from docx import Document
-from docx.oxml.text.paragraph import CT_P
 from docx.oxml.table import CT_Tbl
-from docx.text.paragraph import Paragraph
+from docx.oxml.text.paragraph import CT_P
 from docx.table import Table
-
-import re
-from collections import Counter
+from docx.text.paragraph import Paragraph
 
 logger = logging.getLogger(__name__)
 

@@ -13,9 +13,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 #
-from fastapi import APIRouter
-
 from api.handlers import healthz_handler, run_code_handler
+from fastapi import APIRouter
 
 router = APIRouter()
 

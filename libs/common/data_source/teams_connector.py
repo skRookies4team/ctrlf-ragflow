@@ -3,21 +3,16 @@
 from typing import Any
 
 import msal
+from common.data_source.exceptions import (ConnectorMissingCredentialError,
+                                           ConnectorValidationError,
+                                           InsufficientPermissionsError,
+                                           UnexpectedValidationError)
+from common.data_source.interfaces import (CheckpointedConnectorWithPermSync,
+                                           SecondsSinceUnixEpoch,
+                                           SlimConnectorWithPermSync)
+from common.data_source.models import ConnectorCheckpoint
 from office365.graph_client import GraphClient
 from office365.runtime.client_request_exception import ClientRequestException
-
-from common.data_source.exceptions import (
-    ConnectorValidationError,
-    InsufficientPermissionsError,
-    UnexpectedValidationError, ConnectorMissingCredentialError
-)
-from common.data_source.interfaces import (
-    SecondsSinceUnixEpoch,
-    SlimConnectorWithPermSync, CheckpointedConnectorWithPermSync
-)
-from common.data_source.models import (
-    ConnectorCheckpoint
-)
 
 _SLIM_DOC_BATCH_SIZE = 5000
 

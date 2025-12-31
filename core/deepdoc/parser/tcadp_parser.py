@@ -30,14 +30,14 @@ from pathlib import Path
 from typing import Any, Callable, Optional
 
 import requests
-from tencentcloud.common import credential
-from tencentcloud.common.profile.client_profile import ClientProfile
-from tencentcloud.common.profile.http_profile import HttpProfile
-from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentCloudSDKException
-from tencentcloud.lkeap.v20240522 import lkeap_client, models
-
 from common.config_utils import get_base_config
 from deepdoc.parser.pdf_parser import RAGFlowPdfParser
+from tencentcloud.common import credential
+from tencentcloud.common.exception.tencent_cloud_sdk_exception import \
+    TencentCloudSDKException
+from tencentcloud.common.profile.client_profile import ClientProfile
+from tencentcloud.common.profile.http_profile import HttpProfile
+from tencentcloud.lkeap.v20240522 import lkeap_client, models
 
 
 class TencentCloudAPIClient:

@@ -14,19 +14,23 @@
 #  limitations under the License.
 #
 
-import logging
 import copy
+import logging
 import re
+from io import BytesIO
 
 from common.constants import ParserType
-from io import BytesIO
-from rag.nlp import rag_tokenizer, tokenize, tokenize_table, bullets_category, title_frequency, tokenize_chunks, docx_question_level
 from common.token_utils import num_tokens_from_string
-from deepdoc.parser import PdfParser, DocxParser
-from deepdoc.parser.figure_parser import vision_figure_parser_pdf_wrapper,vision_figure_parser_docx_wrapper
+from deepdoc.parser import DocxParser, PdfParser
+from deepdoc.parser.figure_parser import (vision_figure_parser_docx_wrapper,
+                                          vision_figure_parser_pdf_wrapper)
 from docx import Document
 from PIL import Image
-from rag.app.naive import by_plaintext, PARSERS
+from rag.app.naive import PARSERS, by_plaintext
+from rag.nlp import (bullets_category, docx_question_level, rag_tokenizer,
+                     title_frequency, tokenize, tokenize_chunks,
+                     tokenize_table)
+
 
 class Pdf(PdfParser):
     def __init__(self):

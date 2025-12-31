@@ -1,7 +1,8 @@
-from pymilvus import connections, Collection, list_collections
-from dotenv import load_dotenv
 import os
 from collections import defaultdict
+
+from dotenv import load_dotenv
+from pymilvus import Collection, connections, list_collections
 
 # =========================
 # 1. 환경 로드

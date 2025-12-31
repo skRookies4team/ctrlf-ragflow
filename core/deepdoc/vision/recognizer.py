@@ -15,18 +15,19 @@
 #
 import gc
 import logging
-import os
 import math
-import numpy as np
-import cv2
+import os
 from functools import cmp_to_key
 
-
+import cv2
+import numpy as np
 from common.file_utils import get_project_base_directory
-from .operators import *  # noqa: F403
-from .operators import preprocess
+
 from . import operators
 from .ocr import load_model
+from .operators import *  # noqa: F403
+from .operators import preprocess
+
 
 class Recognizer:
     def __init__(self, label_list, task_name, model_dir=None):

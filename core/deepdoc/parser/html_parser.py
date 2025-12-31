@@ -15,11 +15,13 @@
 #  limitations under the License.
 #
 
-from rag.nlp import find_codec, rag_tokenizer
-import uuid
-import chardet
-from bs4 import BeautifulSoup, NavigableString, Tag, Comment
 import html
+import uuid
+
+import chardet
+from bs4 import BeautifulSoup, Comment, NavigableString, Tag
+from rag.nlp import find_codec, rag_tokenizer
+
 
 def get_encoding(file):
     with open(file,'rb') as f:

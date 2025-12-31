@@ -14,8 +14,9 @@
 #  limitations under the License.
 #
 
-from common.token_utils import num_tokens_from_string, total_token_count_from_response, truncate, encoder
 import pytest
+from common.token_utils import (encoder, num_tokens_from_string,
+                                total_token_count_from_response, truncate)
 
 
 class TestNumTokensFromString:

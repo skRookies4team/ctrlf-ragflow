@@ -2,10 +2,10 @@
 Configuration management for Firecrawl integration with RAGFlow.
 """
 
-import os
-from typing import Dict, Any
-from dataclasses import dataclass
 import json
+import os
+from dataclasses import dataclass
+from typing import Any, Dict
 
 
 @dataclass

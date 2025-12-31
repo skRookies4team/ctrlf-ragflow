@@ -16,18 +16,18 @@
 
 import argparse
 import json
-import networkx as nx
 import logging
-import trio
 
-from common.constants import LLMType
+import networkx as nx
+import trio
 from api.db.services.document_service import DocumentService
 from api.db.services.knowledgebase_service import KnowledgebaseService
 from api.db.services.llm_service import LLMBundle
 from api.db.services.user_service import TenantService
+from common import settings
+from common.constants import LLMType
 from graphrag.general.index import update_graph
 from graphrag.light.graph_extractor import GraphExtractor
-from common import settings
 
 settings.init_settings()
 
