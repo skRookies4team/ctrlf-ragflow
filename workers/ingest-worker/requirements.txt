@@ -1,0 +1,36 @@
+# --- API / worker ---
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+httpx==0.27.2
+python-dotenv==1.0.1
+requests
+
+# --- ragflow / sdk deps ---
+beartype
+environs==9.5.0
+marshmallow==3.21.3
+
+# --- milvus ---
+pymilvus==2.4.6
+
+# --- document parsing ---
+pdfplumber
+python-docx
+PyMuPDF==1.24.10
+pdf2image
+
+# --- OCR / image processing ---
+opencv-python-headless==4.10.0.84
+pytesseract
+Pillow
+numpy
+
+# --- embeddings / ML ---
+sentence-transformers
+transformers
+torch
+
+# --- optional but often needed ---
+pandas
+
+openai

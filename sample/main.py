@@ -17,6 +17,7 @@ import re
 import sys
 import time
 from difflib import SequenceMatcher
+
 # =======================
 # 0. 경로/환경 설정
 # =======================
@@ -27,8 +28,12 @@ import pdfplumber
 import requests
 from docx import Document
 from dotenv import load_dotenv
-# ✅ OpenAI SDK
-from openai import OpenAI
+
+# ✅ OpenAI SDK (openai 선택일 때만 실제로 사용)
+try:
+    from openai import OpenAI
+except Exception:
+    OpenAI = None  # type: ignore
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,24 +53,28 @@ MILVUS_COLLECTION = os.getenv("MILVUS_COLLECTION")
 # =======================
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_EMBED_MODEL = os.getenv("OPENAI_EMBED_MODEL", "text-embedding-3-large")
-
 # text-embedding-3-large -> 3072, text-embedding-3-small -> 1536
 OPENAI_EMBED_DIM = int(os.getenv("OPENAI_EMBED_DIM", "3072"))
 
-if not OPENAI_API_KEY:
-    raise RuntimeError("❌ OPENAI_API_KEY 가 .env에 없습니다. (.env 로드/경로 확인 필요)")
-
-# OpenAI client 생성
-openai_client = OpenAI(api_key=OPENAI_API_KEY)
+# OpenAI client는 "openai embedding"을 실제로 쓸 때만 생성
+openai_client = None
 
 # =======================
-# ✅ 임베딩 함수 (OpenAI)
+# ✅ 임베딩 함수 (OpenAI) - openai 선택일 때만 사용
 # =======================
 def embed_text(text: str) -> List[float]:
     """
     OpenAI Embedding 생성.
     - 반환 벡터 차원은 모델에 의해 고정됨 (large=3072, small=1536)
     """
+    global openai_client
+
+    if openai_client is None:
+        raise RuntimeError(
+            "❌ OpenAI client not initialized. "
+            "Set EMBEDDING_MODEL_SELECTED=openai and provide OPENAI_API_KEY."
+        )
+
     text = (text or "").strip()
     if not text:
         return [0.0] * OPENAI_EMBED_DIM
@@ -91,16 +100,20 @@ def embed_text(text: str) -> List[float]:
 try:
     from ragflow_sdk import RAGFlow
 except ImportError:
+    # ✅ 레포 구조: /workspace/libs/sdk/python/ragflow_sdk
+    sys.path.insert(0, str(BASE_DIR / "libs" / "sdk" / "python"))
+    # (혹시 예전 구조도 같이 커버)
     sys.path.insert(0, str(BASE_DIR / "sdk" / "python"))
     from ragflow_sdk import RAGFlow
+
 
 from embedding_provider import EmbeddingProvider
 from milvus_proxy import MilvusProxy
 from ragflow_sdk.modules.dataset import DataSet
 
-from core.preprocessing.classifier.document_classifier import \
-    DocumentClassifier
-from core.preprocessing.coverters.hwp_extract import extract_docx_blocks
+from core.preprocessing.classifier.document_classifier import DocumentClassifier
+from core.preprocessing.coverters.hwp_extract import extract_docx_blocks  # (폴더명이 coverters인 구조 유지)
+
 # =======================
 # 2. 커스텀 전처리 모듈 import
 # =======================
@@ -115,7 +128,8 @@ embedder = EmbeddingProvider()
 # =======================
 # 3. 환경 변수 (RAGFlow)
 # =======================
-HOST_ADDRESS = os.getenv("RAGFLOW_HOST", "http://localhost")
+# ✅ worker 컨테이너에서 localhost가 아니라 ragflow 서비스로 접근해야 함
+HOST_ADDRESS = os.getenv("RAGFLOW_HOST") or os.getenv("HOST_ADDRESS") or "http://ragflow-cpu:9380"
 API_KEY = os.getenv("RAGFLOW_API_KEY")
 
 # ✅ RAGFlow 내부 설정용(표기용) 모델명은 네 환경에 맞게 유지해도 되고,
@@ -144,7 +158,6 @@ def print_section(title: str):
     print("\n" + "=" * 60)
     print(f"  {title}")
     print("=" * 60)
-
 
 def print_step(n: int, text: str):
     print(f"\n[단계 {n}] {text}")
@@ -375,7 +388,7 @@ def chunk_docx_blocks_with_rules(
         elif blk.get("type") == "table":
             table = blk.get("table") or {}
 
-            # 표 JSON 저장 (네가 이미 쓰는 table_store 그대로 사용)
+            # 표 JSON 저장
             table_store.save_table(
                 table_id=table.get("table_id"),
                 doc=table.get("doc"),
@@ -400,18 +413,15 @@ def chunk_docx_blocks_with_rules(
     if not raw:
         return []
 
-    # 2) 문서 타입/패턴 감지 후 “조 단위” 포함한 기존 규칙 청킹 적용
     doc_type = detect_document_type(raw)
     patterns = detect_heading_patterns_from_text(raw)
 
     if doc_type == "regulation":
-        # ✅ 조 단위 유지 (길이 자르기 OFF)
         return split_text_by_rules(raw, patterns, max_chars=999999, strict_heading_only=True)
 
     if doc_type == "structured":
         return split_text_by_rules(raw, patterns, max_chars=max_chars_structured)
 
-    # general은 기존처럼 문단 흐름 유지 (표 마커도 이미 붙어 있음)
     return ordered_chunks
 
 
@@ -434,7 +444,6 @@ def preprocess_to_chunks(path: Path, chunk_size: int = 1200) -> list[str]:
     else:
         data = result
 
-    # 2) data에서 실제 chunk 목록 꺼내기
     items = []
 
     if isinstance(data, dict):
@@ -453,7 +462,6 @@ def preprocess_to_chunks(path: Path, chunk_size: int = 1200) -> list[str]:
     if not items:
         return []
 
-    # 3) 각 item에서 텍스트만 뽑기
     chunks: list[str] = []
     for item in items:
         if isinstance(item, dict):
@@ -790,10 +798,8 @@ def process_single_file_mode(
     ext = fpath.suffix.lower().lstrip(".")
     print(f"\n======= [{domain}] {fpath.name} 처리 =======")
 
-    # ✅ doc_id 우선순위: CLI doc_id > 파일명
     effective_doc_id = (doc_id or fpath.name)
 
-    # ✅ replace=true 이면 Milvus에서 기존 doc_id 삭제 후 재적재
     if replace and milvus:
         try:
             milvus.delete_file(dataset_id=domain, doc_id=effective_doc_id)
@@ -811,7 +817,6 @@ def process_single_file_mode(
         fpath = Path(docx_path)
         ext = "docx"
 
-    # 업로드
     with open(fpath, "rb") as fb:
         blob = fb.read()
 
@@ -896,22 +901,24 @@ def process_single_file_mode(
 # 메인
 # ===========================================================
 def main():
-    # ✅ 추가: CLI 인자
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", help="업로드 단일 파일 처리 경로")
     parser.add_argument("--domain", default="default", help="단일 파일 모드 도메인명")
+
+    # ✅ 기존 유지 + alias 추가
     parser.add_argument("--doc_id", default=None, help="문서 식별자(docId)")
+    parser.add_argument("--doc-id", dest="doc_id", default=None, help="문서 식별자(docId) (alias)")
+
     parser.add_argument("--version", type=int, default=None, help="문서 버전")
     parser.add_argument("--replace", default="false", help="true면 기존 docId 교체")
 
     args = parser.parse_args()
-
     replace_flag = str(args.replace).lower() in ("1", "true", "yes", "y", "on")
 
     print_section("RAGFlow 커스텀 청킹 + add_chunk (HWP/PDF/PPT/DOCX/TXT/CSV 포함)")
 
     # =========================
-    # 🔥 실험 / 임베딩 설정 (프론트 연동 대비)
+    # 🔥 실험 / 임베딩 설정
     # =========================
     EMBEDDING_MODEL_SELECTED = os.getenv("EMBEDDING_MODEL_SELECTED", "openai")
     EXPERIMENT_TAG = os.getenv("EXPERIMENT_TAG", "A")
@@ -922,13 +929,21 @@ def main():
     }
 
     COLLECTION_NAME_MAP = {
-        # ✅ A/B 라우팅: openai면 기본 ragflow_chunks, sroberta면 ragflow_chunks_sroberta
         "openai": "ragflow_chunks",
         "sroberta": "ragflow_chunks_sroberta",
     }
 
     if EMBEDDING_MODEL_SELECTED not in MODEL_DIM_MAP:
         raise ValueError(f"지원하지 않는 embedding model: {EMBEDDING_MODEL_SELECTED}")
+
+    # ✅ openai 선택일 때만 OPENAI 키/클라이언트 요구
+    global openai_client
+    if EMBEDDING_MODEL_SELECTED == "openai":
+        if OpenAI is None:
+            raise RuntimeError("❌ openai 패키지가 설치되어 있지 않습니다.")
+        if not OPENAI_API_KEY:
+            raise RuntimeError("❌ EMBEDDING_MODEL_SELECTED=openai 인데 OPENAI_API_KEY가 없습니다.")
+        openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
     # ------------------------------------
     # 1) 서버 연결
@@ -938,7 +953,7 @@ def main():
         _ = requests.get(
             f"{HOST_ADDRESS}/api/v1/datasets",
             headers={"Authorization": f"Bearer {API_KEY}"},
-            timeout=5,
+            timeout=10,
         )
         rag = RAGFlow(API_KEY, HOST_ADDRESS)
         print("✅ RAGFlow 연결 성공")
@@ -950,30 +965,26 @@ def main():
     # Milvus 연결
     # ------------------------------------
     print_step(1, "Milvus 연결")
-
     print(f"[DEBUG] EMBEDDING_MODEL_SELECTED={EMBEDDING_MODEL_SELECTED}")
-    
 
     try:
         embedding_model = EMBEDDING_MODEL_SELECTED
         collection_name = COLLECTION_NAME_MAP[embedding_model]
-        
         print(f"[DEBUG] Milvus collection={collection_name}")
-        
+
         milvus = MilvusProxy(
             host=MILVUS_HOST,
             port=MILVUS_PORT,
             collection_name=collection_name,
             dim=MODEL_DIM_MAP[embedding_model],
         )
-        
         print("✅ Milvus 연결/컬렉션 준비 완료")
     except Exception as e:
         print(f"❌ Milvus 연결 실패 (일단 RAGFlow만 진행): {e}")
         milvus = None
 
     # ===========================================================
-    # ✅ 추가: 단일 파일 모드 (--input)
+    # ✅ 단일 파일 모드 (--input)
     # ===========================================================
     if args.input:
         input_path = Path(args.input).expanduser().resolve()
@@ -1007,9 +1018,6 @@ def main():
             print(f"⚠️  폴더가 없습니다. 스킵: {dataset_dir}")
             continue
 
-        # ------------------------------------
-        # 2) 도메인 폴더 안 파일 스캔
-        # ------------------------------------
         print_step(2, f"[{domain}] dataset 폴더 스캔")
 
         pdfs = list(dataset_dir.glob("*.pdf"))
@@ -1029,9 +1037,6 @@ def main():
         for f in files:
             print("   -", f.name)
 
-        # ------------------------------------
-        # 3) 도메인별 Dataset 생성
-        # ------------------------------------
         print_step(3, f"[{domain}] 데이터셋 생성")
         dataset_name = f"auto_{domain}_{int(time.time())}"
 
@@ -1047,9 +1052,6 @@ def main():
 
         print(f"✅ [{domain}] Dataset 생성 완료: {dataset.id} (name={dataset_name})")
 
-        # ------------------------------------
-        # 4) 파일별 업로드 + 청킹
-        # ------------------------------------
         print_step(4, f"[{domain}] 파일 업로드 + 청킹")
 
         for fpath in files:
@@ -1057,14 +1059,12 @@ def main():
             ext = fpath.suffix.lower().lstrip(".")
             print(f"\n======= [{domain}] {fpath.name} 처리 =======")
 
-            # 4-1. HWP/HWPX → DOCX로 변환
             if ext in ("hwp", "hwpx"):
                 print(f"[HWP] {fpath.name} → DOCX로 변환")
                 docx_path = hwp_adapter.to_docx(str(fpath))
                 fpath = Path(docx_path)
                 ext = "docx"
 
-            # 4-2. PDF / PPT / PPTX 처리
             if ext in ("pdf", "ppt", "pptx"):
                 if ext == "pdf":
                     doc_type = classifier.classify(str(fpath))
@@ -1124,7 +1124,6 @@ def main():
                 print(f"→ 파이프라인 청크 {len(chunks)}개 반환")
                 continue
 
-            # 4-3. CSV / DOCX / TXT
             if ext in ("csv", "docx", "txt"):
                 print("→ [CSV/DOCX/TXT] 기존 규정형 청킹 사용")
 
@@ -1168,7 +1167,6 @@ def main():
 
             print(f"⚠️ 지원하지 않는 확장자입니다: .{ext} (스킵)")
 
-        # 5) 도메인별 검색 테스트
         print_step(5, f"[{domain}] 검색 테스트")
         query = f"{domain} 관련 문서의 목적은 무엇인가?"
         results = rag.retrieve(

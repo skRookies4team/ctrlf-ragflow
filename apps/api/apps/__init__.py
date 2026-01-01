@@ -276,10 +276,4 @@ def _db_close(exception):
         logging.exception(f"Request failed: {exception}")
     close_connection()
 
-from api.apps.internal_ragflow_app import internal_bp
 from api.constants import API_VERSION  # 이미 위에서 import 되어있을 가능성 높음
-
-app.register_blueprint(
-    internal_bp,
-    url_prefix=f"/{API_VERSION}/internal_ragflow"
-)
