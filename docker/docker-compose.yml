@@ -42,7 +42,11 @@ services:
       - ../history_data_agent:/ragflow/history_data_agent
       - ./service_conf.yaml.template:/ragflow/conf/service_conf.yaml.template
       - ./entrypoint.sh:/ragflow/entrypoint.sh
-    env_file: .env
+      - ../apps/api/apps/internal_ragflow_app.py:/ragflow/api/apps/internal_ragflow_app.py
+
+    env_file: 
+      - ../.env
+      - ./.env
     networks:
       - ragflow
     restart: on-failure
@@ -51,8 +55,42 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      - RAGFLOW_API_KEY=ragflow-5TjltEnrdgJ6-Zpl3Nze8luNUvyOU2J6gmS6yx1QFDc
-      - AI_TO_RAGFLOW_TOKEN=ragflow-5TjltEnrdgJ6-Zpl3Nze8luNUvyOU2J6gmS6yx1QFDc
+      - HOST_IP=0.0.0.0
+      - HOST_PORT=9380
+      - RAGFLOW_HOST=ragflow-cpu
+      - RAGFLOW_PORT=9380
+      - RAGFLOW_API_KEY=${RAGFLOW_API_KEY}
+      - AI_TO_RAGFLOW_TOKEN=${RAGFLOW_API_KEY}
+      - INGEST_WORKER_URL=http://ingest-worker:9001
+
+  ingest-worker:
+    profiles:
+      - cpu
+      - gpu
+    build:
+      context: ..               # ✅ 레포 루트
+      dockerfile: workers/ingest-worker/Dockerfile
+    container_name: ingest-worker
+    env_file: 
+      - ../.env
+      - ./.env
+    volumes:
+      - hf-cache:/root/.cache/huggingface
+    environment:
+      # - AI_TO_RAGFLOW_TOKEN=${AI_TO_RAGFLOW_TOKEN}
+      # - MILVUS_HOST=${MILVUS_HOST}
+      # - MILVUS_PORT=${MILVUS_PORT}
+      # - MILVUS_COLLECTION=${MILVUS_COLLECTION}
+      # - VLLM_BASE_URL=${VLLM_BASE_URL}
+      # - VLLM_EMBED_MODEL_ID=${VLLM_EMBED_MODEL_ID}
+      - RAGFLOW_BASE_URL=http://ragflow-cpu:9380    # ✅ 같은 네트워크에서 ragflow 접근
+      # - RAGFLOW_API_KEY=${RAGFLOW_API_KEY}
+      # - OPENAI_API_KEY=${OPENAI_API_KEY}
+    networks:
+      - ragflow
+    restart: on-failure
+    ports:
+      - "9011:9001"
 
 
   ragflow-gpu:
@@ -136,3 +174,6 @@ services:
   #           - driver: nvidia
   #             count: all
   #             capabilities: [gpu]
+
+volumes:
+  hf-cache:
