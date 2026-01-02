@@ -3,7 +3,9 @@ import os
 import json
 import logging
 import unicodedata
-from typing import Any, Dict
+import asyncio
+from uuid import uuid4
+from typing import Any, Dict, Optional
 
 import httpx
 from quart import request
@@ -15,7 +17,14 @@ logger = logging.getLogger("internal_ragflow")
 # config helpers
 # ----------------------------
 def _expected_token() -> str:
+    # AI -> RAGFlow 전용 토큰 우선
     return os.getenv("AI_TO_RAGFLOW_TOKEN") or os.getenv("INTERNAL_TOKEN") or ""
+
+
+def _expected_callback_token() -> str:
+    # ✅ RAGFlow(ingest-worker) -> AI callback token
+    # (테스트/운영 환경에선 "AI 서버"가 이 토큰으로 검증해야 함)
+    return os.getenv("RAGFLOW_TO_AI_TOKEN") or ""
 
 
 def _worker_url() -> str:
@@ -62,7 +71,6 @@ async def _parse_json_body() -> Dict[str, Any]:
             if isinstance(body, dict):
                 return body
     except Exception:
-        # 아래 raw 파싱으로 폴백
         pass
 
     # 2) 폴백: raw bytes 직접 파싱
@@ -70,7 +78,6 @@ async def _parse_json_body() -> Dict[str, Any]:
     if not raw:
         return {}
 
-    # 디코딩 후보(utf-8 우선)
     for enc in ("utf-8-sig", "utf-8", "cp949"):
         try:
             s = raw.decode(enc)
@@ -81,7 +88,6 @@ async def _parse_json_body() -> Dict[str, Any]:
         except Exception:
             continue
 
-    # 마지막: 완전 실패면 bytes 정보를 남김
     return {"_raw_bytes_len": len(raw)}
 
 
@@ -100,7 +106,6 @@ def _coerce_str(v: Any) -> str:
                 continue
         return v.decode("utf-8", errors="ignore")
     if isinstance(v, (dict, list)):
-        # 구조형이면 문자열 강제 X (상위에서 체크)
         return ""
     return str(v)
 
@@ -144,11 +149,14 @@ def _canonicalize_ingest_body(body: Dict[str, Any]) -> Dict[str, Any]:
     """
     ingest-worker가 기대하는 키로 정규화 + alias 흡수 + 타입 보정.
     - datasetId/docId/fileUrl 3개는 반드시 canonical key로 맞춘다.
-    - replace/version/meta 같은 옵션 키도 정규화해서 worker로 넘긴다.
+    - replace/version/meta/ingestId 같은 옵션 키도 정규화해서 worker로 넘긴다.
     """
     dataset_id = _pick(body, "datasetId", ["dataset_id", "dataset", "datasetName", "dataset_name"])
     doc_id = _pick(body, "docId", ["doc_id", "doc-id", "documentId", "document_id", "doc"])
     file_url = _pick(body, "fileUrl", ["file_url", "file", "url", "fileURL"])
+
+    # ✅ ingestId도 alias 흡수 (AI가 이미 준 경우 유지)
+    ingest_id = _pick(body, "ingestId", ["ingest_id", "ingest-id", "requestId", "request_id"])
 
     out: Dict[str, Any] = dict(body)  # 원래 payload 유지(필요한 확장키 유지)
 
@@ -156,16 +164,21 @@ def _canonicalize_ingest_body(body: Dict[str, Any]) -> Dict[str, Any]:
     out["docId"] = _coerce_str(doc_id).strip()
     out["fileUrl"] = _coerce_str(file_url).strip()
 
-    # 옵션들 정규화 (있으면 canonical 형태로 유지)
+    if ingest_id is not None:
+        out["ingestId"] = _coerce_str(ingest_id).strip()
+
+    # 옵션들 정규화
     if "replace" in out or "isReplace" in out or "replace_doc" in out:
         out["replace"] = _bool(_pick(out, "replace", ["isReplace", "replace_doc"]), default=False)
+    else:
+        # ✅ worker/main.py가 bool로 받기 쉬우라고 기본값을 명시(선택)
+        out.setdefault("replace", False)
 
     if "version" in out or "ver" in out or "docVersion" in out:
         out["version"] = _int(_pick(out, "version", ["ver", "docVersion"]), default=None)
 
     # meta는 dict 보장
     if "meta" in out and out["meta"] is not None and not isinstance(out["meta"], dict):
-        # meta가 문자열로 들어오면 JSON 파싱을 시도
         try:
             if isinstance(out["meta"], str):
                 out["meta"] = json.loads(out["meta"])
@@ -177,26 +190,67 @@ def _canonicalize_ingest_body(body: Dict[str, Any]) -> Dict[str, Any]:
     return out
 
 
+def _make_ingest_id() -> str:
+    return str(uuid4())
+
+
+def _get_sync_mode() -> bool:
+    return os.getenv("INGEST_SYNC_MODE", "0").strip() in ("1", "true", "yes", "y", "on")
+
+
+async def _post_to_worker_background(
+    worker_endpoint: str,
+    headers: Dict[str, str],
+    payload_bytes: bytes,
+    *,
+    ingest_id: str,
+    dataset_id: str,
+    doc_id: str,
+) -> None:
+    """
+    202로 즉시 응답한 뒤, 백그라운드에서 worker로 실제 ingest 요청 전달.
+    실패해도 API 응답은 이미 나갔으므로 여기서는 로그로만 남긴다.
+    """
+    timeout = httpx.Timeout(_timeout(), connect=10.0)
+    try:
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            resp = await client.post(worker_endpoint, headers=headers, content=payload_bytes)
+
+        payload = _safe_json(resp)
+        ok = resp.status_code < 400
+
+        logger.warning(
+            "[INTERNAL_INGEST_BG] ingestId=%s ok=%s status=%s datasetId=%r docId=%r resp=%s",
+            ingest_id,
+            ok,
+            resp.status_code,
+            dataset_id,
+            doc_id,
+            payload if isinstance(payload, dict) else {"_raw": str(payload)},
+        )
+    except Exception as e:
+        logger.exception(
+            "[INTERNAL_INGEST_BG] FAILED ingestId=%s datasetId=%r docId=%r err=%s",
+            ingest_id,
+            dataset_id,
+            doc_id,
+            e,
+        )
+
+
 # ----------------------------
 # route
 # ----------------------------
 @manager.route("/internal/ragflow/ingest", methods=["POST"])
 async def internal_ragflow_ingest():
     """
-    RAGFlow 내부 엔드포인트:
-    - 토큰 검증
-    - JSON 바디 검증
-    - ingest-worker(/ingest)로 전달 (UTF-8로 강제)
+    AI -> RAGFlow Ingest 실행 API
 
-    기대 바디(최소):
-      {
-        "datasetId": "사내규정",
-        "docId": "TEST-001",
-        "fileUrl": "https://....pdf",
-        "replace": true,          # optional
-        "version": 3,             # optional
-        "meta": {...}             # optional
-      }
+    - 토큰 검증
+    - JSON 바디 검증/정규화
+    - ingestId 확정(요청에 있으면 재사용, 없으면 생성)
+    - 202 Accepted 즉시 응답 (QUEUED)
+    - 실제 ingest는 ingest-worker(/ingest)로 비동기 전달
     """
     # 1) 내부 토큰 검증
     got = request.headers.get("X-Internal-Token", "")
@@ -217,59 +271,130 @@ async def internal_ragflow_ingest():
     body = _canonicalize_ingest_body(body)
 
     # 필수값 체크(최소)
-    dataset_name = body.get("datasetId")
+    dataset_id = body.get("datasetId")
     doc_id = body.get("docId")
     file_url = body.get("fileUrl")
 
-    if not dataset_name or not doc_id or not file_url:
+    if not dataset_id or not doc_id or not file_url:
         return {"code": 400, "data": False, "message": "datasetId, docId, fileUrl required"}, 400
 
-    # 3) worker로 전달
+    # 3) ingestId 확정
+    ingest_id = (body.get("ingestId") or "").strip() or _make_ingest_id()
+    body["ingestId"] = ingest_id
+
+    # (선택) meta에 ingestId 주입
+    meta = body.get("meta")
+    if isinstance(meta, dict):
+        meta.setdefault("ingestId", ingest_id)
+        body["meta"] = meta
+
+    # 4) worker로 전달 준비
     worker_endpoint = f"{_worker_url()}/ingest"
 
-    # worker에서도 같은 토큰 검증 가능하도록 헤더 전달
     headers = {
         "Content-Type": "application/json; charset=utf-8",
-        "X-Internal-Token": got,
-        # ✅ 추적/관측용: upstream 식별 헤더(있어도 무해)
+        "X-Internal-Token": got,  # worker에서도 동일 토큰 검증
         "X-From": "ragflow-api",
+        "X-Ingest-Id": ingest_id,
     }
 
-    timeout = httpx.Timeout(_timeout(), connect=10.0)
-
-    # ✅ 핵심: 워커로 넘길 JSON을 "ensure_ascii=False"로 UTF-8 bytes로 강제
+    # ✅ UTF-8 bytes 고정
     payload_bytes = json.dumps(body, ensure_ascii=False).encode("utf-8")
 
     logger.warning(
-        "[INTERNAL_INGEST] -> worker=%s datasetId=%r docId=%r replace=%r version=%r keys=%s",
+        "[INTERNAL_INGEST] QUEUE ingestId=%s worker=%s datasetId=%r docId=%r replace=%r version=%r keys=%s",
+        ingest_id,
         worker_endpoint,
-        dataset_name,
+        dataset_id,
         doc_id,
         body.get("replace"),
         body.get("version"),
         list(body.keys()),
     )
 
+    # 5) 202 즉시 반환 + (옵션) 동기 디버깅
+    if _get_sync_mode():
+        timeout = httpx.Timeout(_timeout(), connect=10.0)
+        try:
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                resp = await client.post(worker_endpoint, headers=headers, content=payload_bytes)
+
+            payload = _safe_json(resp)
+            if isinstance(payload, dict) and "code" not in payload:
+                payload = {
+                    "code": 100 if resp.status_code < 400 else resp.status_code,
+                    "data": payload,
+                    "message": "ok" if resp.status_code < 400 else "error",
+                }
+            return payload, resp.status_code
+
+        except httpx.TimeoutException:
+            logger.exception("[INTERNAL_INGEST] worker timeout (sync)")
+            return {"code": 504, "data": False, "message": "ingest-worker timeout"}, 504
+        except httpx.RequestError as e:
+            logger.exception("[INTERNAL_INGEST] worker request error (sync): %s", e)
+            return {"code": 502, "data": False, "message": f"ingest-worker unreachable: {e}"}, 502
+        except Exception as e:
+            logger.exception("[INTERNAL_INGEST] unexpected error (sync): %s", e)
+            return {"code": 500, "data": False, "message": f"internal error: {e}"}, 500
+
+    # 비동기 모드(기본): 백그라운드로 worker 호출 후 즉시 202
     try:
-        async with httpx.AsyncClient(timeout=timeout) as client:
-            resp = await client.post(worker_endpoint, headers=headers, content=payload_bytes)
-
-        payload = _safe_json(resp)
-
-        # ✅ 표준화: worker가 raw를 주더라도 code/message 형태로 감싸기
-        if isinstance(payload, dict) and "code" not in payload:
-            payload = {"code": 100 if resp.status_code < 400 else resp.status_code, "data": payload, "message": "ok" if resp.status_code < 400 else "error"}
-
-        return payload, resp.status_code
-
-    except httpx.TimeoutException:
-        logger.exception("[INTERNAL_INGEST] worker timeout")
-        return {"code": 504, "data": False, "message": "ingest-worker timeout"}, 504
-
-    except httpx.RequestError as e:
-        logger.exception("[INTERNAL_INGEST] worker request error: %s", e)
-        return {"code": 502, "data": False, "message": f"ingest-worker unreachable: {e}"}, 502
-
+        asyncio.create_task(
+            _post_to_worker_background(
+                worker_endpoint,
+                headers,
+                payload_bytes,
+                ingest_id=ingest_id,
+                dataset_id=dataset_id,
+                doc_id=doc_id,
+            )
+        )
     except Exception as e:
-        logger.exception("[INTERNAL_INGEST] unexpected error: %s", e)
-        return {"code": 500, "data": False, "message": f"internal error: {e}"}, 500
+        logger.exception("[INTERNAL_INGEST] failed to schedule background task ingestId=%s err=%s", ingest_id, e)
+        return {"code": 500, "data": False, "message": "failed to queue ingest task"}, 500
+
+    return {
+        "received": True,
+        "ingestId": ingest_id,
+        "status": "QUEUED",
+    }, 202
+
+
+# ============================================================
+# ✅ (추가) ingest-worker -> AI callback receiver (테스트용)
+# ============================================================
+@manager.route("/internal/ai/callbacks/ragflow/ingest", methods=["POST"])
+async def internal_ai_callback_ragflow_ingest():
+    """
+    ingest-worker가 결과를 콜백하는 엔드포인트 (테스트/운영 시 AI 서버에서 구현해야 함)
+
+    URL:
+      /v1/internal_ragflow/internal/ai/callbacks/ragflow/ingest
+
+    Headers:
+      X-Internal-Token: {RAGFLOW_TO_AI_TOKEN}
+
+    Body:
+      {
+        ingestId, docId, version, status, processedAt, failReason, meta, stats
+      }
+    """
+    got = request.headers.get("X-Internal-Token", "")
+    expected = _expected_callback_token()
+    if not expected:
+        return {"code": 500, "data": False, "message": "RAGFLOW_TO_AI_TOKEN not configured"}, 500
+    if got != expected:
+        return {"code": 401, "data": False, "message": "Unauthorized callback"}, 401
+
+    body: Dict[str, Any] = await _parse_json_body()
+    body = _normalize_unicode(body)
+
+    ingest_id = (body.get("ingestId") or "").strip()
+    doc_id = (body.get("docId") or "").strip()
+    status = (body.get("status") or "").strip()
+
+    logger.warning("[AI_CALLBACK_RX] ingestId=%s docId=%s status=%s body=%s", ingest_id, doc_id, status, body)
+
+    # 여기서 DB 업데이트 / 상태 저장 / 이벤트 발행 등 처리하면 됨
+    return {"code": 100, "data": {"received": True}, "message": "ok"}, 200

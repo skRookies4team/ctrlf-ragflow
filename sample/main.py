@@ -11,6 +11,12 @@ HWP / PDF / PPT / DOCX / TXT / CSV 자동 처리 + 문서 타입 판별 + 자동
 - dataset을 매번 새로 만들지 않고 "도메인당 1개 고정 dataset"을 재사용(get_or_create)
 - replace=true면 Milvus 뿐 아니라 RAGFlow 문서도 삭제 후 재업로드
 - add_chunk에서 content 변수 사용 버그 수정 (content=text -> content=content)
+
+✅ 신규 요구사항 반영(핵심):
+- --ingest-id / --meta-json 인자 지원 (ingest-worker가 넘김)
+- 처리 결과는 main.py가 직접 콜백하지 않고, ingest-worker가 콜백함
+- main.py는 worker가 파싱할 수 있도록 stdout에 다음 라인을 남김:
+  INGEST_STATS_JSON={"chunks":123, ...}
 """
 
 import argparse
@@ -21,6 +27,7 @@ import os
 import re
 import sys
 import time
+from uuid import uuid4
 from difflib import SequenceMatcher
 
 # =======================
@@ -180,6 +187,24 @@ def print_step(n: int, text: str):
 
 
 # ===========================================================
+# ✅ (신규) worker가 파싱할 ingest stats 출력
+# ===========================================================
+def print_ingest_stats(chunks: int, extra: Optional[Dict[str, Any]] = None) -> None:
+    """
+    ingest-worker(app.py)가 stdout에서 파싱하는 라인:
+      INGEST_STATS_JSON={...}
+    """
+    payload: Dict[str, Any] = {"chunks": int(chunks or 0)}
+    if extra and isinstance(extra, dict):
+        payload.update(extra)
+    try:
+        print("INGEST_STATS_JSON=" + json.dumps(payload, ensure_ascii=False))
+    except Exception:
+        # 어떤 상황에서도 최소 형태는 남기기
+        print("INGEST_STATS_JSON=" + '{"chunks":%d}' % int(chunks or 0))
+
+
+# ===========================================================
 # (운영형 핵심) RAGFlow REST 헬퍼 (SDK가 없는 기능도 안정적으로 처리)
 # ===========================================================
 def _auth_headers() -> Dict[str, str]:
@@ -203,10 +228,9 @@ def _list_datasets_rest() -> List[Dict[str, Any]]:
 
 
 def _find_dataset_by_name(dataset_name: str) -> Optional[Dict[str, Any]]:
-    # 1) SDK에 목록 기능이 있으면 우선 사용
+    # 1) SDK에 목록 기능이 있으면 우선 사용 (형태가 버전에 따라 달라서 여기선 패스)
     try:
         if hasattr(RAGFlow, "list_datasets") and callable(getattr(RAGFlow, "list_datasets")):
-            # 인스턴스 메서드인지 확인은 호출에서 해결
             pass
     except Exception:
         pass
@@ -249,9 +273,7 @@ def get_or_create_dataset(rag: Any, domain: str) -> Any:
             ds.id = ds_id  # type: ignore
             return ds
         except Exception:
-            # 여기까지 오면 create_dataset으로 새로 만드는 수밖에 없음
             print("⚠ SDK로 기존 dataset 핸들 생성 실패 → 새로 생성 시도(이름 중복 가능)")
-            # fallthrough
 
     # 없으면 생성
     parser_config = DataSet.ParserConfig(rag, {"raptor": {"use_raptor": False}})
@@ -282,7 +304,6 @@ def _list_documents_rest(dataset_id: str) -> List[Dict[str, Any]]:
 
 
 def _delete_document_rest(dataset_id: str, document_id: str) -> bool:
-    # 서버마다 라우트가 다를 수 있어 여러 형태를 시도
     candidates = [
         f"{HOST_ADDRESS}/api/v1/datasets/{dataset_id}/documents/{document_id}",
         f"{HOST_ADDRESS}/api/v1/datasets/{dataset_id}/document/{document_id}",
@@ -311,9 +332,8 @@ def delete_ragflow_document_by_name(dataset: Any, effective_doc_name: str) -> bo
         target_ids = []
         for d in docs:
             name = d.get("display_name") or d.get("name") or d.get("filename") or d.get("doc_name")
-            if name == effective_doc_name:
-                if d.get("id"):
-                    target_ids.append(d["id"])
+            if name == effective_doc_name and d.get("id"):
+                target_ids.append(d["id"])
         deleted_any = False
         for did in target_ids:
             ok = _delete_document_rest(str(ds_id), str(did))
@@ -328,12 +348,6 @@ def delete_ragflow_document_by_name(dataset: Any, effective_doc_name: str) -> bo
 # 1. 문서 타입 자동 판단 (텍스트 기반 규정/방침 판별용)
 # ===========================================================
 def detect_document_type(raw_text: str) -> str:
-    """
-    문서 형태 자동 판단
-    - regulation: '제 n조'가 많이 등장하는 규정류
-    - structured: ◇/◊/○/숫자 헤더가 많은 보안/방침 문서
-    - general: 일반 문서 (보고서, 회의록 등)
-    """
     text = raw_text.replace("\x01", " ").replace("\u00a0", " ")
     lines = text.splitlines()
 
@@ -347,22 +361,15 @@ def detect_document_type(raw_text: str) -> str:
 
     if article >= 3:
         return "regulation"
-
     if article == 0 and (diamond >= 2 or circle >= 2):
         return "structured"
-
     if number >= 5:
         return "structured"
-
     if length > 2000 and paragraph_count >= 3:
         return "general"
-
     return "general"
 
 
-# ===========================================================
-# 2. heading 패턴 자동 감지
-# ===========================================================
 def detect_heading_patterns_from_text(raw_text: str) -> List[str]:
     text = raw_text.replace("\x01", " ").replace("\u00a0", " ")
     lines = text.splitlines()
@@ -391,20 +398,14 @@ def detect_heading_patterns_from_text(raw_text: str) -> List[str]:
     special = counts["special"]
     num = counts["number_top"] + counts["number_sub"]
 
-    # 규정류
     if article >= 3:
         active = ["article"]
-
-    # 보안관리규정
     elif article == 0 and diamond >= 1:
         active = ["diamond"]
         if circle + special >= 1:
             active += ["circle", "special"]
-
-    # 경영방침, 숫자 구조 문서
     elif num >= 3:
         active = ["number_top", "number_sub"]
-
     else:
         nonzero = [k for k, v in counts.items() if v > 0]
         if nonzero:
@@ -416,9 +417,6 @@ def detect_heading_patterns_from_text(raw_text: str) -> List[str]:
     return [candidate[k] for k in active]
 
 
-# ===========================================================
-# 3. 길이 기반 스플릿 함수
-# ===========================================================
 def split_long_chunk_with_heading(chunk_text: str, max_chars: int) -> List[str]:
     if len(chunk_text) <= max_chars:
         return [chunk_text]
@@ -441,17 +439,12 @@ def split_long_chunk_with_heading(chunk_text: str, max_chars: int) -> List[str]:
         buf = []
 
     for p in paras:
-        if not buf:
-            cand = p
-        else:
-            cand = "\n\n".join(buf + [p])
-
+        cand = p if not buf else "\n\n".join(buf + [p])
         if len(cand) <= max_body:
             buf.append(p)
         else:
             flush()
             if len(p) > max_body:
-                # 강제 자르기
                 s = 0
                 while s < len(p):
                     part = p[s : s + max_body]
@@ -464,18 +457,12 @@ def split_long_chunk_with_heading(chunk_text: str, max_chars: int) -> List[str]:
     return chunks
 
 
-# ===========================================================
-# 4. 규정형 청킹
-# ===========================================================
 def split_text_by_rules(
     raw_text: str,
     heading_patterns: Sequence[str],
     max_chars: int,
     strict_heading_only: bool = False,
 ) -> List[str]:
-    """
-    strict_heading_only=True → 길이 기준 분할 OFF (조 단위 유지)
-    """
     lines = raw_text.splitlines()
     compiled = [re.compile(p) for p in heading_patterns]
     coarse: List[str] = []
@@ -483,10 +470,7 @@ def split_text_by_rules(
 
     def is_heading(line: str) -> bool:
         s = line.strip()
-        for pat in compiled:
-            if pat.match(s):
-                return True
-        return False
+        return any(pat.match(s) for pat in compiled)
 
     def flush():
         nonlocal buf
@@ -509,11 +493,9 @@ def split_text_by_rules(
     if last:
         coarse.append(last)
 
-    # 길이 기반 분할 해제 (규정류)
     if strict_heading_only:
         return [c for c in coarse if len(c.strip()) > 20]
 
-    # structured 문서 → 필요시 길이 분할
     final: List[str] = []
     for ch in coarse:
         if len(ch) <= max_chars:
@@ -525,26 +507,15 @@ def split_text_by_rules(
 
 
 def chunk_docx_blocks_with_rules(blocks: list[dict], max_chars_structured: int = 2000) -> list[str]:
-    """
-    extract_docx_blocks 결과(blocks)를 받아서
-    - 표는 JSON 저장 + TABLE 마커 유지
-    - 전체 텍스트를 조(제 n 조) 기준으로 청킹
-    - structured/general은 기존 로직 준용
-    반환: list[str] (최종 청크)
-    """
     ordered_chunks: list[str] = []
 
-    # 1) 블록을 문서 흐름대로 하나의 raw 텍스트로 재구성
     for blk in blocks:
         if blk.get("type") == "text":
             t = (blk.get("text") or "").strip()
             if t:
                 ordered_chunks.append(t)
-
         elif blk.get("type") == "table":
             table = blk.get("table") or {}
-
-            # 표 JSON 저장
             table_store.save_table(
                 table_id=table.get("table_id"),
                 doc=table.get("doc"),
@@ -552,8 +523,6 @@ def chunk_docx_blocks_with_rules(blocks: list[dict], max_chars_structured: int =
                 headers=table.get("headers"),
                 rows=table.get("rows"),
             )
-
-            # 직전 문단에 TABLE 참조 결합
             table_id = table.get("table_id")
             if ordered_chunks:
                 ordered_chunks[-1] += f"\n\n[TABLE:{table_id}] 표 데이터는 별도 JSON으로 저장되어 있습니다."
@@ -569,23 +538,14 @@ def chunk_docx_blocks_with_rules(blocks: list[dict], max_chars_structured: int =
 
     if doc_type == "regulation":
         return split_text_by_rules(raw, patterns, max_chars=999999, strict_heading_only=True)
-
     if doc_type == "structured":
         return split_text_by_rules(raw, patterns, max_chars=max_chars_structured)
-
     return ordered_chunks
 
 
-# ==========================================
-# HWP / 슬라이드형 PDF 전처리 파이프라인 래퍼
-# ==========================================
 def preprocess_to_chunks(path: Path, chunk_size: int = 1200) -> list[str]:
-    """
-    PreprocessPipeline을 실행해서 청크 리스트(list[str])로 변환.
-    """
     result = preprocess_pipeline.run(str(path), chunk_size=chunk_size)
 
-    # 1) result가 문자열이면 → JSON 파일 경로라고 가정하고 로드
     if isinstance(result, str):
         try:
             with open(result, "r", encoding="utf-8") as f:
@@ -596,13 +556,11 @@ def preprocess_to_chunks(path: Path, chunk_size: int = 1200) -> list[str]:
         data = result
 
     items = []
-
     if isinstance(data, dict):
         if "result_json" in data:
             rj = data["result_json"]
-            if isinstance(rj, dict):
-                if "chunks" in rj and isinstance(rj["chunks"], list):
-                    items = rj["chunks"]
+            if isinstance(rj, dict) and "chunks" in rj and isinstance(rj["chunks"], list):
+                items = rj["chunks"]
             elif isinstance(rj, list):
                 items = rj
         elif "chunks" in data and isinstance(data["chunks"], list):
@@ -619,17 +577,12 @@ def preprocess_to_chunks(path: Path, chunk_size: int = 1200) -> list[str]:
             text = item.get("text") or item.get("content") or ""
         else:
             text = str(item)
-
         text = text.strip()
         if text:
             chunks.append(text)
-
     return chunks
 
 
-# ===========================================================
-# 5. DOCX / TXT / CSV 전용 chunk 함수
-# ===========================================================
 def extract_text_docx(path: Path) -> str:
     doc = Document(str(path))
     paras = [p.text for p in doc.paragraphs if p.text.strip()]
@@ -657,7 +610,6 @@ def extract_text_csv(path: Path) -> str:
             if col_s or val_s:
                 lines.append(f"{col_s}: {val_s}")
         lines.append("")
-
     return "\n".join(lines).strip()
 
 
@@ -685,7 +637,6 @@ def chunk_document(path: Path) -> List[str]:
         paras = [p.strip() for p in raw.split("\n\n") if p.strip()]
         chunks: List[str] = []
         buf: List[str] = []
-
         for p in paras:
             candidate = "\n\n".join(buf + [p]) if buf else p
             if len(candidate) <= 800:
@@ -704,7 +655,6 @@ def chunk_text_pdf(path: Path) -> list[str]:
     with pdfplumber.open(str(path)) as pdf:
         for p in pdf.pages:
             pages.append(p.extract_text() or "")
-
     raw = "\n".join(pages)
 
     doc_type = detect_document_type(raw)
@@ -718,7 +668,6 @@ def chunk_text_pdf(path: Path) -> list[str]:
         paras = [p.strip() for p in raw.split("\n\n") if p.strip()]
         chunks: list[str] = []
         buf: list[str] = []
-
         for p in paras:
             candidate = "\n\n".join(buf + [p]) if buf else p
             if len(candidate) <= 800:
@@ -729,7 +678,6 @@ def chunk_text_pdf(path: Path) -> list[str]:
                 buf = [p]
         if buf:
             chunks.append("\n\n".join(buf))
-
         return chunks
 
 
@@ -737,7 +685,6 @@ def chunk_text_pdf(path: Path) -> list[str]:
 # 메인 설정값 & 도메인 디렉터리 정의
 # ===========================================================
 MAX_CHUNK_LEN = 8000
-
 SCRIPT_DIR = Path(__file__).parent  # sample 폴더 기준
 
 DOMAIN_DIRS = {
@@ -768,9 +715,6 @@ def compare_with_solution(dataset_dir: Path, fpath: Path, chunks: list[str]):
     print(f"  [유사도] 전체 청킹 결과 vs solution/{solution_txt_path.name}: {sim*100:.2f}%")
 
 
-# ===========================================================
-# 청크 추가 유틸 (RAGFlow + (옵션) Milvus 동시 저장 버전) - 정리본
-# ===========================================================
 def add_chunks_safe(
     doc,
     chunks,
@@ -783,12 +727,13 @@ def add_chunks_safe(
     """
     RAGFlow: 무조건 chunk 추가
     Milvus: chunk_hash 기준 중복 차단 후 일괄 insert
+    반환: 실제로 RAGFlow에 add_chunk된 개수
     """
     print(f"→ 생성된 청크 수: {len(chunks)}")
 
     if not chunks:
         print("⚠ 청크 0개 → 저장 스킵")
-        return
+        return 0
 
     milvus_payload = []
     added = 0
@@ -857,10 +802,9 @@ def add_chunks_safe(
     else:
         print("→ Milvus 적재 없음 (중복 또는 embedding 실패)")
 
+    return added
 
-# ===========================================================
-# ✅ 단일 파일 모드 처리 함수
-# ===========================================================
+
 def process_single_file_mode(
     rag,
     milvus,
@@ -871,11 +815,12 @@ def process_single_file_mode(
     doc_id: str | None,
     version: int | None,
     replace: bool,
-):
+) -> int:
     """
     --input 으로 들어온 파일 1개만 처리
     - dataset은 "도메인당 1개 고정"으로 재사용
     - replace=true면 (1) RAGFlow 문서 삭제 (2) Milvus 삭제 후 재업로드
+    반환: 실제 add_chunk된 개수
     """
     print("\n" + "#" * 60)
     print("### 단일 파일 모드")
@@ -938,7 +883,7 @@ def process_single_file_mode(
         if doc_type == "text_pdf":
             print("→ [텍스트 PDF] 로컬 규정형 청킹 사용")
             chunks = chunk_text_pdf(fpath)
-            add_chunks_safe(
+            added = add_chunks_safe(
                 doc,
                 chunks,
                 milvus=milvus,
@@ -947,12 +892,12 @@ def process_single_file_mode(
                 embedding_model=embedding_model_selected,
                 experiment_tag=experiment_tag,
             )
-            return
+            return int(added)
 
         print("→ [이미지/슬라이드] PreprocessPipeline + add_chunk 사용")
         pipeline_result = preprocess_pipeline.run(str(fpath))
         chunks = pipeline_result.get("chunks", []) if isinstance(pipeline_result, dict) else []
-        add_chunks_safe(
+        added = add_chunks_safe(
             doc,
             chunks,
             milvus=milvus,
@@ -962,7 +907,7 @@ def process_single_file_mode(
             experiment_tag=experiment_tag,
         )
         print(f"→ 파이프라인 청크 {len(chunks)}개 반환")
-        return
+        return int(added)
 
     # CSV / DOCX / TXT
     if ext in ("csv", "docx", "txt"):
@@ -972,7 +917,7 @@ def process_single_file_mode(
             print("→ DOCX blocks 기반 처리 + 조단위(제 n 조) 청킹 적용")
             blocks = extract_docx_blocks(fpath)
             docx_chunks = chunk_docx_blocks_with_rules(blocks)
-            add_chunks_safe(
+            added = add_chunks_safe(
                 doc,
                 docx_chunks,
                 milvus=milvus,
@@ -981,10 +926,10 @@ def process_single_file_mode(
                 embedding_model=embedding_model_selected,
                 experiment_tag=experiment_tag,
             )
-            return
+            return int(added)
 
         chunks = chunk_document(fpath)
-        add_chunks_safe(
+        added = add_chunks_safe(
             doc,
             chunks,
             milvus=milvus,
@@ -993,14 +938,24 @@ def process_single_file_mode(
             embedding_model=embedding_model_selected,
             experiment_tag=experiment_tag,
         )
-        return
+        return int(added)
 
     print(f"⚠️ 지원하지 않는 확장자입니다: .{ext} (스킵)")
+    return 0
 
 
-# ===========================================================
-# 메인
-# ===========================================================
+def _parse_meta_json(meta_json: str | None) -> Dict[str, Any]:
+    if not meta_json:
+        return {}
+    try:
+        obj = json.loads(meta_json)
+        if isinstance(obj, dict):
+            return obj
+        return {"_meta_raw": obj}
+    except Exception:
+        return {"_meta_raw": meta_json}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", help="업로드 단일 파일 처리 경로")
@@ -1013,10 +968,23 @@ def main():
     parser.add_argument("--version", type=int, default=None, help="문서 버전")
     parser.add_argument("--replace", default="false", help="true면 기존 docId 교체")
 
+    # ✅ 신규: worker가 넘기는 추적 인자
+    parser.add_argument("--ingest-id", dest="ingest_id", default=None, help="ingest 작업 식별자(추적용)")
+    parser.add_argument("--meta-json", dest="meta_json", default=None, help="meta JSON 문자열")
+
     args = parser.parse_args()
     replace_flag = str(args.replace).lower() in ("1", "true", "yes", "y", "on")
 
-    print_section("RAGFlow 커스텀 청킹 + add_chunk (운영형: dataset 재사용/replace 지원)")
+    ingest_id = args.ingest_id or str(uuid4())
+    meta = _parse_meta_json(args.meta_json)
+
+    # docId는 단일 파일 모드에서 doc_id 우선, 없으면 파일명
+    if args.input:
+        effective_doc_id = args.doc_id or Path(args.input).name
+    else:
+        effective_doc_id = args.doc_id or "batch"
+
+    print_section("RAGFlow 커스텀 청킹 + add_chunk (운영형: dataset 재사용/replace 지원 + worker-callback)")
 
     # =========================
     # 🔥 실험 / 임베딩 설정
@@ -1037,7 +1005,6 @@ def main():
     if EMBEDDING_MODEL_SELECTED not in MODEL_DIM_MAP:
         raise ValueError(f"지원하지 않는 embedding model: {EMBEDDING_MODEL_SELECTED}")
 
-    # ✅ openai 선택일 때만 OPENAI 키/클라이언트 요구
     global openai_client
     if EMBEDDING_MODEL_SELECTED == "openai":
         if OpenAI is None:
@@ -1046,11 +1013,24 @@ def main():
             raise RuntimeError("❌ EMBEDDING_MODEL_SELECTED=openai 인데 OPENAI_API_KEY가 없습니다.")
         openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
-    # ------------------------------------
-    # 1) 서버 연결
-    # ------------------------------------
-    print_step(1, "서버 연결")
+    chunks_added = 0
+    milvus = None
+
+    # stats에 남길 부가 정보(원하면 더 추가 가능)
+    stats_extra = {
+        "ingestId": ingest_id,
+        "docId": effective_doc_id,
+        "version": args.version,
+        "domain": args.domain if args.input else None,
+        "replace": replace_flag,
+        "status": "UNKNOWN",
+    }
+
     try:
+        # ------------------------------------
+        # 1) 서버 연결
+        # ------------------------------------
+        print_step(1, "서버 연결")
         _ = requests.get(
             f"{HOST_ADDRESS}/api/v1/datasets",
             headers=_auth_headers(),
@@ -1058,204 +1038,218 @@ def main():
         )
         rag = RAGFlow(API_KEY, HOST_ADDRESS)
         print("✅ RAGFlow 연결 성공")
-    except Exception as e:
-        print(f"❌ 서버 연결 실패: {e}")
-        return
 
-    # ------------------------------------
-    # Milvus 연결
-    # ------------------------------------
-    print_step(2, "Milvus 연결")
-    print(f"[DEBUG] EMBEDDING_MODEL_SELECTED={EMBEDDING_MODEL_SELECTED}")
+        # ------------------------------------
+        # 2) Milvus 연결
+        # ------------------------------------
+        print_step(2, "Milvus 연결")
+        print(f"[DEBUG] EMBEDDING_MODEL_SELECTED={EMBEDDING_MODEL_SELECTED}")
 
-    try:
-        embedding_model = EMBEDDING_MODEL_SELECTED
-        collection_name = COLLECTION_NAME_MAP[embedding_model]
-        print(f"[DEBUG] Milvus collection={collection_name}")
+        try:
+            embedding_model = EMBEDDING_MODEL_SELECTED
+            collection_name = COLLECTION_NAME_MAP[embedding_model]
+            print(f"[DEBUG] Milvus collection={collection_name}")
 
-        milvus = MilvusProxy(
-            host=MILVUS_HOST,
-            port=MILVUS_PORT,
-            collection_name=collection_name,
-            dim=MODEL_DIM_MAP[embedding_model],
-        )
-        print("✅ Milvus 연결/컬렉션 준비 완료")
-    except Exception as e:
-        print(f"❌ Milvus 연결 실패 (일단 RAGFlow만 진행): {e}")
-        milvus = None
+            milvus = MilvusProxy(
+                host=MILVUS_HOST,
+                port=MILVUS_PORT,
+                collection_name=collection_name,
+                dim=MODEL_DIM_MAP[embedding_model],
+            )
+            print("✅ Milvus 연결/컬렉션 준비 완료")
+        except Exception as e:
+            print(f"❌ Milvus 연결 실패 (일단 RAGFlow만 진행): {e}")
+            milvus = None
 
-    # ===========================================================
-    # ✅ 단일 파일 모드 (--input)
-    # ===========================================================
-    if args.input:
-        input_path = Path(args.input).expanduser().resolve()
-        if not input_path.exists():
-            print(f"❌ 단일 파일 경로가 존재하지 않습니다: {input_path}")
+        # ===========================================================
+        # ✅ 단일 파일 모드 (--input)
+        # ===========================================================
+        if args.input:
+            input_path = Path(args.input).expanduser().resolve()
+            if not input_path.exists():
+                raise RuntimeError(f"단일 파일 경로가 존재하지 않습니다: {input_path}")
+
+            chunks_added = process_single_file_mode(
+                rag=rag,
+                milvus=milvus,
+                embedding_model_selected=EMBEDDING_MODEL_SELECTED,
+                experiment_tag=EXPERIMENT_TAG,
+                input_path=input_path,
+                domain=args.domain,
+                doc_id=args.doc_id,
+                version=args.version,
+                replace=replace_flag,
+            )
+
+            stats_extra["status"] = "COMPLETED"
+            print_ingest_stats(chunks_added, extra=stats_extra)
             return
 
-        process_single_file_mode(
-            rag=rag,
-            milvus=milvus,
-            embedding_model_selected=EMBEDDING_MODEL_SELECTED,
-            experiment_tag=EXPERIMENT_TAG,
-            input_path=input_path,
-            domain=args.domain,
-            doc_id=args.doc_id,
-            version=args.version,
-            replace=replace_flag,
-        )
-        return
+        # ==============================================
+        # ★ 도메인별 배치 처리 (기존 유지)
+        # ==============================================
+        # 배치 모드는 ingest-worker 콜백 스펙(단일 doc 단위)과 매칭이 애매해서,
+        # 여기서는 stats 출력만 하되 status는 BATCH로 남김.
+        for domain, dataset_dir in DOMAIN_DIRS.items():
+            print("\n" + "#" * 60)
+            print(f"### 도메인: {domain}")
+            print(f"### 로컬 폴더: {dataset_dir}")
+            print("#" * 60)
 
-    # ==============================================
-    # ★ 도메인별 배치 처리 (운영형: dataset 재사용)
-    # ==============================================
-    for domain, dataset_dir in DOMAIN_DIRS.items():
-        print("\n" + "#" * 60)
-        print(f"### 도메인: {domain}")
-        print(f"### 로컬 폴더: {dataset_dir}")
-        print("#" * 60)
+            if not dataset_dir.exists():
+                print(f"⚠️  폴더가 없습니다. 스킵: {dataset_dir}")
+                continue
 
-        if not dataset_dir.exists():
-            print(f"⚠️  폴더가 없습니다. 스킵: {dataset_dir}")
-            continue
+            print_step(3, f"[{domain}] dataset 폴더 스캔")
 
-        print_step(3, f"[{domain}] dataset 폴더 스캔")
+            pdfs = list(dataset_dir.glob("*.pdf"))
+            ppts = list(dataset_dir.glob("*.ppt")) + list(dataset_dir.glob("*.pptx"))
+            hwps = list(dataset_dir.glob("*.hwp")) + list(dataset_dir.glob("*.hwpx"))
+            docxs = list(dataset_dir.glob("*.docx"))
+            txts = list(dataset_dir.glob("*.txt"))
+            csvs = list(dataset_dir.glob("*.csv"))
 
-        pdfs = list(dataset_dir.glob("*.pdf"))
-        ppts = list(dataset_dir.glob("*.ppt")) + list(dataset_dir.glob("*.pptx"))
-        hwps = list(dataset_dir.glob("*.hwp")) + list(dataset_dir.glob("*.hwpx"))
-        docxs = list(dataset_dir.glob("*.docx"))
-        txts = list(dataset_dir.glob("*.txt"))
-        csvs = list(dataset_dir.glob("*.csv"))
+            files = sorted(pdfs + ppts + hwps + docxs + txts + csvs)
 
-        files = sorted(pdfs + ppts + hwps + docxs + txts + csvs)
+            if not files:
+                print(f"❌ [{domain}] 처리할 파일이 없습니다.")
+                continue
 
-        if not files:
-            print(f"❌ [{domain}] 처리할 파일이 없습니다.")
-            continue
+            print("📂 처리 파일:")
+            for f in files:
+                print("   -", f.name)
 
-        print("📂 처리 파일:")
-        for f in files:
-            print("   -", f.name)
+            print_step(4, f"[{domain}] 데이터셋 확보(get_or_create)")
+            dataset = get_or_create_dataset(rag, domain)
 
-        # ✅ 운영형 핵심: 도메인당 dataset 1개 재사용
-        print_step(4, f"[{domain}] 데이터셋 확보(get_or_create)")
-        dataset = get_or_create_dataset(rag, domain)
+            print_step(5, f"[{domain}] 파일 업로드 + 청킹")
 
-        print_step(5, f"[{domain}] 파일 업로드 + 청킹")
+            for fpath in files:
+                fpath = fpath.resolve()
+                ext = fpath.suffix.lower().lstrip(".")
+                print(f"\n======= [{domain}] {fpath.name} 처리 =======")
 
-        for fpath in files:
-            fpath = fpath.resolve()
-            ext = fpath.suffix.lower().lstrip(".")
-            print(f"\n======= [{domain}] {fpath.name} 처리 =======")
+                effective_doc_id_batch = fpath.name
 
-            # 배치에서는 파일명 자체를 docId로 사용(=display_name) → replace/삭제 시 매칭 쉬움
-            effective_doc_id = fpath.name
+                if ext in ("hwp", "hwpx"):
+                    print(f"[HWP] {fpath.name} → DOCX로 변환")
+                    docx_path = hwp_adapter.to_docx(str(fpath))
+                    fpath = Path(docx_path)
+                    ext = "docx"
 
-            # HWP/HWPX → DOCX로 변환
-            if ext in ("hwp", "hwpx"):
-                print(f"[HWP] {fpath.name} → DOCX로 변환")
-                docx_path = hwp_adapter.to_docx(str(fpath))
-                fpath = Path(docx_path)
-                ext = "docx"
+                if ext in ("pdf", "ppt", "pptx"):
+                    if ext == "pdf":
+                        doc_type = classifier.classify(str(fpath))
+                    else:
+                        doc_type = "ppt"
 
-            # replace 배치 옵션은 CLI에 없으니 기본 false 유지(원형 유지)
-            # 운영에서 필요하면 --replace 배치 적용도 추가 가능
+                    print(f"→ 문서 타입: {doc_type}")
 
-            if ext in ("pdf", "ppt", "pptx"):
-                if ext == "pdf":
-                    doc_type = classifier.classify(str(fpath))
-                else:
-                    doc_type = "ppt"
+                    with open(fpath, "rb") as fb:
+                        blob = fb.read()
 
-                print(f"→ 문서 타입: {doc_type}")
+                    doc = dataset.upload_documents([{"display_name": effective_doc_id_batch, "blob": blob}])[0]
+                    print(f"→ 업로드 완료 (doc.id={doc.id})")
 
-                with open(fpath, "rb") as fb:
-                    blob = fb.read()
+                    if doc_type == "text_pdf":
+                        print("→ [텍스트 PDF] 로컬 규정형 청킹 사용")
+                        chunks = chunk_text_pdf(fpath)
+                        compare_with_solution(dataset_dir, fpath, chunks)
 
-                doc = dataset.upload_documents([{"display_name": effective_doc_id, "blob": blob}])[0]
-                print(f"→ 업로드 완료 (doc.id={doc.id})")
+                        chunks_added += int(
+                            add_chunks_safe(
+                                doc,
+                                chunks,
+                                milvus=milvus,
+                                dataset_id=domain,
+                                doc_id=effective_doc_id_batch,
+                                embedding_model=EMBEDDING_MODEL_SELECTED,
+                                experiment_tag=EXPERIMENT_TAG,
+                            )
+                        )
+                        continue
 
-                if doc_type == "text_pdf":
-                    print("→ [텍스트 PDF] 로컬 규정형 청킹 사용")
-                    chunks = chunk_text_pdf(fpath)
+                    print("→ [이미지/슬라이드] PreprocessPipeline + add_chunk 사용")
+                    pipeline_result = preprocess_pipeline.run(str(fpath))
+                    chunks = pipeline_result.get("chunks", []) if isinstance(pipeline_result, dict) else []
+                    chunks_added += int(
+                        add_chunks_safe(
+                            doc,
+                            chunks,
+                            milvus=milvus,
+                            dataset_id=domain,
+                            doc_id=effective_doc_id_batch,
+                            embedding_model=EMBEDDING_MODEL_SELECTED,
+                            experiment_tag=EXPERIMENT_TAG,
+                        )
+                    )
+                    print(f"→ 파이프라인 청크 {len(chunks)}개 반환")
+                    continue
+
+                if ext in ("csv", "docx", "txt"):
+                    print("→ [CSV/DOCX/TXT] 기존 규정형 청킹 사용")
+
+                    with open(fpath, "rb") as fb:
+                        blob = fb.read()
+
+                    doc = dataset.upload_documents([{"display_name": effective_doc_id_batch, "blob": blob}])[0]
+                    print(f"→ 업로드 완료 (doc.id={doc.id})")
+
+                    if ext == "docx":
+                        print("→ DOCX blocks 기반 처리 + 조단위(제 n 조) 청킹 적용")
+                        blocks = extract_docx_blocks(fpath)
+                        docx_chunks = chunk_docx_blocks_with_rules(blocks)
+
+                        chunks_added += int(
+                            add_chunks_safe(
+                                doc,
+                                docx_chunks,
+                                milvus=milvus,
+                                dataset_id=domain,
+                                doc_id=effective_doc_id_batch,
+                                embedding_model=EMBEDDING_MODEL_SELECTED,
+                                experiment_tag=EXPERIMENT_TAG,
+                            )
+                        )
+                        continue
+
+                    chunks = chunk_document(fpath)
                     compare_with_solution(dataset_dir, fpath, chunks)
 
-                    add_chunks_safe(
-                        doc,
-                        chunks,
-                        milvus=milvus,
-                        dataset_id=domain,
-                        doc_id=effective_doc_id,
-                        embedding_model=EMBEDDING_MODEL_SELECTED,
-                        experiment_tag=EXPERIMENT_TAG,
+                    chunks_added += int(
+                        add_chunks_safe(
+                            doc,
+                            chunks,
+                            milvus=milvus,
+                            dataset_id=domain,
+                            doc_id=effective_doc_id_batch,
+                            embedding_model=EMBEDDING_MODEL_SELECTED,
+                            experiment_tag=EXPERIMENT_TAG,
+                        )
                     )
                     continue
 
-                print("→ [이미지/슬라이드] PreprocessPipeline + add_chunk 사용")
-                pipeline_result = preprocess_pipeline.run(str(fpath))
-                chunks = pipeline_result.get("chunks", []) if isinstance(pipeline_result, dict) else []
-                add_chunks_safe(
-                    doc,
-                    chunks,
-                    milvus=milvus,
-                    dataset_id=domain,
-                    doc_id=effective_doc_id,
-                    embedding_model=EMBEDDING_MODEL_SELECTED,
-                    experiment_tag=EXPERIMENT_TAG,
-                )
-                print(f"→ 파이프라인 청크 {len(chunks)}개 반환")
-                continue
+                print(f"⚠️ 지원하지 않는 확장자입니다: .{ext} (스킵)")
 
-            if ext in ("csv", "docx", "txt"):
-                print("→ [CSV/DOCX/TXT] 기존 규정형 청킹 사용")
+            print_step(6, f"[{domain}] 검색 테스트")
+            query = f"{domain} 관련 문서의 목적은 무엇인가?"
+            results = rag.retrieve(dataset_ids=[dataset.id], question=query, top_k=3)
+            for i, r in enumerate(results, 1):
+                print(f"\n[검색 {i}]")
+                print(r.content[:200] + "...")
 
-                with open(fpath, "rb") as fb:
-                    blob = fb.read()
+        stats_extra["status"] = "BATCH_COMPLETED"
+        print_ingest_stats(chunks_added, extra=stats_extra)
+        return
 
-                doc = dataset.upload_documents([{"display_name": effective_doc_id, "blob": blob}])[0]
-                print(f"→ 업로드 완료 (doc.id={doc.id})")
+    except Exception as e:
+        # ✅ 실패여도 worker가 stdout에서 stats 뽑을 수 있게 남김
+        stats_extra["status"] = "FAILED"
+        stats_extra["error"] = str(e)[:500]
+        print_ingest_stats(0, extra=stats_extra)
+        # worker가 stderr로 잡을 수 있게 re-raise
+        raise
 
-                if ext == "docx":
-                    print("→ DOCX blocks 기반 처리 + 조단위(제 n 조) 청킹 적용")
-                    blocks = extract_docx_blocks(fpath)
-                    docx_chunks = chunk_docx_blocks_with_rules(blocks)
-
-                    add_chunks_safe(
-                        doc,
-                        docx_chunks,
-                        milvus=milvus,
-                        dataset_id=domain,
-                        doc_id=effective_doc_id,
-                        embedding_model=EMBEDDING_MODEL_SELECTED,
-                        experiment_tag=EXPERIMENT_TAG,
-                    )
-                    continue
-
-                chunks = chunk_document(fpath)
-                compare_with_solution(dataset_dir, fpath, chunks)
-
-                add_chunks_safe(
-                    doc,
-                    chunks,
-                    milvus=milvus,
-                    dataset_id=domain,
-                    doc_id=effective_doc_id,
-                    embedding_model=EMBEDDING_MODEL_SELECTED,
-                    experiment_tag=EXPERIMENT_TAG,
-                )
-                continue
-
-            print(f"⚠️ 지원하지 않는 확장자입니다: .{ext} (스킵)")
-
-        # (원형 유지) 검색 테스트
-        print_step(6, f"[{domain}] 검색 테스트")
-        query = f"{domain} 관련 문서의 목적은 무엇인가?"
-        results = rag.retrieve(dataset_ids=[dataset.id], question=query, top_k=3)
-
-        for i, r in enumerate(results, 1):
-            print(f"\n[검색 {i}]")
-            print(r.content[:200] + "...")
 
 if __name__ == "__main__":
     main()
