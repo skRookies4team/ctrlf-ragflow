@@ -23,7 +23,9 @@ on:
 
 # https://docs.github.com/en/actions/using-jobs/using-concurrency
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  # group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  # cancel-in-progress: true
+  group: tests-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
