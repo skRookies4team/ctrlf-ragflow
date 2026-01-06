@@ -11,7 +11,7 @@ load_dotenv()
 
 MILVUS_HOST = os.getenv("MILVUS_HOST")
 MILVUS_PORT = os.getenv("MILVUS_PORT")
-MILVUS_COLLECTION = os.getenv("MILVUS_COLLECTION", "ragflow_chunks")
+MILVUS_COLLECTION = os.getenv("MILVUS_COLLECTION", "ragflow_chunks_openai")
 
 # =========================
 # 2. Milvus 연결
@@ -58,3 +58,36 @@ for dataset_id, docs in tree.items():
     print(f"\n📁 dataset_id: {dataset_id}")
     for d in sorted(docs):
         print(f"   ├─ 📄 {d}")
+
+# =========================
+# 5. 필드 목록 + 값 예시(짧게)
+# =========================
+print("\n🧾 Fields & sample values (short)")
+
+# 스키마에서 필드명 추출
+fields = [f.name for f in col.schema.fields]
+
+sample = col.query(
+    expr="chunk_id >= 0",
+    output_fields=fields,
+    limit=1
+)
+
+if not sample:
+    print("⚠ 데이터 없음")
+else:
+    row = sample[0]
+    for f in fields:
+        v = row.get(f)
+
+        # 값 짧게 요약
+        if v is None:
+            short = "None"
+        elif isinstance(v, list):
+            short = f"<list len={len(v)}>"
+        elif isinstance(v, str):
+            short = v[:40] + ("..." if len(v) > 40 else "")
+        else:
+            short = str(v)
+
+        print(f" - {f:20s}: {short}")

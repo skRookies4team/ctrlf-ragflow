@@ -385,14 +385,14 @@ class DatasetMgr:
         Spec:
         POST /internal/ai/callbacks/ragflow/ingest
         Headers:
-          X-Internal-Token: <RAGFLOW_TO_AI_TOKEN>
+          X-Internal-Token: <AI_CALLBACK_TOKEN>
 
         환경변수:
           AI_CALLBACK_URL  : 예) http://ai-service/internal/ai/callbacks/ragflow/ingest
-          RAGFLOW_TO_AI_TOKEN : 토큰
+          AI_CALLBACK_TOKEN : 토큰
         """
         callback_url = os.getenv("AI_CALLBACK_URL")
-        token = os.getenv("RAGFLOW_TO_AI_TOKEN")
+        token = os.getenv("AI_CALLBACK_TOKEN")
         if not callback_url or not token:
             return  # 콜백 비활성
 

@@ -41,6 +41,11 @@ import requests
 from docx import Document
 from dotenv import load_dotenv
 
+import milvus_proxy
+from milvus_proxy import MilvusProxy
+
+print("🔥 milvus_proxy loaded from:", milvus_proxy.__file__)
+
 # ✅ OpenAI SDK (openai 선택일 때만 실제로 사용)
 try:
     from openai import OpenAI
@@ -117,7 +122,7 @@ except ImportError:
 
 
 from embedding_provider import EmbeddingProvider
-from milvus_proxy import MilvusProxy
+
 from ragflow_sdk.modules.dataset import DataSet
 
 from core.preprocessing.classifier.document_classifier import DocumentClassifier
@@ -138,7 +143,12 @@ embedder = EmbeddingProvider()
 # 3. 환경 변수 (RAGFlow)
 # =======================
 # ✅ worker 컨테이너에서 localhost가 아니라 ragflow 서비스로 접근해야 함
-HOST_ADDRESS = os.getenv("RAGFLOW_HOST") or os.getenv("HOST_ADDRESS") or "http://ragflow-cpu:9380"
+HOST_ADDRESS = (
+    os.getenv("RAGFLOW_BASE_URL")
+    or os.getenv("RAGFLOW_HOST")
+    or os.getenv("HOST_ADDRESS")
+    or "http://ragflow-cpu:80"
+)
 API_KEY = os.getenv("RAGFLOW_API_KEY")
 
 # ✅ RAGFlow 내부 설정용(표기용) 모델명은 네 환경에 맞게 유지해도 되고,
@@ -157,15 +167,15 @@ classifier = DocumentClassifier()
 preprocess_pipeline = PreprocessPipeline()
 
 
-def safe_ascii(s: str) -> str:
+def safe_dataset_name(domain: str) -> str:
+    # 한글/영문/숫자/공백/하이픈/언더스코어 허용
+    s = (domain or "default").strip()
+    s = re.sub(r"[^\w가-힣\s-]+", "", s)      # 특수문자 제거
+    s = re.sub(r"\s+", "_", s)               # 공백 -> _
+    s = s.strip("_")
     if not s:
         return "default"
-    # ascii로 slug 시도
-    slug = re.sub(r"[^a-zA-Z0-9_-]+", "_", s).strip("_")
-    if slug:
-        return slug[:40]
-    # 전부 한글/특수면 해시로
-    return hashlib.sha1(s.encode("utf-8")).hexdigest()[:12]
+    return s[:50]
 
 
 # ===========================================================
@@ -190,18 +200,27 @@ def print_step(n: int, text: str):
 # ✅ (신규) worker가 파싱할 ingest stats 출력
 # ===========================================================
 def print_ingest_stats(chunks: int, extra: Optional[Dict[str, Any]] = None) -> None:
-    """
-    ingest-worker(app.py)가 stdout에서 파싱하는 라인:
-      INGEST_STATS_JSON={...}
-    """
-    payload: Dict[str, Any] = {"chunks": int(chunks or 0)}
-    if extra and isinstance(extra, dict):
-        payload.update(extra)
-    try:
-        print("INGEST_STATS_JSON=" + json.dumps(payload, ensure_ascii=False))
-    except Exception:
-        # 어떤 상황에서도 최소 형태는 남기기
-        print("INGEST_STATS_JSON=" + '{"chunks":%d}' % int(chunks or 0))
+    base = extra or {}
+    meta_obj = base.get("meta") or {}
+    meta_safe = dict(meta_obj) if isinstance(meta_obj, dict) else {"_meta_raw": meta_obj}
+
+    payload = {
+        "ingestId": base.get("ingestId"),
+        "docId": base.get("docId"),
+        "version": base.get("version"),
+        "status": base.get("status"),
+        "meta": meta_safe,
+        "stats": {"chunks": int(chunks or 0)},
+    }
+
+    for k in ("ragDatasetPk", "ragDocumentPk", "uploadName", "domain", "replace", "error", "systemDocId"):
+        v = base.get(k)
+        if v is not None:
+            payload["meta"][k] = v
+
+    # ✅ 1줄 + 직렬화 안전
+    line = json.dumps(payload, ensure_ascii=False, separators=(",", ":"), default=str)
+    print("INGEST_STATS_JSON=" + line)
 
 
 # ===========================================================
@@ -251,7 +270,7 @@ def get_or_create_dataset(rag: Any, domain: str) -> Any:
     도메인당 1개 고정 dataset 재사용.
     - name: domain_{safe_ascii(domain)}
     """
-    dataset_name = f"domain_{safe_ascii(domain)}"
+    dataset_name = f"domain_{safe_dataset_name(domain)}"
 
     found = _find_dataset_by_name(dataset_name)
     if found and found.get("id"):
@@ -317,14 +336,39 @@ def _delete_document_rest(dataset_id: str, document_id: str) -> bool:
             continue
     return False
 
+def _get_dataset_id(dataset: Any) -> Optional[str]:
+    """
+    RAGFlow SDK dataset 객체는 버전에 따라 id 필드가 다를 수 있어서
+    여러 후보를 순차적으로 확인.
+    """
+    if dataset is None:
+        return None
+
+    for key in ("id", "dataset_id", "datasetId"):
+        v = getattr(dataset, key, None)
+        if v:
+            return str(v)
+
+    # dataset.data / dataset._data 형태 방어
+    data = getattr(dataset, "data", None) or getattr(dataset, "_data", None)
+    if isinstance(data, dict) and data.get("id"):
+        return str(data["id"])
+
+    # dict로 넘어오는 경우
+    if isinstance(dataset, dict) and dataset.get("id"):
+        return str(dataset["id"])
+
+    return None
+
 
 def delete_ragflow_document_by_name(dataset: Any, effective_doc_name: str) -> bool:
     """
     replace=true일 때 RAGFlow쪽 문서도 지우기.
     - display_name / name / filename 중 하나가 effective_doc_name과 동일한 문서를 삭제 시도
     """
-    ds_id = getattr(dataset, "id", None)
+    ds_id = _get_dataset_id(dataset)
     if not ds_id:
+        print("⚠ delete_ragflow_document_by_name: dataset id not found -> skip")
         return False
 
     try:
@@ -696,6 +740,37 @@ DOMAIN_DIRS = {
     "사내규정": SCRIPT_DIR / "dataset_사내규정",
 }
 
+DEPT_KEYWORDS = [
+    "전체 부서",
+    "총무팀",
+    "기획팀",
+    "마케팅팀",
+    "인사팀",
+    "재무팀",
+    "개발팀",
+    "영업팀",
+    "법무팀",
+]
+
+def infer_department_from_filename(filename: str) -> str:
+    """
+    파일명에 부서명이 포함되면 해당 부서를 반환.
+    없으면 '전체 부서' 반환.
+    """
+    name = (filename or "").replace(" ", "").strip()
+
+    # 우선순위: '전체'가 섞여있으면 전체 부서로 처리하고 싶다면 여기서 먼저 체크
+    if "전체" in name:
+        return "전체 부서"
+
+    for dept in DEPT_KEYWORDS:
+        if dept == "전체 부서":
+            continue
+        if dept.replace(" ", "") in name:
+            return dept
+
+    return "전체 부서"
+
 
 def compare_with_solution(dataset_dir: Path, fpath: Path, chunks: list[str]):
     solution_dir = dataset_dir / "solution"
@@ -719,40 +794,62 @@ def add_chunks_safe(
     doc,
     chunks,
     milvus=None,
-    dataset_id=None,
-    doc_id=None,
+    dataset_id: str | None = None,
+    doc_id: str | None = None,
     embedding_model="openai",
     experiment_tag=None,
+    department: str | None = None,   # ✅ 추가
+    document_title: str | None = None,
 ):
     """
     RAGFlow: 무조건 chunk 추가
     Milvus: chunk_hash 기준 중복 차단 후 일괄 insert
     반환: 실제로 RAGFlow에 add_chunk된 개수
     """
-    print(f"→ 생성된 청크 수: {len(chunks)}")
+    print(f"[TRACE][ADD] start: chunks={len(chunks)} dataset_id={dataset_id} doc_id={doc_id} embedding_model={embedding_model} exp={experiment_tag}")
 
     if not chunks:
-        print("⚠ 청크 0개 → 저장 스킵")
+        print("[TRACE][ADD] ⚠ chunks=0 -> skip (no saving)")
         return 0
 
     milvus_payload = []
     added = 0
 
+    # 통계용 카운터
+    addchunk_ok = 0
+    addchunk_fail = 0
+    exists_check_ok = 0
+    exists_check_fail = 0
+    dup_skip = 0
+    embed_ok = 0
+    embed_fail = 0
+
     for idx, chunk in enumerate(chunks, start=1):
-        if isinstance(chunk, dict):
-            text = (chunk.get("text") or "").strip()
-            chunk_type = chunk.get("type", "text")
-            metadata = {
-                "source": chunk_type,
-                "page_index": chunk.get("page_index"),
-                "image_path": chunk.get("image_path"),
-            }
-        else:
-            text = str(chunk).strip()
-            chunk_type = "text"
-            metadata = {"source": "text"}
+        # ---- normalize ----
+        try:
+            if isinstance(chunk, dict):
+                text = (chunk.get("text") or "").strip()
+                chunk_type = chunk.get("type", "text")
+                metadata = {
+                    "source": chunk_type,
+                    "page_index": chunk.get("page_index"),
+                    "page_num": chunk.get("page_num"),              # ✅ 추가
+                    "section": chunk.get("section"),                # ✅ 추가
+                    "section_path": chunk.get("section_path"),      # ✅ 추가
+                    "document_title": chunk.get("document_title"),  # ✅ 추가
+                    "image_path": chunk.get("image_path"),
+                }
+            else:
+                text = str(chunk).strip()
+                chunk_type = "text"
+                metadata = {"source": "text"}
+        except Exception as e:
+            print(f"[TRACE][ADD][ERROR] normalize failed idx={idx}: {repr(e)}")
+            continue
 
         if not text:
+            if idx <= 3:
+                print(f"[TRACE][ADD] empty text skip idx={idx} type={chunk_type}")
             continue
 
         chash = chunk_hash(text)
@@ -762,16 +859,73 @@ def add_chunks_safe(
         else:
             content = text
 
-        # ✅ FIX: content 변수 사용 (원래 버그: content=text)
-        doc.add_chunk(content=content)
-        added += 1
+        # ✅ ChatSource 메타 (없으면 안전 기본값)
+        doc_title = (metadata.get("document_title") or document_title or "").strip()[:256]
 
+        # page_num: chunk에 page_num이 있으면 그대로, 없으면 page_index(+1)로 유추
+        page_num_val = metadata.get("page_num", None)
+        if page_num_val is None and metadata.get("page_index") is not None:
+            try:
+                page_num_val = int(metadata["page_index"]) + 1
+            except Exception:
+                page_num_val = None
+
+        page_num = None
+        if page_num_val not in (None, ""):
+            try:
+                page_num = int(page_num_val)
+            except Exception:
+                page_num = None
+
+        section = (metadata.get("section") or "").strip()[:128]
+        section_path = (metadata.get("section_path") or "").strip()[:256]
+
+
+        # ---- RAGFlow add_chunk ----
+        try:
+            doc.add_chunk(content=content)
+            added += 1
+            addchunk_ok += 1
+        except Exception as e:
+            addchunk_fail += 1
+            print(f"[TRACE][ADD][ERROR] doc.add_chunk failed idx={idx} len={len(content)}: {repr(e)}")
+            # add_chunk 실패하면 milvus도 의미 없으니 다음 chunk로
+            continue
+
+        # ---- Milvus payload build ----
         if milvus and dataset_id and doc_id:
-            if milvus.exists_chunk_hash(dataset_id, doc_id, chash):
-                continue
+            # 1) 중복 체크
+            try:
+                exists_check_ok += 1
+                if milvus.exists_chunk_hash(dataset_id, doc_id, chash, department=department):
+                    dup_skip += 1
+                    if dup_skip <= 3:
+                        print(f"[TRACE][ADD] dup_skip idx={idx} hash={chash[:10]} dept={department}...")
+                    continue
+            except Exception as e:
+                exists_check_fail += 1
+                # 중복 체크가 실패해도 insert 자체는 시도할 수 있게 계속 진행
+                print(f"[TRACE][ADD][WARN] exists_chunk_hash failed idx={idx}: {repr(e)} (continue to embed/insert)")
 
+            # 2) 임베딩 생성
             try:
                 embedding = embedder.embed(text, embedding_model)
+                embed_ok += 1
+
+                # 임베딩 차원/형태 확인 (초반 1~2개만)
+                if embed_ok <= 2:
+                    if isinstance(embedding, list):
+                        print(f"[TRACE][ADD] embedding_ok idx={idx} dim={len(embedding)}")
+                    else:
+                        print(f"[TRACE][ADD][WARN] embedding type idx={idx}: {type(embedding)}")
+
+                # section/section_path 기본 채움(텍스트 chunk에서도 최소 UX 확보)
+                if not section:
+                    first_line = (text.splitlines()[0].strip() if text else "")
+                    section = first_line[:128]
+                if not section_path and section:
+                    section_path = section[:256]
+
                 milvus_payload.append(
                     {
                         "dataset_id": dataset_id,
@@ -780,30 +934,53 @@ def add_chunks_safe(
                         "chunk_hash": chash,
                         "text": text,
                         "embedding": embedding,
-                        "metadata": {
-                            **metadata,
-                            "embedding_model": embedding_model,
-                            "experiment": experiment_tag,
-                        },
+                        "department": (department or "ALL").strip()[:32],  # ✅ 이걸로 끝
+                        
+                        # ✅ ChatSource 메타 4종
+                        "document_title": doc_title,
+                        "page_num": page_num,
+                        "section": section,
+                        "section_path": section_path,
                     }
                 )
             except Exception as e:
-                print(f"⚠ embedding 실패 (chunk {idx}): {e}")
+                embed_fail += 1
+                print(f"[TRACE][ADD][ERROR] ⚠ embedding failed idx={idx} len(text)={len(text)}: {repr(e)}")
 
+        # ---- preview ----
         if idx <= 2:
-            print(f"\n[미리보기 {idx}] ({chunk_type})")
+            print(f"\n[TRACE][ADD][PREVIEW {idx}] ({chunk_type})")
             print(text[:200] + ("..." if len(text) > 200 else ""))
 
-    print(f"→ RAGFlow 청크 추가 완료: {added}개")
+    print(f"[TRACE][ADD] ragflow_added={added} addchunk_ok={addchunk_ok} addchunk_fail={addchunk_fail}")
+    print(f"[TRACE][ADD] exists_check_ok={exists_check_ok} exists_check_fail={exists_check_fail} dup_skip={dup_skip}")
+    print(f"[TRACE][ADD] embed_ok={embed_ok} embed_fail={embed_fail} milvus_payload={len(milvus_payload)}")
+
+    # ---- Milvus insert ----
+    if milvus and dataset_id and doc_id and not milvus_payload:
+        # ✅ 운영 정책: Milvus 필수인데 넣을 게 없으면 실패 처리
+        raise RuntimeError(
+            f"Milvus payload is empty -> FAIL by policy "
+            f"(dataset_id={dataset_id}, doc_id={doc_id}, chunks={len(chunks)})"
+        )
 
     if milvus and milvus_payload:
-        milvus.insert_chunks(dataset_id=dataset_id, chunks=milvus_payload)
-        print(f"→ Milvus 적재 완료: {len(milvus_payload)}개")
+        print(f"[TRACE][ADD] calling milvus.insert_chunks payload={len(milvus_payload)} dataset_id={dataset_id} doc_id={doc_id}")
+        try:
+            milvus.insert_chunks(dataset_id=dataset_id, chunks=milvus_payload)
+            print(f"[TRACE][ADD] ✅ milvus.insert_chunks OK inserted={len(milvus_payload)}")
+        except Exception as e:
+            print(f"[TRACE][ADD][ERROR] ❌ milvus.insert_chunks failed: {repr(e)}")
+            raise RuntimeError(f"Milvus insert failed: {repr(e)}") from e
     else:
-        print("→ Milvus 적재 없음 (중복 또는 embedding 실패)")
+        reason = []
+        if not milvus:
+            reason.append("milvus=None")
+        if not milvus_payload:
+            reason.append("payload=0")
+        print(f"[TRACE][ADD] milvus skipped ({', '.join(reason)})")
 
     return added
-
 
 def process_single_file_mode(
     rag,
@@ -812,136 +989,199 @@ def process_single_file_mode(
     experiment_tag: str,
     input_path: Path,
     domain: str,
-    doc_id: str | None,
+    doc_id: str | None,          # ✅ 이제 "원본 문서키"로 쓸 값 (없으면 파일명 그대로)
     version: int | None,
     replace: bool,
-) -> int:
+    milvus_dataset_id: str,
+    milvus_doc_id: str | None,   # ✅ 이제 "원본 문서키"로 쓸 값 (없으면 doc_id로 확정)
+    department: str,
+) -> tuple[int, str, dict]:
     """
-    --input 으로 들어온 파일 1개만 처리
-    - dataset은 "도메인당 1개 고정"으로 재사용
-    - replace=true면 (1) RAGFlow 문서 삭제 (2) Milvus 삭제 후 재업로드
-    반환: 실제 add_chunk된 개수
+    단일 파일 모드 정책(권장):
+    - ✅ Milvus/docId(시스템 키): 원본 파일명 유지 (.hwp 포함)
+    - ✅ RAGFlow 업로드명: 변환 후 확장자(.docx 등)로 업로드
+    - ✅ replace 삭제도 분리:
+        - RAGFlow: 업로드명(uploadName) 기준 삭제
+        - Milvus: 원본 docId 기준 삭제
     """
     print("\n" + "#" * 60)
     print("### 단일 파일 모드")
-    print(f"### 도메인: {domain}")
-    print(f"### 파일: {input_path}")
+    print(f"### domain(arg) = {domain}")
+    print(f"### input_path = {input_path}")
+    print(f"### embedding_model_selected = {embedding_model_selected}")
     print("#" * 60)
 
+    # ---------------------------
+    # [1] Dataset 결정
+    # ---------------------------
     dataset = get_or_create_dataset(rag, domain)
+    print(
+        "[TRACE-1] dataset resolved -> "
+        f"id={getattr(dataset, 'id', None)}, "
+        f"name={getattr(dataset, 'name', None)}"
+    )
 
-    fpath = input_path.resolve()
-    ext = fpath.suffix.lower().lstrip(".")
-    print(f"\n======= [{domain}] {fpath.name} 처리 =======")
+    orig_path = input_path.expanduser().resolve()
+    if not orig_path.exists():
+        raise RuntimeError(f"단일 파일 경로가 존재하지 않습니다: {orig_path}")
 
-    effective_doc_id = (doc_id or fpath.name)
+    orig_ext = orig_path.suffix.lower()  # ".hwp" / ".pdf" ...
+    orig_name = orig_path.name          # "파일.hwp"
 
-    # ✅ 운영형: replace=true면 RAGFlow 문서도 삭제
+    # ✅ Milvus/시스템 docId: "원본 파일명(.hwp 포함)"을 기본으로
+    # - 외부에서 doc_id/milvus_doc_id를 줬으면 그걸 우선
+    # - 안 줬으면 input 파일명 그대로
+    system_doc_id = (milvus_doc_id or doc_id or orig_name).strip()
+    if not system_doc_id:
+        system_doc_id = orig_name
+
+    print(f"[TRACE-2] system_doc_id (Milvus key) = {system_doc_id}")
+
+    print(f"[DEPT] single-file department={department}")
+
+    # ---------------------------
+    # [2] HWP/HWPX -> DOCX 변환 (업로드용)
+    # ---------------------------
+    upload_path = orig_path
+    if orig_ext in (".hwp", ".hwpx"):
+        print(f"[TRACE-3] HWP/HWPX detected → DOCX convert")
+        docx_path = hwp_adapter.to_docx(str(orig_path))
+        upload_path = Path(docx_path).resolve()
+        if not upload_path.exists():
+            raise RuntimeError(f"HWP 변환 실패: {upload_path}")
+
+    upload_ext = upload_path.suffix.lower()  # ".docx" 등
+    upload_name = f"{orig_path.stem}{upload_ext}"   # 원본 stem 기반
+    # 예: (교재)...예방교육 + .docx
+    # 위 줄은 system_doc_id가 "파일.hwp"면 stem="파일" -> "파일.docx"
+    # (권장) 업로드명은 원본 stem 기반: 사람이 보기 쉬움
+    print(
+        "[TRACE-4] upload file -> "
+        f"upload_path={upload_path}, upload_name={upload_name}"
+    )
+
+    # ---------------------------
+    # [3] replace 처리 (삭제 분리)
+    # ---------------------------
     if replace:
+        print("[TRACE-5] replace=true → 기존 문서 삭제 시도")
+
+        # ✅ RAGFlow는 업로드명(확장자 포함) 기준으로 삭제
         try:
-            deleted = delete_ragflow_document_by_name(dataset, effective_doc_id)
-            if deleted:
-                print(f"✅ replace=true → RAGFlow 기존 문서 삭제 완료 (name={effective_doc_id})")
-            else:
-                print(f"ℹ replace=true → RAGFlow 기존 문서 없음/삭제불가 (name={effective_doc_id})")
+            deleted = delete_ragflow_document_by_name(dataset, upload_name)
+            print(f"[TRACE-5] RAGFlow delete(upload_name) result = {deleted}")
         except Exception as e:
-            print(f"⚠ replace RAGFlow 삭제 실패: {e}")
+            print(f"[TRACE-5][WARN] RAGFlow delete failed: {e}")
 
-        if milvus:
+        # ✅ Milvus는 원본 docId(system_doc_id) 기준으로 삭제
+        if milvus and milvus_dataset_id and system_doc_id:
             try:
-                milvus.delete_file(dataset_id=domain, doc_id=effective_doc_id)
-                print(f"✅ replace=true → Milvus 기존 doc 삭제 완료 (dataset_id={domain}, doc_id={effective_doc_id})")
+                milvus.delete_file(dataset_id=milvus_dataset_id, doc_id=system_doc_id)
+                print("[TRACE-5] Milvus delete(system_doc_id) OK")
             except Exception as e:
-                print(f"⚠ replace 삭제 실패 (Milvus): {e}")
+                print(f"[TRACE-5][WARN] Milvus delete failed: {e}")
 
-    if version is not None:
-        print(f"ℹ version={version} (추적용)")
-
-    # HWP/HWPX → DOCX로 변환
-    if ext in ("hwp", "hwpx"):
-        print(f"[HWP] {fpath.name} → DOCX로 변환")
-        docx_path = hwp_adapter.to_docx(str(fpath))
-        fpath = Path(docx_path)
-        ext = "docx"
-
-    with open(fpath, "rb") as fb:
+    # ---------------------------
+    # [4] 업로드
+    # ---------------------------
+    with open(upload_path, "rb") as fb:
         blob = fb.read()
+    print(f"[TRACE-6] upload blob size = {len(blob)} bytes")
 
-    # ✅ display_name을 effective_doc_id로 고정 → replace 시 찾기 쉬움
-    doc = dataset.upload_documents([{"display_name": effective_doc_id, "blob": blob}])[0]
-    print(f"→ 업로드 완료 (doc.id={doc.id})")
+    doc = dataset.upload_documents(
+        [{"display_name": upload_name, "name": upload_name, "blob": blob}]
+    )[0]
 
-    # PDF / PPT / PPTX
+    print(
+        "[TRACE-6] uploaded -> "
+        f"ragflow_doc.id={doc.id}, display_name={upload_name}"
+    )
+
+    stats_extra2 = {
+        "ragDatasetPk": str(getattr(dataset, "id", "")),
+        "ragDocumentPk": str(getattr(doc, "id", "")),
+        "uploadName": upload_name,
+        
+        "systemDocId": system_doc_id,
+    }
+
+    # ---------------------------
+    # [5] 청킹/추출
+    # ---------------------------
+    ext = upload_ext.lstrip(".")  # "docx" / "pdf" / ...
+
     if ext in ("pdf", "ppt", "pptx"):
         if ext == "pdf":
-            doc_type = classifier.classify(str(fpath))
+            doc_type = classifier.classify(str(upload_path))
         else:
             doc_type = "ppt"
-
-        print(f"→ 문서 타입: {doc_type}")
+        print(f"[TRACE-7] doc_type = {doc_type}")
 
         if doc_type == "text_pdf":
-            print("→ [텍스트 PDF] 로컬 규정형 청킹 사용")
-            chunks = chunk_text_pdf(fpath)
+            chunks = chunk_text_pdf(upload_path)
             added = add_chunks_safe(
                 doc,
                 chunks,
                 milvus=milvus,
-                dataset_id=domain,
-                doc_id=effective_doc_id,
+                dataset_id=milvus_dataset_id,
+                doc_id=system_doc_id,                # ✅ Milvus docId는 원본키
                 embedding_model=embedding_model_selected,
                 experiment_tag=experiment_tag,
+                department=department,
+                document_title=orig_path.stem,
             )
-            return int(added)
+            return int(added), upload_name, stats_extra2
 
-        print("→ [이미지/슬라이드] PreprocessPipeline + add_chunk 사용")
-        pipeline_result = preprocess_pipeline.run(str(fpath))
+        pipeline_result = preprocess_pipeline.run(str(upload_path))
         chunks = pipeline_result.get("chunks", []) if isinstance(pipeline_result, dict) else []
         added = add_chunks_safe(
             doc,
             chunks,
             milvus=milvus,
-            dataset_id=domain,
-            doc_id=effective_doc_id,
+            dataset_id=milvus_dataset_id,
+            doc_id=system_doc_id,                    # ✅ Milvus docId는 원본키
             embedding_model=embedding_model_selected,
             experiment_tag=experiment_tag,
+            department=department,
+            document_title=orig_path.stem,
         )
-        print(f"→ 파이프라인 청크 {len(chunks)}개 반환")
-        return int(added)
+        return int(added), upload_name, stats_extra2
 
-    # CSV / DOCX / TXT
     if ext in ("csv", "docx", "txt"):
-        print("→ [CSV/DOCX/TXT] 기존 규정형 청킹 사용")
+        print(f"[TRACE-7] structured file type = {ext}")
 
         if ext == "docx":
-            print("→ DOCX blocks 기반 처리 + 조단위(제 n 조) 청킹 적용")
-            blocks = extract_docx_blocks(fpath)
+            blocks = extract_docx_blocks(upload_path)
             docx_chunks = chunk_docx_blocks_with_rules(blocks)
             added = add_chunks_safe(
                 doc,
                 docx_chunks,
                 milvus=milvus,
-                dataset_id=domain,
-                doc_id=effective_doc_id,
+                dataset_id=milvus_dataset_id,
+                doc_id=system_doc_id,                # ✅ Milvus docId는 원본키
                 embedding_model=embedding_model_selected,
                 experiment_tag=experiment_tag,
+                department=department,
+                document_title=orig_path.stem,
             )
-            return int(added)
+            return int(added), upload_name, stats_extra2
 
-        chunks = chunk_document(fpath)
+        chunks = chunk_document(upload_path)
         added = add_chunks_safe(
             doc,
             chunks,
             milvus=milvus,
-            dataset_id=domain,
-            doc_id=effective_doc_id,
+            dataset_id=milvus_dataset_id,
+            doc_id=system_doc_id,                    # ✅ Milvus docId는 원본키
             embedding_model=embedding_model_selected,
             experiment_tag=experiment_tag,
+            department=department,
+            document_title=orig_path.stem,
         )
-        return int(added)
+        return int(added), upload_name, stats_extra2
 
-    print(f"⚠️ 지원하지 않는 확장자입니다: .{ext} (스킵)")
-    return 0
+    print(f"[TRACE] unsupported extension .{ext}")
+    return 0, upload_name, stats_extra2
 
 
 def _parse_meta_json(meta_json: str | None) -> Dict[str, Any]:
@@ -975,14 +1215,38 @@ def main():
     args = parser.parse_args()
     replace_flag = str(args.replace).lower() in ("1", "true", "yes", "y", "on")
 
+    # ✅ 서버 운영: 단일 문서 모드만 허용 (배치 금지)
+    if not args.input:
+        # stdout에 stats 남기고, worker가 실패로 처리하게 함
+        ingest_id = args.ingest_id or str(uuid4())
+        meta = _parse_meta_json(args.meta_json)
+        stats_extra = {
+            "ingestId": ingest_id,
+            "docId": args.doc_id or "batch",
+            "version": args.version,
+            "domain": None,
+            "replace": replace_flag,
+            "status": "FAILED",
+            "meta": meta,
+            "error": "Batch mode disabled on server. Use --input.",
+        }
+        print_ingest_stats(0, extra=stats_extra)
+        raise RuntimeError("Batch mode disabled on server. Use --input.")
+
     ingest_id = args.ingest_id or str(uuid4())
     meta = _parse_meta_json(args.meta_json)
 
-    # docId는 단일 파일 모드에서 doc_id 우선, 없으면 파일명
+    
+    DEPARTMENT = (meta.get("department") if isinstance(meta, dict) else None) or "ALL"
+    DEPARTMENT = str(DEPARTMENT).strip()[:32] if DEPARTMENT else "ALL"
+
     if args.input:
-        effective_doc_id = args.doc_id or Path(args.input).name
+        _in_path = Path(args.input)
+        doc_key_for_stats = args.doc_id or _in_path.stem
+        upload_name_for_stats = f"{doc_key_for_stats}{_in_path.suffix.lower()}"
     else:
-        effective_doc_id = args.doc_id or "batch"
+        doc_key_for_stats = args.doc_id or "batch"
+        upload_name_for_stats = None
 
     print_section("RAGFlow 커스텀 청킹 + add_chunk (운영형: dataset 재사용/replace 지원 + worker-callback)")
 
@@ -998,7 +1262,7 @@ def main():
     }
 
     COLLECTION_NAME_MAP = {
-        "openai": "ragflow_chunks",
+        "openai": "ragflow_chunks_openai",
         "sroberta": "ragflow_chunks_sroberta",
     }
 
@@ -1014,16 +1278,26 @@ def main():
         openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
     chunks_added = 0
-    milvus = None
+    # milvus = None
 
+    MILVUS_DATASET_ID = os.getenv("INGEST_DATASET_ID")
+    if not MILVUS_DATASET_ID:
+        raise RuntimeError("INGEST_DATASET_ID is required in single-file mode")
+
+    MILVUS_DATASET_ID = os.getenv("INGEST_DATASET_ID")
+    SYSTEM_DOC_ID = os.getenv("INGEST_DOC_ID")
+    if not SYSTEM_DOC_ID:
+        raise RuntimeError("INGEST_DOC_ID is required in single-file mode")
+    
     # stats에 남길 부가 정보(원하면 더 추가 가능)
     stats_extra = {
         "ingestId": ingest_id,
-        "docId": effective_doc_id,
+        "docId": SYSTEM_DOC_ID,
         "version": args.version,
         "domain": args.domain if args.input else None,
         "replace": replace_flag,
         "status": "UNKNOWN",
+        "meta": meta,
     }
 
     try:
@@ -1045,11 +1319,15 @@ def main():
         print_step(2, "Milvus 연결")
         print(f"[DEBUG] EMBEDDING_MODEL_SELECTED={EMBEDDING_MODEL_SELECTED}")
 
-        try:
-            embedding_model = EMBEDDING_MODEL_SELECTED
-            collection_name = COLLECTION_NAME_MAP[embedding_model]
-            print(f"[DEBUG] Milvus collection={collection_name}")
+        # (필수 env 체크)
+        if not MILVUS_HOST or not MILVUS_PORT:
+            raise RuntimeError("MILVUS_HOST/MILVUS_PORT env missing")
 
+        embedding_model = EMBEDDING_MODEL_SELECTED
+        collection_name = COLLECTION_NAME_MAP[embedding_model]
+        print(f"[DEBUG] Milvus collection={collection_name}")
+
+        try:
             milvus = MilvusProxy(
                 host=MILVUS_HOST,
                 port=MILVUS_PORT,
@@ -1057,9 +1335,13 @@ def main():
                 dim=MODEL_DIM_MAP[embedding_model],
             )
             print("✅ Milvus 연결/컬렉션 준비 완료")
+            stats_extra["milvusCollection"] = collection_name
+            stats_extra["milvusDim"] = MODEL_DIM_MAP[embedding_model]
+        
         except Exception as e:
-            print(f"❌ Milvus 연결 실패 (일단 RAGFlow만 진행): {e}")
-            milvus = None
+            # ✅ 운영 정책: Milvus 필수 → 즉시 실패
+            raise RuntimeError(f"Milvus connect failed: {e}") from e
+
 
         # ===========================================================
         # ✅ 단일 파일 모드 (--input)
@@ -1069,178 +1351,239 @@ def main():
             if not input_path.exists():
                 raise RuntimeError(f"단일 파일 경로가 존재하지 않습니다: {input_path}")
 
-            chunks_added = process_single_file_mode(
+            chunks_added, final_upload_name, extra2 = process_single_file_mode(
                 rag=rag,
                 milvus=milvus,
                 embedding_model_selected=EMBEDDING_MODEL_SELECTED,
                 experiment_tag=EXPERIMENT_TAG,
                 input_path=input_path,
                 domain=args.domain,
-                doc_id=args.doc_id,
+                doc_id=SYSTEM_DOC_ID,
+        
                 version=args.version,
                 replace=replace_flag,
+                milvus_dataset_id=MILVUS_DATASET_ID,
+                milvus_doc_id=SYSTEM_DOC_ID,
+                department=DEPARTMENT,   # ✅ 추가
             )
+
+            if isinstance(extra2, dict):
+                stats_extra.update(extra2)
+
+            stats_extra["uploadName"] = final_upload_name
+            stats_extra["docId"] = SYSTEM_DOC_ID  # ✅ stats도 원본명으로
 
             stats_extra["status"] = "COMPLETED"
             print_ingest_stats(chunks_added, extra=stats_extra)
             return
+        
+        # ===========================================================
+        # ✅ 배치 모드는 Milvus 적재 OFF (권장)
+        # - 배치는 AI 요청 스펙(datasetId/docId 매칭)이 없어서 Milvus 키를 안정적으로 못 맞춤
+        # - 따라서 RAGFlow 업로드 + add_chunk만 수행
+        # ===========================================================
+        # milvus = None
 
         # ==============================================
         # ★ 도메인별 배치 처리 (기존 유지)
         # ==============================================
         # 배치 모드는 ingest-worker 콜백 스펙(단일 doc 단위)과 매칭이 애매해서,
         # 여기서는 stats 출력만 하되 status는 BATCH로 남김.
-        for domain, dataset_dir in DOMAIN_DIRS.items():
-            print("\n" + "#" * 60)
-            print(f"### 도메인: {domain}")
-            print(f"### 로컬 폴더: {dataset_dir}")
-            print("#" * 60)
+        # for domain, dataset_dir in DOMAIN_DIRS.items():
+        #     print("\n" + "#" * 60)
+        #     print(f"### 도메인: {domain}")
+        #     print(f"### 로컬 폴더: {dataset_dir}")
+        #     print("#" * 60)
 
-            if not dataset_dir.exists():
-                print(f"⚠️  폴더가 없습니다. 스킵: {dataset_dir}")
-                continue
+        #     if not dataset_dir.exists():
+        #         print(f"⚠️  폴더가 없습니다. 스킵: {dataset_dir}")
+        #         continue
 
-            print_step(3, f"[{domain}] dataset 폴더 스캔")
+        #     print_step(3, f"[{domain}] dataset 폴더 스캔")
 
-            pdfs = list(dataset_dir.glob("*.pdf"))
-            ppts = list(dataset_dir.glob("*.ppt")) + list(dataset_dir.glob("*.pptx"))
-            hwps = list(dataset_dir.glob("*.hwp")) + list(dataset_dir.glob("*.hwpx"))
-            docxs = list(dataset_dir.glob("*.docx"))
-            txts = list(dataset_dir.glob("*.txt"))
-            csvs = list(dataset_dir.glob("*.csv"))
+        #     pdfs = list(dataset_dir.glob("*.pdf"))
+        #     ppts = list(dataset_dir.glob("*.ppt")) + list(dataset_dir.glob("*.pptx"))
+        #     hwps = list(dataset_dir.glob("*.hwp")) + list(dataset_dir.glob("*.hwpx"))
+        #     docxs = list(dataset_dir.glob("*.docx"))
+        #     txts = list(dataset_dir.glob("*.txt"))
+        #     csvs = list(dataset_dir.glob("*.csv"))
 
-            files = sorted(pdfs + ppts + hwps + docxs + txts + csvs)
+        #     files = sorted(pdfs + ppts + hwps + docxs + txts + csvs)
 
-            if not files:
-                print(f"❌ [{domain}] 처리할 파일이 없습니다.")
-                continue
+        #     if not files:
+        #         print(f"❌ [{domain}] 처리할 파일이 없습니다.")
+        #         continue
 
-            print("📂 처리 파일:")
-            for f in files:
-                print("   -", f.name)
+        #     print("📂 처리 파일:")
+        #     for f in files:
+        #         print("   -", f.name)
 
-            print_step(4, f"[{domain}] 데이터셋 확보(get_or_create)")
-            dataset = get_or_create_dataset(rag, domain)
+        #     print_step(4, f"[{domain}] 데이터셋 확보(get_or_create)")
+        #     dataset = get_or_create_dataset(rag, domain)
 
-            print_step(5, f"[{domain}] 파일 업로드 + 청킹")
+        #     print_step(5, f"[{domain}] 파일 업로드 + 청킹")
 
-            for fpath in files:
-                fpath = fpath.resolve()
-                ext = fpath.suffix.lower().lstrip(".")
-                print(f"\n======= [{domain}] {fpath.name} 처리 =======")
+        #     for fpath in files:
+        #         orig_path = fpath.resolve()
+        #         orig_ext = orig_path.suffix.lower().lstrip(".")
+        #         system_doc_id = orig_path.name              # ✅ 원본키: 규정01.hwp (Milvus 기준)
 
-                effective_doc_id_batch = fpath.name
+        #         # ✅ 업로드용 파일/이름(=RAGFlow 기준)
+        #         upload_path = orig_path
+        #         upload_name = orig_path.name                # 기본은 원본명
 
-                if ext in ("hwp", "hwpx"):
-                    print(f"[HWP] {fpath.name} → DOCX로 변환")
-                    docx_path = hwp_adapter.to_docx(str(fpath))
-                    fpath = Path(docx_path)
-                    ext = "docx"
+        #         # 1) HWP/HWPX면 변환해서 업로드명은 docx로
+        #         if orig_ext in ("hwp", "hwpx"):
+        #             print(f"[HWP] {orig_path.name} → DOCX로 변환")
+        #             docx_path = hwp_adapter.to_docx(str(orig_path))
+        #             upload_path = Path(docx_path).resolve()
+        #             if not upload_path.exists():
+        #                 raise RuntimeError(f"HWP 변환 실패: {upload_path}")
 
-                if ext in ("pdf", "ppt", "pptx"):
-                    if ext == "pdf":
-                        doc_type = classifier.classify(str(fpath))
-                    else:
-                        doc_type = "ppt"
+        #             upload_name = f"{orig_path.stem}{upload_path.suffix.lower()}"   # ✅ 규정01.docx
 
-                    print(f"→ 문서 타입: {doc_type}")
+        #         ext = upload_path.suffix.lower().lstrip(".")  # ✅ 이후 로직은 "업로드 파일" 기준 확장자
 
-                    with open(fpath, "rb") as fb:
-                        blob = fb.read()
+        #         # 2) replace면 삭제도 분리 (배치에서도 적용)
+        #         if replace_flag:
+        #             # ✅ RAGFlow 삭제: 업로드명 기준(.docx)
+        #             try:
+        #                 deleted = delete_ragflow_document_by_name(dataset, upload_name)
+        #                 print(f"[REPLACE] RAGFlow delete(upload_name={upload_name}) -> {deleted}")
+        #             except Exception as e:
+        #                 print(f"[REPLACE][WARN] RAGFlow delete failed: {e}")
 
-                    doc = dataset.upload_documents([{"display_name": effective_doc_id_batch, "blob": blob}])[0]
-                    print(f"→ 업로드 완료 (doc.id={doc.id})")
+        #             # ✅ Milvus 삭제: 원본키 기준(.hwp)
+        #             if milvus and MILVUS_DATASET_ID:
+        #                 try:
+        #                     milvus.delete_file(dataset_id=MILVUS_DATASET_ID, doc_id=system_doc_id)
+        #                     print(f"[REPLACE] Milvus delete(system_doc_id={system_doc_id}) OK")
+        #                 except Exception as e:
+        #                     print(f"[REPLACE][WARN] Milvus delete failed: {e}")
 
-                    if doc_type == "text_pdf":
-                        print("→ [텍스트 PDF] 로컬 규정형 청킹 사용")
-                        chunks = chunk_text_pdf(fpath)
-                        compare_with_solution(dataset_dir, fpath, chunks)
+        #         # 3) 업로드는 upload_path + upload_name으로!
+        #         with open(upload_path, "rb") as fb:
+        #             blob = fb.read()
 
-                        chunks_added += int(
-                            add_chunks_safe(
-                                doc,
-                                chunks,
-                                milvus=milvus,
-                                dataset_id=domain,
-                                doc_id=effective_doc_id_batch,
-                                embedding_model=EMBEDDING_MODEL_SELECTED,
-                                experiment_tag=EXPERIMENT_TAG,
-                            )
-                        )
-                        continue
+        #         doc = dataset.upload_documents(
+        #             [{"display_name": upload_name, "name": upload_name, "blob": blob}]
+        #         )[0]
+        #         print(f"→ 업로드 완료 (doc.id={doc.id}, upload_name={upload_name})")
 
-                    print("→ [이미지/슬라이드] PreprocessPipeline + add_chunk 사용")
-                    pipeline_result = preprocess_pipeline.run(str(fpath))
-                    chunks = pipeline_result.get("chunks", []) if isinstance(pipeline_result, dict) else []
-                    chunks_added += int(
-                        add_chunks_safe(
-                            doc,
-                            chunks,
-                            milvus=milvus,
-                            dataset_id=domain,
-                            doc_id=effective_doc_id_batch,
-                            embedding_model=EMBEDDING_MODEL_SELECTED,
-                            experiment_tag=EXPERIMENT_TAG,
-                        )
-                    )
-                    print(f"→ 파이프라인 청크 {len(chunks)}개 반환")
-                    continue
+        #         document_title = orig_path.stem
+        #         department = infer_department_from_filename(orig_path.name)
 
-                if ext in ("csv", "docx", "txt"):
-                    print("→ [CSV/DOCX/TXT] 기존 규정형 청킹 사용")
+        #         print(f"[DEPT] filename={orig_path.name} -> department={department}")
 
-                    with open(fpath, "rb") as fb:
-                        blob = fb.read()
+        #         # -----------------------------
+        #         # PDF / PPT / PPTX
+        #         # -----------------------------
+        #         if ext in ("pdf", "ppt", "pptx"):
+        #             if ext == "pdf":
+        #                 doc_type = classifier.classify(str(upload_path))
+        #             else:
+        #                 doc_type = "ppt"
 
-                    doc = dataset.upload_documents([{"display_name": effective_doc_id_batch, "blob": blob}])[0]
-                    print(f"→ 업로드 완료 (doc.id={doc.id})")
+        #             print(f"→ 문서 타입: {doc_type}")
 
-                    if ext == "docx":
-                        print("→ DOCX blocks 기반 처리 + 조단위(제 n 조) 청킹 적용")
-                        blocks = extract_docx_blocks(fpath)
-                        docx_chunks = chunk_docx_blocks_with_rules(blocks)
+        #             if doc_type == "text_pdf":
+        #                 print("→ [텍스트 PDF] 로컬 규정형 청킹 사용")
+        #                 chunks = chunk_text_pdf(upload_path)
+        #                 compare_with_solution(dataset_dir, upload_path, chunks)
 
-                        chunks_added += int(
-                            add_chunks_safe(
-                                doc,
-                                docx_chunks,
-                                milvus=milvus,
-                                dataset_id=domain,
-                                doc_id=effective_doc_id_batch,
-                                embedding_model=EMBEDDING_MODEL_SELECTED,
-                                experiment_tag=EXPERIMENT_TAG,
-                            )
-                        )
-                        continue
+        #                 chunks_added += int(
+        #                     add_chunks_safe(
+        #                         doc,
+        #                         chunks,
+        #                         milvus=milvus,
+        #                         dataset_id=domain,                 # (배치 Milvus ON이면 MILVUS_DATASET_ID로 바꿔)
+        #                         doc_id=system_doc_id,              # ✅ Milvus docId는 원본키
+        #                         embedding_model=EMBEDDING_MODEL_SELECTED,
+        #                         experiment_tag=EXPERIMENT_TAG,
+        #                         department=department,
+        #                         document_title=document_title,
+        #                     )
+        #                 )
+        #             else:
+        #                 print("→ [이미지/슬라이드] PreprocessPipeline + add_chunk 사용")
+        #                 pipeline_result = preprocess_pipeline.run(str(upload_path))
+        #                 chunks = pipeline_result.get("chunks", []) if isinstance(pipeline_result, dict) else []
 
-                    chunks = chunk_document(fpath)
-                    compare_with_solution(dataset_dir, fpath, chunks)
+        #                 chunks_added += int(
+        #                     add_chunks_safe(
+        #                         doc,
+        #                         chunks,
+        #                         milvus=milvus,
+        #                         dataset_id=domain,                 # (배치 Milvus ON이면 MILVUS_DATASET_ID로 바꿔)
+        #                         doc_id=system_doc_id,              # ✅ Milvus docId는 원본키
+        #                         embedding_model=EMBEDDING_MODEL_SELECTED,
+        #                         experiment_tag=EXPERIMENT_TAG,
+        #                         department=department,
+        #                         document_title=document_title,
+        #                     )
+        #                 )
+        #                 print(f"→ 파이프라인 청크 {len(chunks)}개 반환")
 
-                    chunks_added += int(
-                        add_chunks_safe(
-                            doc,
-                            chunks,
-                            milvus=milvus,
-                            dataset_id=domain,
-                            doc_id=effective_doc_id_batch,
-                            embedding_model=EMBEDDING_MODEL_SELECTED,
-                            experiment_tag=EXPERIMENT_TAG,
-                        )
-                    )
-                    continue
+        #             continue
 
-                print(f"⚠️ 지원하지 않는 확장자입니다: .{ext} (스킵)")
+        #         # -----------------------------
+        #         # CSV / DOCX / TXT
+        #         # -----------------------------
+        #         if ext in ("csv", "docx", "txt"):
+        #             print("→ [CSV/DOCX/TXT] 기존 규정형 청킹 사용")
 
-            print_step(6, f"[{domain}] 검색 테스트")
-            query = f"{domain} 관련 문서의 목적은 무엇인가?"
-            results = rag.retrieve(dataset_ids=[dataset.id], question=query, top_k=3)
-            for i, r in enumerate(results, 1):
-                print(f"\n[검색 {i}]")
-                print(r.content[:200] + "...")
+        #             if ext == "docx":
+        #                 print("→ DOCX blocks 기반 처리 + 조단위(제 n 조) 청킹 적용")
+        #                 blocks = extract_docx_blocks(upload_path)
+        #                 docx_chunks = chunk_docx_blocks_with_rules(blocks)
 
-        stats_extra["status"] = "BATCH_COMPLETED"
-        print_ingest_stats(chunks_added, extra=stats_extra)
-        return
+        #                 chunks_added += int(
+        #                     add_chunks_safe(
+        #                         doc,
+        #                         docx_chunks,
+        #                         milvus=milvus,
+        #                         dataset_id=domain,                 # (배치 Milvus ON이면 MILVUS_DATASET_ID로 바꿔)
+        #                         doc_id=system_doc_id,              # ✅ Milvus docId는 원본키
+        #                         embedding_model=EMBEDDING_MODEL_SELECTED,
+        #                         experiment_tag=EXPERIMENT_TAG,
+        #                         department=department,
+        #                         document_title=document_title,
+        #                     )
+        #                 )
+        #                 continue
+
+        #             chunks = chunk_document(upload_path)
+        #             compare_with_solution(dataset_dir, upload_path, chunks)
+
+        #             chunks_added += int(
+        #                 add_chunks_safe(
+        #                     doc,
+        #                     chunks,
+        #                     milvus=milvus,
+        #                     dataset_id=domain,                     # (배치 Milvus ON이면 MILVUS_DATASET_ID로 바꿔)
+        #                     doc_id=system_doc_id,                  # ✅ Milvus docId는 원본키
+        #                     embedding_model=EMBEDDING_MODEL_SELECTED,
+        #                     experiment_tag=EXPERIMENT_TAG,
+        #                     department=department,
+        #                     document_title=document_title,
+        #                 )
+        #             )
+        #             continue
+                    
+
+        #         print(f"⚠️ 지원하지 않는 확장자입니다: .{ext} (스킵)")
+
+
+        #     print_step(6, f"[{domain}] 검색 테스트")
+        #     query = f"{domain} 관련 문서의 목적은 무엇인가?"
+        #     results = rag.retrieve(dataset_ids=[dataset.id], question=query, top_k=3)
+        #     for i, r in enumerate(results, 1):
+        #         print(f"\n[검색 {i}]")
+        #         print(r.content[:200] + "...")
+
+        # stats_extra["status"] = "BATCH_COMPLETED"
+        # print_ingest_stats(chunks_added, extra=stats_extra)
+        # return
 
     except Exception as e:
         # ✅ 실패여도 worker가 stdout에서 stats 뽑을 수 있게 남김
@@ -1250,6 +1593,6 @@ def main():
         # worker가 stderr로 잡을 수 있게 re-raise
         raise
 
-
+# 수행
 if __name__ == "__main__":
     main()

@@ -12,10 +12,15 @@ from quart import request
 
 logger = logging.getLogger("internal_ragflow")
 
-
 # ----------------------------
 # config helpers
 # ----------------------------
+def _worker_ingest_path() -> str:
+    return os.getenv("INGEST_WORKER_PATH", "/ingest")
+
+def _enable_callback_receiver() -> bool:
+    return os.getenv("ENABLE_CALLBACK_RECEIVER", "0").strip() in ("1","true","yes","y","on")
+
 def _expected_token() -> str:
     # AI -> RAGFlow 전용 토큰 우선
     return os.getenv("AI_TO_RAGFLOW_TOKEN") or os.getenv("INTERNAL_TOKEN") or ""
@@ -24,7 +29,7 @@ def _expected_token() -> str:
 def _expected_callback_token() -> str:
     # ✅ RAGFlow(ingest-worker) -> AI callback token
     # (테스트/운영 환경에선 "AI 서버"가 이 토큰으로 검증해야 함)
-    return os.getenv("RAGFLOW_TO_AI_TOKEN") or ""
+    return os.getenv("AI_CALLBACK_TOKEN") or ""
 
 
 def _worker_url() -> str:
@@ -241,7 +246,7 @@ async def _post_to_worker_background(
 # ----------------------------
 # route
 # ----------------------------
-@manager.route("/internal/ragflow/ingest", methods=["POST"])
+@manager.route("internal/ragflow/ingest", methods=["POST"])
 async def internal_ragflow_ingest():
     """
     AI -> RAGFlow Ingest 실행 API
@@ -289,11 +294,11 @@ async def internal_ragflow_ingest():
         body["meta"] = meta
 
     # 4) worker로 전달 준비
-    worker_endpoint = f"{_worker_url()}/ingest"
+    worker_endpoint = f"{_worker_url()}{_worker_ingest_path()}"
 
     headers = {
         "Content-Type": "application/json; charset=utf-8",
-        "X-Internal-Token": got,  # worker에서도 동일 토큰 검증
+        "X-Internal-Token": _expected_token(),   # worker에서도 동일 토큰 검증
         "X-From": "ragflow-api",
         "X-Ingest-Id": ingest_id,
     }
@@ -364,37 +369,38 @@ async def internal_ragflow_ingest():
 # ============================================================
 # ✅ (추가) ingest-worker -> AI callback receiver (테스트용)
 # ============================================================
-@manager.route("/internal/ai/callbacks/ragflow/ingest", methods=["POST"])
-async def internal_ai_callback_ragflow_ingest():
-    """
-    ingest-worker가 결과를 콜백하는 엔드포인트 (테스트/운영 시 AI 서버에서 구현해야 함)
+if _enable_callback_receiver():
+    @manager.route("/ai/callbacks/ragflow/ingest", methods=["POST"])
+    async def internal_ai_callback_ragflow_ingest():
+        """
+        ingest-worker가 결과를 콜백하는 엔드포인트 (테스트/운영 시 AI 서버에서 구현해야 함)
 
-    URL:
-      /v1/internal_ragflow/internal/ai/callbacks/ragflow/ingest
+        URL:
+        /v1/internal_ragflow/internal/ai/callbacks/ragflow/ingest
 
-    Headers:
-      X-Internal-Token: {RAGFLOW_TO_AI_TOKEN}
+        Headers:
+        X-Internal-Token: {AI_CALLBACK_TOKEN}
 
-    Body:
-      {
-        ingestId, docId, version, status, processedAt, failReason, meta, stats
-      }
-    """
-    got = request.headers.get("X-Internal-Token", "")
-    expected = _expected_callback_token()
-    if not expected:
-        return {"code": 500, "data": False, "message": "RAGFLOW_TO_AI_TOKEN not configured"}, 500
-    if got != expected:
-        return {"code": 401, "data": False, "message": "Unauthorized callback"}, 401
+        Body:
+        {
+            ingestId, docId, version, status, processedAt, failReason, meta, stats
+        }
+        """
+        got = request.headers.get("X-Internal-Token", "")
+        expected = _expected_callback_token()
+        if not expected:
+            return {"code": 500, "data": False, "message": "AI_CALLBACK_TOKEN not configured"}, 500
+        if got != expected:
+            return {"code": 401, "data": False, "message": "Unauthorized callback"}, 401
 
-    body: Dict[str, Any] = await _parse_json_body()
-    body = _normalize_unicode(body)
+        body: Dict[str, Any] = await _parse_json_body()
+        body = _normalize_unicode(body)
 
-    ingest_id = (body.get("ingestId") or "").strip()
-    doc_id = (body.get("docId") or "").strip()
-    status = (body.get("status") or "").strip()
+        ingest_id = (body.get("ingestId") or "").strip()
+        doc_id = (body.get("docId") or "").strip()
+        status = (body.get("status") or "").strip()
 
-    logger.warning("[AI_CALLBACK_RX] ingestId=%s docId=%s status=%s body=%s", ingest_id, doc_id, status, body)
+        logger.warning("[AI_CALLBACK_RX] ingestId=%s docId=%s status=%s body=%s", ingest_id, doc_id, status, body)
 
-    # 여기서 DB 업데이트 / 상태 저장 / 이벤트 발행 등 처리하면 됨
-    return {"code": 100, "data": {"received": True}, "message": "ok"}, 200
+        # 여기서 DB 업데이트 / 상태 저장 / 이벤트 발행 등 처리하면 됨
+        return {"code": 100, "data": {"received": True}, "message": "ok"}, 200
