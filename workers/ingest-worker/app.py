@@ -7,7 +7,8 @@ import uuid
 import asyncio
 import logging
 import subprocess
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+
 from pathlib import Path
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
@@ -16,8 +17,43 @@ import httpx
 from fastapi import FastAPI, Header, HTTPException
 from pydantic import BaseModel, Field
 
-logging.basicConfig(level=logging.INFO)
+from contextvars import ContextVar
+
+# ---- request-scoped context ----
+_ctx_ingest_id: ContextVar[str] = ContextVar("ingest_id", default="-")
+_ctx_trace_id: ContextVar[str] = ContextVar("trace_id", default="-")
+_ctx_doc_id: ContextVar[str] = ContextVar("doc_id", default="-")
+
+class RequestContextFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord) -> bool:
+        record.ingestId = _ctx_ingest_id.get()
+        record.traceId = _ctx_trace_id.get()
+        record.docId = _ctx_doc_id.get()
+        return True
+
+def _kst_now_iso() -> str:
+    kst = timezone(timedelta(hours=9))
+    return datetime.now(kst).isoformat(timespec="seconds")
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)sZ %(levelname)s %(name)s "
+           "[ingestId=%(ingestId)s traceId=%(traceId)s docId=%(docId)s] "
+           "%(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S",
+)
+
+_ctx_filter = RequestContextFilter()
+
+root = logging.getLogger()
+root.addFilter(_ctx_filter)
+
 logger = logging.getLogger("ingest-worker")
+logger.addFilter(_ctx_filter)
+
+logging.getLogger("httpx").addFilter(_ctx_filter)
+logging.getLogger("httpcore").addFilter(_ctx_filter)
+
 
 app = FastAPI()
 
@@ -34,8 +70,10 @@ CALLBACK_TOKEN = os.getenv("AI_CALLBACK_TOKEN") or ""
 MAIN_PATH = os.getenv("INGEST_MAIN_PATH", "/workspace/sample/main.py")
 
 # 콜백 URL (없으면 기본값)
-DEFAULT_CALLBACK_URL = "http://192.168.0.112:8000/v1/internal_ragflow/internal/ai/callbacks/ragflow/ingest"
-CALLBACK_URL = (os.getenv("AI_CALLBACK_URL") or DEFAULT_CALLBACK_URL).strip()
+base = (os.getenv("AI_CALLBACK_URL") or "").rstrip("/")
+path = (os.getenv("AI_CALLBACK_PATH") or "").strip()
+
+CALLBACK_URL = f"{base}{path}" if base and path else ""
 
 # TMP_DIR
 TMP_DIR = Path(os.getenv("INGEST_TMP_DIR", "/tmp/ingest"))
@@ -205,6 +243,20 @@ async def ingest(req: IngestReq, x_internal_token: str = Header(default="")):
     meta = dict(req.meta or {})
     meta["ingestId"] = ingest_id
 
+    # ✅ 여기부터: 요청 컨텍스트 세팅 (요청 단위 분리 핵심)
+    trace_id = str(meta.get("traceId") or meta.get("trace_id") or "-")
+    trace_id_for_log = trace_id if trace_id is not None else "-"
+
+    _ctx_ingest_id.set(ingest_id)
+    _ctx_trace_id.set(trace_id)
+    _ctx_doc_id.set(req.docId or "-")
+
+    # ✅ 요청 시작 로그(시간 포함)
+    logger.info(
+        "[INGEST_START] utc=%s kst=%s datasetId=%s version=%s replace=%s fileUrl=%s",
+        _utc_now_iso(), _kst_now_iso(), req.datasetId, req.version, req.replace, req.fileUrl
+    )
+
     local_path: Optional[Path] = None
     try:
         # 1) domain 체크 (여기서도 콜백 보장)
@@ -225,7 +277,10 @@ async def ingest(req: IngestReq, x_internal_token: str = Header(default="")):
 
         # 2) 다운로드 (실패해도 콜백 보장)
         try:
+            logger.info("[DOWNLOAD_START] url=%s", req.fileUrl)
             local_path = await _download_to_tmp(req.fileUrl, req.docId)
+            logger.info("[DOWNLOAD_OK] path=%s size=%s", local_path, local_path.stat().st_size)
+
         except httpx.HTTPError as e:
             callback_payload = {
                 "ingestId": ingest_id,
@@ -377,9 +432,12 @@ async def ingest(req: IngestReq, x_internal_token: str = Header(default="")):
         raise HTTPException(status_code=504, detail="main.py timeout")
 
     finally:
+        logger.info("[INGEST_END] utc=%s kst=%s", _utc_now_iso(), _kst_now_iso())
+
         # ✅ 무조건 tmp 삭제
         try:
             if local_path and local_path.exists():
                 local_path.unlink()
-        except Exception:
-            logger.warning("[WORKER] failed to remove tmp file: %s", local_path)
+        except Exception as e:
+            logger.warning("[WORKER] failed to remove tmp file: %s err=%r", local_path, e)
+

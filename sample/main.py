@@ -935,7 +935,7 @@ def add_chunks_safe(
                         "text": text,
                         "embedding": embedding,
                         "department": (department or "ALL").strip()[:32],  # ✅ 이걸로 끝
-                        
+
                         # ✅ ChatSource 메타 4종
                         "document_title": doc_title,
                         "page_num": page_num,
@@ -1101,7 +1101,7 @@ def process_single_file_mode(
         "ragDatasetPk": str(getattr(dataset, "id", "")),
         "ragDocumentPk": str(getattr(doc, "id", "")),
         "uploadName": upload_name,
-        
+
         "systemDocId": system_doc_id,
     }
 
@@ -1236,7 +1236,7 @@ def main():
     ingest_id = args.ingest_id or str(uuid4())
     meta = _parse_meta_json(args.meta_json)
 
-    
+
     DEPARTMENT = (meta.get("department") if isinstance(meta, dict) else None) or "ALL"
     DEPARTMENT = str(DEPARTMENT).strip()[:32] if DEPARTMENT else "ALL"
 
@@ -1284,11 +1284,14 @@ def main():
     if not MILVUS_DATASET_ID:
         raise RuntimeError("INGEST_DATASET_ID is required in single-file mode")
 
-    MILVUS_DATASET_ID = os.getenv("INGEST_DATASET_ID")
-    SYSTEM_DOC_ID = os.getenv("INGEST_DOC_ID")
+    SYSTEM_DOC_ID = (args.doc_id or os.getenv("INGEST_DOC_ID") or "").strip()
     if not SYSTEM_DOC_ID:
-        raise RuntimeError("INGEST_DOC_ID is required in single-file mode")
-    
+        SYSTEM_DOC_ID = Path(args.input).name  # 최후 fallback은 실제 파일명.확장자
+
+    print(f"[TRACE]: AI에서 받은 [DOCID] args.doc_id={args.doc_id!r}")
+    print(f"[TRACE][DOCID] env.INGEST_DOC_ID={os.getenv('INGEST_DOC_ID')!r}")
+    print(f"[TRACE]: 최종 [DOCID] SYSTEM_DOC_ID={SYSTEM_DOC_ID!r}")
+
     # stats에 남길 부가 정보(원하면 더 추가 가능)
     stats_extra = {
         "ingestId": ingest_id,
@@ -1337,7 +1340,7 @@ def main():
             print("✅ Milvus 연결/컬렉션 준비 완료")
             stats_extra["milvusCollection"] = collection_name
             stats_extra["milvusDim"] = MODEL_DIM_MAP[embedding_model]
-        
+
         except Exception as e:
             # ✅ 운영 정책: Milvus 필수 → 즉시 실패
             raise RuntimeError(f"Milvus connect failed: {e}") from e
@@ -1359,7 +1362,7 @@ def main():
                 input_path=input_path,
                 domain=args.domain,
                 doc_id=SYSTEM_DOC_ID,
-        
+
                 version=args.version,
                 replace=replace_flag,
                 milvus_dataset_id=MILVUS_DATASET_ID,
@@ -1376,7 +1379,7 @@ def main():
             stats_extra["status"] = "COMPLETED"
             print_ingest_stats(chunks_added, extra=stats_extra)
             return
-        
+
         # ===========================================================
         # ✅ 배치 모드는 Milvus 적재 OFF (권장)
         # - 배치는 AI 요청 스펙(datasetId/docId 매칭)이 없어서 Milvus 키를 안정적으로 못 맞춤
@@ -1569,7 +1572,7 @@ def main():
         #                 )
         #             )
         #             continue
-                    
+
 
         #         print(f"⚠️ 지원하지 않는 확장자입니다: .{ext} (스킵)")
 

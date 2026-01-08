@@ -155,15 +155,21 @@ def _canonicalize_ingest_body(body: Dict[str, Any]) -> Dict[str, Any]:
     ingest-worker가 기대하는 키로 정규화 + alias 흡수 + 타입 보정.
     - datasetId/docId/fileUrl 3개는 반드시 canonical key로 맞춘다.
     - replace/version/meta/ingestId 같은 옵션 키도 정규화해서 worker로 넘긴다.
+    - ✅ callback contract(meta.ragDocumentPk/traceId/requestId) 보장 (주입이 아니라 "이관")
     """
     dataset_id = _pick(body, "datasetId", ["dataset_id", "dataset", "datasetName", "dataset_name"])
-    doc_id = _pick(body, "docId", ["doc_id", "doc-id", "documentId", "document_id", "doc"])
+    doc_id = _pick(body, "docId", ["doc_id", "doc-id", "doc", "documentId", "document_id"])
     file_url = _pick(body, "fileUrl", ["file_url", "file", "url", "fileURL"])
 
-    # ✅ ingestId도 alias 흡수 (AI가 이미 준 경우 유지)
-    ingest_id = _pick(body, "ingestId", ["ingest_id", "ingest-id", "requestId", "request_id"])
+    # ✅ callback contract keys (may come as top-level from AI)
+    rag_document_pk = _pick(body, "ragDocumentPk", ["rag_document_pk", "ragDocumentPK", "rag_documentPk"])
+    trace_id = _pick(body, "traceId", ["trace_id", "trace-id"])
+    request_id = _pick(body, "requestId", ["request_id", "request-id"])
 
-    out: Dict[str, Any] = dict(body)  # 원래 payload 유지(필요한 확장키 유지)
+    # ✅ ingestId는 ingestId/requestId를 섞으면 안됨 (절대 requestId alias 넣지 말 것)
+    ingest_id = _pick(body, "ingestId", ["ingest_id", "ingest-id"])
+
+    out: Dict[str, Any] = dict(body)  # 원래 payload 유지(확장키 유지)
 
     out["datasetId"] = _coerce_str(dataset_id).strip()
     out["docId"] = _coerce_str(doc_id).strip()
@@ -172,28 +178,46 @@ def _canonicalize_ingest_body(body: Dict[str, Any]) -> Dict[str, Any]:
     if ingest_id is not None:
         out["ingestId"] = _coerce_str(ingest_id).strip()
 
-    # 옵션들 정규화
+    # replace 정규화
     if "replace" in out or "isReplace" in out or "replace_doc" in out:
         out["replace"] = _bool(_pick(out, "replace", ["isReplace", "replace_doc"]), default=False)
     else:
-        # ✅ worker/main.py가 bool로 받기 쉬우라고 기본값을 명시(선택)
         out.setdefault("replace", False)
 
+    # version 정규화 (없으면 그대로 None 유지)
     if "version" in out or "ver" in out or "docVersion" in out:
         out["version"] = _int(_pick(out, "version", ["ver", "docVersion"]), default=None)
 
     # meta는 dict 보장
-    if "meta" in out and out["meta"] is not None and not isinstance(out["meta"], dict):
+    meta = out.get("meta")
+    if meta is None:
+        meta = {}
+    elif not isinstance(meta, dict):
         try:
-            if isinstance(out["meta"], str):
-                out["meta"] = json.loads(out["meta"])
+            if isinstance(meta, str):
+                meta = json.loads(meta)
+                if not isinstance(meta, dict):
+                    meta = {"_meta_raw": str(meta)}
             else:
-                out["meta"] = {"_meta_raw": str(out["meta"])}
+                meta = {"_meta_raw": str(meta)}
         except Exception:
-            out["meta"] = {"_meta_raw": str(out["meta"])}
+            meta = {"_meta_raw": str(meta)}
 
+    v = _coerce_str(rag_document_pk).strip()
+    if rag_document_pk is not None and v and not meta.get("ragDocumentPk"):
+        meta["ragDocumentPk"] = v
+
+    v = _coerce_str(trace_id).strip()
+    if trace_id is not None and v and not meta.get("traceId"):
+        meta["traceId"] = v
+
+    v = _coerce_str(request_id).strip()
+    if request_id is not None and v and not meta.get("requestId"):
+        meta["requestId"] = v
+
+
+    out["meta"] = meta
     return out
-
 
 def _make_ingest_id() -> str:
     return str(uuid4())
@@ -246,7 +270,7 @@ async def _post_to_worker_background(
 # ----------------------------
 # route
 # ----------------------------
-@manager.route("internal/ragflow/ingest", methods=["POST"])
+@manager.route("/internal/ragflow/ingest", methods=["POST"])
 async def internal_ragflow_ingest():
     """
     AI -> RAGFlow Ingest 실행 API
@@ -257,6 +281,8 @@ async def internal_ragflow_ingest():
     - 202 Accepted 즉시 응답 (QUEUED)
     - 실제 ingest는 ingest-worker(/ingest)로 비동기 전달
     """
+    logger.warning("🔥 ROUTE HIT: internal_ragflow_ingest")
+
     # 1) 내부 토큰 검증
     got = request.headers.get("X-Internal-Token", "")
     expected = _expected_token()
@@ -275,6 +301,22 @@ async def internal_ragflow_ingest():
     # 2-1) key/alias/타입 정규화
     body = _canonicalize_ingest_body(body)
 
+    # ----------------------------
+    # ✅ callback contract validation (AI callback requires these)
+    # ----------------------------
+    if body.get("version") is None:
+        return {"code": 400, "data": False, "message": "version required"}, 400
+
+    meta = body.get("meta")
+    if not isinstance(meta, dict):
+        meta = {}
+
+    missing = [k for k in ("ragDocumentPk", "traceId", "requestId") if not meta.get(k)]
+    if missing:
+        return {"code": 400, "data": False, "message": f"meta missing required keys: {missing}"}, 400
+
+    body["meta"] = meta
+
     # 필수값 체크(최소)
     dataset_id = body.get("datasetId")
     doc_id = body.get("docId")
@@ -286,12 +328,6 @@ async def internal_ragflow_ingest():
     # 3) ingestId 확정
     ingest_id = (body.get("ingestId") or "").strip() or _make_ingest_id()
     body["ingestId"] = ingest_id
-
-    # (선택) meta에 ingestId 주입
-    meta = body.get("meta")
-    if isinstance(meta, dict):
-        meta.setdefault("ingestId", ingest_id)
-        body["meta"] = meta
 
     # 4) worker로 전달 준비
     worker_endpoint = f"{_worker_url()}{_worker_ingest_path()}"
@@ -370,7 +406,7 @@ async def internal_ragflow_ingest():
 # ✅ (추가) ingest-worker -> AI callback receiver (테스트용)
 # ============================================================
 if _enable_callback_receiver():
-    @manager.route("/ai/callbacks/ragflow/ingest", methods=["POST"])
+    @manager.route("/internal/ai/callbacks/ragflow/ingest", methods=["POST"])
     async def internal_ai_callback_ragflow_ingest():
         """
         ingest-worker가 결과를 콜백하는 엔드포인트 (테스트/운영 시 AI 서버에서 구현해야 함)
@@ -404,3 +440,4 @@ if _enable_callback_receiver():
 
         # 여기서 DB 업데이트 / 상태 저장 / 이벤트 발행 등 처리하면 됨
         return {"code": 100, "data": {"received": True}, "message": "ok"}, 200
+    

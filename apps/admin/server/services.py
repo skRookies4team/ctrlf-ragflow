@@ -391,10 +391,13 @@ class DatasetMgr:
           AI_CALLBACK_URL  : 예) http://ai-service/internal/ai/callbacks/ragflow/ingest
           AI_CALLBACK_TOKEN : 토큰
         """
-        callback_url = os.getenv("AI_CALLBACK_URL")
-        token = os.getenv("AI_CALLBACK_TOKEN")
-        if not callback_url or not token:
+        base = (os.getenv("AI_CALLBACK_URL") or "").rstrip("/")
+        path = (os.getenv("AI_CALLBACK_PATH") or "").strip()
+
+        if not base or not path:
             return  # 콜백 비활성
+
+        callback_url = f"{base}{path}"
 
         body = {
             "ingestId": ingest_id,
