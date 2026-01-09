@@ -37,6 +37,8 @@ class MilvusProxy:
 
     # (선택) 메타 인덱스 이름
     META_INDEX_PREFIX = os.getenv("MILVUS_META_INDEX_PREFIX", "idx_").strip() or "idx_"
+    DEFAULT_PAGE_NUM = int(os.getenv("MILVUS_DEFAULT_PAGE_NUM", "0"))
+
 
     def __init__(
         self,
@@ -228,9 +230,21 @@ class MilvusProxy:
                 section = _cut("section", c.get("section") or "")
                 section_path = _cut("section_path", c.get("section_path") or "")
 
+                # page_num: 스키마 nullable 여부에 따라 기본값 강제
                 page_num_val = c.get("page_num", None)
+
+                # nullable 판단 (pymilvus 버전마다 속성명이 다를 수 있어서 방어적으로)
+                page_num_nullable = True
+                try:
+                    for f in self.collection.schema.fields:
+                        if f.name == "page_num":
+                            page_num_nullable = bool(getattr(f, "nullable", True))
+                            break
+                except Exception:
+                    page_num_nullable = True
+
                 page_num: Optional[int] = None
-                if page_num_val is not None and page_num_val != "":
+                if page_num_val not in (None, "", "None"):
                     try:
                         page_num = int(page_num_val)
                     except Exception:
@@ -249,8 +263,15 @@ class MilvusProxy:
                     row["department"] = dept
                 if has_document_title:
                     row["document_title"] = document_title
+
+                # ✅ nullable=False이면 절대 None 금지 → 기본값으로 치환
+                if not page_num_nullable and page_num is None:
+                    page_num = self.DEFAULT_PAGE_NUM
+
+                # ✅ 여기 추가: page_num 필드가 있으면 무조건 row에 넣기
                 if has_page_num:
                     row["page_num"] = page_num
+
                 if has_section:
                     row["section"] = section
                 if has_section_path:

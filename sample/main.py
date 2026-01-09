@@ -864,18 +864,20 @@ def add_chunks_safe(
 
         # page_num: chunk에 page_num이 있으면 그대로, 없으면 page_index(+1)로 유추
         page_num_val = metadata.get("page_num", None)
+
         if page_num_val is None and metadata.get("page_index") is not None:
             try:
                 page_num_val = int(metadata["page_index"]) + 1
             except Exception:
                 page_num_val = None
 
-        page_num = None
-        if page_num_val not in (None, ""):
-            try:
-                page_num = int(page_num_val)
-            except Exception:
-                page_num = None
+        # ✅ 여기서부터가 핵심: Milvus INT64(널 불가)면 기본값 강제
+        DEFAULT_PAGE_NUM = 0  # 또는 -1 (정책 선택)
+
+        try:
+            page_num = int(page_num_val) if page_num_val not in (None, "", "None") else DEFAULT_PAGE_NUM
+        except Exception:
+            page_num = DEFAULT_PAGE_NUM
 
         section = (metadata.get("section") or "").strip()[:128]
         section_path = (metadata.get("section_path") or "").strip()[:256]
